@@ -653,6 +653,59 @@ if (fs.existsSync(esbuildModulePath)) {
   );
 }
 
+fs.writeFileSync(
+  path.join(shimDir, "firebase-client-shim.ts"),
+  `import { initializeApp, getApps, getApp, type FirebaseApp } from "firebase/app";
+import { getAuth, GoogleAuthProvider, type Auth } from "firebase/auth";
+import type { Firestore } from "firebase/firestore";
+
+const firebaseConfig = {
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY ?? "",
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN ?? "",
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID ?? "",
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET ?? "",
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID ?? "",
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID ?? "",
+};
+
+export function isFirebaseBrowserConfigured(): boolean {
+  return Boolean(
+    firebaseConfig.apiKey &&
+      firebaseConfig.projectId &&
+      !firebaseConfig.apiKey.includes("your_firebase") &&
+      !firebaseConfig.projectId.includes("your-project"),
+  );
+}
+
+let cachedApp: FirebaseApp | null = null;
+
+export function getFirebaseBrowserApp(): FirebaseApp | null {
+  if (!isFirebaseBrowserConfigured()) return null;
+  if (cachedApp) return cachedApp;
+  cachedApp = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+  return cachedApp;
+}
+
+export function getFirebaseBrowserAuth(): Auth | null {
+  const app = getFirebaseBrowserApp();
+  if (!app) return null;
+  return getAuth(app);
+}
+
+export function getFirebaseBrowserDb(): Firestore | null {
+  return null;
+}
+
+export function createGoogleOAuthProvider(): GoogleAuthProvider {
+  const provider = new GoogleAuthProvider();
+  provider.addScope("email");
+  provider.addScope("profile");
+  provider.setCustomParameters({ prompt: "select_account" });
+  return provider;
+}
+`,
+);
+
 const aliasPlugin = {
   name: "next-firebase-spa-alias",
   setup(build) {
@@ -661,6 +714,9 @@ const aliasPlugin = {
     }));
     build.onResolve({ filter: /^next\/navigation$/ }, () => ({
       path: path.join(shimDir, "next-navigation.tsx"),
+    }));
+    build.onResolve({ filter: /^@\/lib\/firebase\/client$/ }, () => ({
+      path: path.join(shimDir, "firebase-client-shim.ts"),
     }));
     build.onResolve(
       { filter: /^@\/actions\/(trade|admin|ai|onboarding|reflection)$/ },
@@ -685,20 +741,23 @@ const aliasPlugin = {
   },
 };
 
+const buildVersion = Date.now();
 console.log("Bundling React + TradingView Lightweight-Charts SPA with esbuild...");
 await esbuild.default.build({
   entryPoints: [path.join(rootDir, "scripts", "firebase-spa-bridge.tsx")],
   bundle: true,
   minify: true,
+  jsx: "automatic",
   format: "esm",
   target: ["es2020"],
-  outfile: path.join(outDir, "app.js"),
+  outfile: path.join(outDir, "app.v3.js"),
   plugins: [aliasPlugin],
   define: {
     ...envVars,
     __INITIAL_SEED_DB__: JSON.stringify(seedDb),
   },
 });
+fs.copyFileSync(path.join(outDir, "app.v3.js"), path.join(outDir, "app.js"));
 
 const indexHtml = `<!DOCTYPE html>
 <html lang="en">
@@ -709,7 +768,7 @@ const indexHtml = `<!DOCTYPE html>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/styles.css" />
+  <link rel="stylesheet" href="/styles.css?v=${buildVersion}" />
   <style>
     :root {
       --font-inter: 'Inter', system-ui, sans-serif;
@@ -717,10 +776,11 @@ const indexHtml = `<!DOCTYPE html>
       --font-jetbrains-mono: 'JetBrains Mono', monospace;
     }
   </style>
+  <script>window.process = window.process || { env: { NODE_ENV: "production" } };</script>
 </head>
 <body class="bg-sgx-canvas text-sgx-ink antialiased">
   <div id="root"></div>
-  <script type="module" src="/app.js"></script>
+  <script type="module" src="/app.v3.js?v=${buildVersion}"></script>
 </body>
 </html>`;
 

@@ -5,6 +5,10 @@ import React, {
   useState,
 } from "react";
 import { createRoot } from "react-dom/client";
+
+if (typeof window !== "undefined") {
+  (window as unknown as { React: typeof React }).React = React;
+}
 import type {
   AppSettingsDoc,
   ChartTimeframe,
@@ -47,7 +51,7 @@ import PortfolioClient, {
   type EnrichedHoldingRow,
 } from "../src/app/portfolio/PortfolioClient";
 import LeaderboardClient, {
-  type LeaderboardRow,
+  type LeaderboardStudentRow,
 } from "../src/app/leaderboard/LeaderboardClient";
 import AdminClient from "../src/app/admin/AdminClient";
 import LaunchClient from "../src/app/launch/LaunchClient";
@@ -78,12 +82,29 @@ export function getBrowserDb(): typeof __INITIAL_SEED_DB__ {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
-      return JSON.parse(raw);
+      const parsed = JSON.parse(raw);
+      if (parsed?.marketSnapshot) {
+        if (
+          !parsed.marketSnapshot.updatedAt ||
+          Date.now() - new Date(parsed.marketSnapshot.updatedAt).getTime() > 120000
+        ) {
+          parsed.marketSnapshot.updatedAt = new Date().toISOString();
+          try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
+          } catch {
+            // ignore
+          }
+        }
+      }
+      return parsed;
     }
   } catch {
     // ignore
   }
   const copy = JSON.parse(JSON.stringify(__INITIAL_SEED_DB__));
+  if (copy?.marketSnapshot) {
+    copy.marketSnapshot.updatedAt = new Date().toISOString();
+  }
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(copy));
   } catch {
@@ -696,39 +717,20 @@ function AppShell() {
     );
   } else if (pathname === "/leaderboard") {
     const students = Object.values(db.users).filter((u) => u.role === "student");
-    const rows: LeaderboardRow[] = students.map((s) => {
-      const base = s.startingCapital > 0 ? s.startingCapital : 10000;
-      const returnDollar = Number((s.netValue - base).toFixed(2));
-      const returnPct = Number(((returnDollar / base) * 100).toFixed(2));
-      const hhi = s.hhi ?? 1;
-      const divMult = 1 + (1 - Math.min(1, Math.max(0, hhi)));
-      const smartScore = Number(
-        (returnPct >= 0 ? returnPct * divMult : returnPct / divMult).toFixed(2),
-      );
-      return {
-        uid: s.uid,
-        nickname: s.nickname,
-        email: s.email,
-        classGroupIds: s.classGroupIds,
-        netValue: s.netValue,
-        cashBalance: s.cashBalance,
-        holdingsValue: s.holdingsValue,
-        returnDollar,
-        returnPct,
-        hhi,
-        smartScore,
-        achievementCount: s.achievementCount,
-        achievements: s.achievements ?? {},
-      };
-    });
+    const studentRows: LeaderboardStudentRow[] = students.map((s) => ({
+      uid: s.uid,
+      nickname: s.nickname || s.email.split("@")[0] || "Trader",
+      netValue: s.netValue,
+      startingCapital: s.startingCapital || 10000,
+      totalFeesPaid: s.totalFeesPaid || 0,
+      hhi: s.hhi ?? 1,
+      achievementCount: s.achievementCount || 0,
+    }));
     content = (
       <LeaderboardClient
-        currentUser={currentUser}
-        rows={rows}
-        classes={Object.values(db.classGroups)}
-        leaderboardMode={db.appSettings.leaderboardMode}
-        schoolName={db.appSettings.schoolName}
-        semester={db.appSettings.currentSemester}
+        students={studentRows}
+        currentUserId={currentUser.uid}
+        mode={db.appSettings.leaderboardMode || "named"}
       />
     );
   } else if (pathname === "/admin") {
@@ -779,7 +781,6 @@ function AppShell() {
         navigate,
         refresh,
       }}
-      key={tickVersion}
     >
       <div className="min-h-screen flex flex-col bg-sgx-canvas text-sgx-ink">
         {pathname !== "/login" && (

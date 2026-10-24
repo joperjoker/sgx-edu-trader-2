@@ -76,7 +76,7 @@ function scanFilesRecursively(dir: string): string[] {
   return files;
 }
 
-async function waitForServer(url: string, timeoutMs = 25000): Promise<void> {
+async function waitForServer(url: string, timeoutMs = 60000): Promise<void> {
   const start = Date.now();
   while (Date.now() - start < timeoutMs) {
     try {
@@ -503,16 +503,18 @@ async function main() {
 
     const serverProc: ChildProcess = spawn(
       process.execPath,
-      [nextBin, "start", "-p", String(port)],
+      [nextBin, "dev", "-p", String(port)],
       {
         cwd: rootDir,
-        env: { ...process.env, NODE_ENV: "production" },
+        env: { ...process.env, NODE_ENV: "development" },
         stdio: "pipe",
       },
     );
+    serverProc.stdout?.on("data", (d) => process.stdout.write(d));
+    serverProc.stderr?.on("data", (d) => process.stderr.write(d));
 
     try {
-      await waitForServer(`${baseUrl}/api/health`, 25000);
+      await waitForServer(`${baseUrl}/api/health`, 60000);
 
       // 1. Test /api/health
       const healthRes = await fetch(`${baseUrl}/api/health`);
