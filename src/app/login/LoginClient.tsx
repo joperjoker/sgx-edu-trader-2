@@ -26,28 +26,28 @@ const GOOGLE_CLASSROOM_ACCOUNTS = [
   {
     email: "student1@gmail.com",
     name: "Ryan Koh (Sec 4 Student)",
-    roleLabel: "Student · S$10,300.78 Net Value",
+    roleLabel: "Demo Student · S$10,300+ Active Portfolio (4 SGX Stocks)",
     badgeClass: "bg-blue-50 text-blue-700 border-blue-200",
     icon: GraduationCap,
   },
   {
     email: "chloe.ng@gmail.com",
     name: "Chloe Ng (Sec 4 Student)",
-    roleLabel: "Student · S$10,222.40 Net Value",
+    roleLabel: "Demo Student · Compare Class Leaderboard & Smart Score",
     badgeClass: "bg-emerald-50 text-emerald-700 border-emerald-200",
     icon: TrendingUp,
   },
   {
     email: "teacher@sgxedu.sg",
     name: "Ms. Rachel Lim (HOD Finance)",
-    roleLabel: "Teacher · Classroom & Reflection Console",
+    roleLabel: "Demo Teacher · View Student Reflections, Dividends & Grades",
     badgeClass: "bg-indigo-50 text-indigo-700 border-indigo-200",
     icon: UserCheck,
   },
   {
     email: "admin@sgxedu.sg",
     name: "Dr. Tan (School Superadmin)",
-    roleLabel: "Superadmin · Full Google Cloud Controls",
+    roleLabel: "Demo Admin · Manage Classes, Trading Rules & Google Sheets",
     badgeClass: "bg-amber-50 text-amber-800 border-amber-200",
     icon: Award,
   },
@@ -116,7 +116,15 @@ export default function LoginClient() {
           demoEmail: "student1@gmail.com",
           demoName: "Ryan Koh",
         });
-      } catch (err) {
+      } catch (err: unknown) {
+        const firebaseErr = err as { code?: string; message?: string };
+        if (firebaseErr?.code === "auth/configuration-not-found") {
+          setError(
+            "Firebase Authentication is pending 1-click activation in your Firebase Console. Please click 'Get started' in Firebase Console → Authentication, or click any account below to sign in instantly!",
+          );
+          setActiveMode("custom");
+          return;
+        }
         const msg =
           err instanceof Error ? err.message : "Google Sign-In was cancelled.";
         setError(msg);
@@ -213,42 +221,48 @@ export default function LoginClient() {
         <div className="space-y-6 lg:col-span-7">
           <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3.5 py-1.5 text-xs font-semibold text-sgx-blue">
             <Sparkles className="h-3.5 w-3.5" />
-            100% Google Cloud · Firebase · Gemini 2.5 Flash · TradingView Charts
+            Singapore Schools Financial Literacy Simulator · Powered by Google Cloud &amp; Gemini 2.5 AI
           </div>
 
           <h1 className="font-display text-3xl font-extrabold tracking-tight text-slate-900 sm:text-5xl leading-[1.12]">
-            Experience the{" "}
-            <span className="text-sgx-blue">Singapore Exchange</span> in
-            High-Craft Daylight.
+            Learn How the{" "}
+            <span className="text-sgx-blue">Singapore Stock Market</span> Works —
+            100% Risk-Free.
           </h1>
 
           <p className="max-w-xl text-base leading-relaxed text-slate-600">
-            Practice investing <strong className="font-mono text-slate-900">S$10,000.00</strong>{" "}
-            across 20 flagship SGX Mainboard companies with real-time Bid/Ask order
-            books, 100-share board lots, multi-timeframe candlestick charts, and
-            Socratic Gemini AI coaching.
+            Every student starts with{" "}
+            <strong className="font-mono text-slate-900">S$10,000.00</strong> in
+            virtual cash to invest across 20 iconic Singapore companies (like DBS,
+            Singtel, SIA, and Sheng Siong). Learn real Singapore Exchange (SGX)
+            rules in plain English — with built-in AI coaching for students and
+            1-click Google Sheets grading for teachers.
           </p>
 
           <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 pt-2">
             <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
               <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-sgx-blue">
                 <TrendingUp className="h-4 w-4" />
-                Pro TradingView Charts
+                For Students: Real Charts &amp; AI Coach
               </div>
               <p className="mt-1.5 text-xs leading-relaxed text-slate-600">
-                Interactive OHLCV candlesticks, volume histograms, 20/50 SMA, VWAP,
-                and 1D–1Y timeframes with live crosshair inspection.
+                Explore interactive price charts (Candlesticks &amp; Moving Averages
+                explained simply), test company dividends, and ask the Socratic
+                Gemini AI coach to explain financial news without giving away the
+                answers.
               </p>
             </div>
 
             <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
               <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-emerald-700">
                 <CheckCircle2 className="h-4 w-4" />
-                Exact SGX Market Rules
+                For Teachers: Zero-Prep Lesson Ready
               </div>
               <p className="mt-1.5 text-xs leading-relaxed text-slate-600">
-                Standard 100-share board lots, SGX tick-size tables, Market & Limit
-                orders, and authentic CDP + SGX + 9% GST fee breakdowns.
+                Teach real SGX concepts — <strong>Board Lots</strong> (100-share
+                bundles), <strong>Bid/Ask</strong> prices, and{" "}
+                <strong>CDP + 9% GST</strong> fees — while grading student weekly
+                reflections and diversification scores in one click.
               </p>
             </div>
           </div>
@@ -375,8 +389,9 @@ export default function LoginClient() {
               {activeMode === "oauth" ? (
                 <div className="mt-3 space-y-2">
                   <p className="text-[11px] text-slate-500">
-                    1-Click Google Workspace Account Selector (Student, Teacher &
-                    Superadmin):
+                    <strong>Instant Demo Profiles:</strong> Click any role below to
+                    explore a pre-loaded Student, Teacher, or Admin account right
+                    away (no password needed):
                   </p>
                   {GOOGLE_CLASSROOM_ACCOUNTS.map((acct) => {
                     const Icon = acct.icon;

@@ -25,25 +25,25 @@ const SCENARIOS: Array<{
   {
     id: "mas_tightening",
     shortTitle: "MAS SGD Tightening",
-    subtitle: "Stronger SGD & elevated rates",
+    subtitle: "Stronger Singapore Dollar (MAS S$NEER policy) & higher interest rates",
     icon: Landmark,
   },
   {
     id: "semi_capex_surge",
     shortTitle: "AI & Tech Capex Boom",
-    subtitle: "Semiconductor & precision orders surge",
+    subtitle: "Global AI factory spending boosts Singapore precision & chip suppliers",
     icon: Cpu,
   },
   {
     id: "changi_tourism_boom",
     shortTitle: "Changi Aviation Boom",
-    subtitle: "Record ASEAN air travel & MRO demand",
+    subtitle: "Record ASEAN air travel & aircraft maintenance (MRO) demand",
     icon: Plane,
   },
   {
     id: "energy_inflation_shock",
     shortTitle: "Energy & Oil Shock",
-    subtitle: "Brent crude +35% & supply inflation",
+    subtitle: "Global oil prices jump +35%, raising transport & electricity costs",
     icon: Flame,
   },
 ];

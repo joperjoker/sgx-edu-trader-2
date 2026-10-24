@@ -262,11 +262,7 @@ export default function SgxContractNoteModal({ trade, onClose }: Props) {
           <div className="flex items-start gap-2.5 rounded-2xl border border-blue-100 bg-blue-50/50 p-3.5 text-[11px] text-slate-600">
             <Building2 className="h-4 w-4 shrink-0 text-sgx-blue mt-0.5" />
             <p>
-              <strong>Educational Contract Note:</strong> Issued by SGX Edu-Trader
-              2.0 Classroom Simulator. On the real Singapore Exchange, Central
-              Depository (CDP) settlement occurs on <strong>T+2</strong> (two
-              business days after trade execution). No real money or securities
-              are involved.
+              <strong>What is a Contract Note &amp; T+2 Settlement?</strong> A Contract Note is your official legal receipt for buying or selling shares on SGX. On the real Singapore Exchange, Central Depository (CDP) settlement happens on <strong>T+2 (Trade Day + 2 Business Days)</strong> — the day cash and legal share ownership officially transfer.
             </p>
           </div>
         </div>

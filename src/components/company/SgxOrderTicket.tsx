@@ -336,6 +336,11 @@ export default function SgxOrderTicket({
           </button>
         ))}
       </div>
+      <p className="mt-1.5 text-[11px] text-slate-500">
+        {orderType === "market"
+          ? "Market Order = Buy/sell immediately at the best available Bid or Ask price."
+          : "Limit Order = Set the exact price you want and wait in the queue until the market reaches it."}
+      </p>
 
       {coolingOffActive ? (
         <div className="mt-4 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-xs text-rose-800 space-y-1.5">
@@ -517,6 +522,9 @@ export default function SgxOrderTicket({
                   <span>Singapore GST (9%):</span>
                   <span>S${formatSgd(fees.gstAmount)}</span>
                 </div>
+                <p className="pt-1 border-t border-slate-100 font-sans text-[10px] text-slate-500">
+                  💡 <strong>Why fees matter:</strong> Because Singapore brokers charge a S$10.00 minimum fee, tiny trades cost a higher % in fees than larger trades!
+                </p>
               </div>
             )}
 
@@ -595,7 +603,11 @@ export default function SgxOrderTicket({
         </button>
 
         {showOrderBook && (
-          <div className="mt-3 grid grid-cols-2 gap-2 font-mono text-[11px]">
+          <>
+          <p className="mt-1.5 text-[11px] text-slate-500">
+            Live queue of buyers (<strong className="text-emerald-700">Bids</strong>) and sellers (<strong className="text-rose-700">Asks</strong>). Click any price row to set a Limit Order.
+          </p>
+          <div className="mt-2 grid grid-cols-2 gap-2 font-mono text-[11px]">
             {/* Bids Column */}
             <div>
               <div className="flex justify-between text-[10px] font-sans font-semibold uppercase text-slate-400 pb-1 border-b border-slate-100">
@@ -658,6 +670,7 @@ export default function SgxOrderTicket({
               </div>
             </div>
           </div>
+          </>
         )}
       </div>
 

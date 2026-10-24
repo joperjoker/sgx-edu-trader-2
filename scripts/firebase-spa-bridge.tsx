@@ -438,9 +438,9 @@ function CompanyView({
               </span>
             </div>
             <p className="mt-1.5 font-mono text-[11px] text-slate-500">
-              Bid:{" "}
+              Bid (Sell Now):{" "}
               <strong className="text-emerald-700">S${formatSgxPrice(bid)}</strong>{" "}
-              · Ask: <strong className="text-rose-700">S${formatSgxPrice(ask)}</strong>{" "}
+              · Ask (Buy Now): <strong className="text-rose-700">S${formatSgxPrice(ask)}</strong>{" "}
               · Board Lot: <strong className="text-slate-800">100 shares</strong>
             </p>
           </div>
@@ -448,36 +448,44 @@ function CompanyView({
 
         <div className="mt-5 grid grid-cols-2 gap-3 border-t border-slate-100 pt-4 sm:grid-cols-4 lg:grid-cols-8 text-xs">
           <div>
-            <p className="text-[10px] uppercase text-slate-400">Open</p>
+            <p className="text-[10px] font-semibold uppercase text-slate-500">Open</p>
             <p className="font-mono font-bold text-slate-900">S${formatSgxPrice(openPrice)}</p>
+            <p className="text-[10px] text-slate-400">9:00 AM start price</p>
           </div>
           <div>
-            <p className="text-[10px] uppercase text-slate-400">Prev Close</p>
+            <p className="text-[10px] font-semibold uppercase text-slate-500">Prev Close</p>
             <p className="font-mono font-bold text-slate-900">S${formatSgxPrice(prevClose)}</p>
+            <p className="text-[10px] text-slate-400">Yesterday&apos;s end price</p>
           </div>
           <div>
-            <p className="text-[10px] uppercase text-slate-400">Day High</p>
+            <p className="text-[10px] font-semibold uppercase text-slate-500">Day High</p>
             <p className="font-mono font-bold text-emerald-700">S${formatSgxPrice(dayHigh)}</p>
+            <p className="text-[10px] text-slate-400">Highest price today</p>
           </div>
           <div>
-            <p className="text-[10px] uppercase text-slate-400">Day Low</p>
+            <p className="text-[10px] font-semibold uppercase text-slate-500">Day Low</p>
             <p className="font-mono font-bold text-rose-700">S${formatSgxPrice(dayLow)}</p>
+            <p className="text-[10px] text-slate-400">Lowest price today</p>
           </div>
           <div>
-            <p className="text-[10px] uppercase text-slate-400">Volume</p>
+            <p className="text-[10px] font-semibold uppercase text-slate-500">Volume</p>
             <p className="font-mono font-bold text-slate-900">{volume.toLocaleString("en-SG")}</p>
+            <p className="text-[10px] text-slate-400">Shares traded today</p>
           </div>
           <div>
-            <p className="text-[10px] uppercase text-slate-400">Market Cap</p>
+            <p className="text-[10px] font-semibold uppercase text-slate-500">Market Cap</p>
             <p className="font-mono font-bold text-slate-900">{meta.marketCapB}</p>
+            <p className="text-[10px] text-slate-400">Total company value</p>
           </div>
           <div>
-            <p className="text-[10px] uppercase text-slate-400">P/E Ratio</p>
+            <p className="text-[10px] font-semibold uppercase text-slate-500">P/E Ratio</p>
             <p className="font-mono font-bold text-slate-900">{meta.peRatio.toFixed(1)}x</p>
+            <p className="text-[10px] text-slate-400">Price per S$1 profit</p>
           </div>
           <div>
-            <p className="text-[10px] uppercase text-slate-400">Div Yield</p>
+            <p className="text-[10px] font-semibold uppercase text-slate-500">Div Yield</p>
             <p className="font-mono font-bold text-sgx-blue">{meta.dividendYieldPct.toFixed(1)}%</p>
+            <p className="text-[10px] text-slate-400">Annual cash payout %</p>
           </div>
         </div>
       </section>

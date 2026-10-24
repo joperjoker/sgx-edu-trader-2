@@ -251,9 +251,7 @@ export default function AdminClient({
             {settings.schoolName} — SGX Classroom Administration
           </h1>
           <p className="text-xs text-slate-500">
-            Manage Google Workspace student accounts, inspect weekly
-            reflections, configure SGX board lot/fee rules, and export to Google
-            Sheets.
+            No finance degree required: manage student rosters, review weekly reflections, customize classroom trading rules, and export grades to Google Sheets in 1 click.
           </p>
         </div>
 
@@ -265,6 +263,22 @@ export default function AdminClient({
           <Download className="h-4 w-4" />
           Export Gradebook for Google Sheets
         </button>
+      </section>
+
+      {/* Teacher 3-Step Quick-Start Classroom Guide */}
+      <section className="grid grid-cols-1 gap-3 rounded-2xl border border-indigo-200 bg-indigo-50/40 p-4 text-xs text-slate-700 md:grid-cols-3">
+        <div>
+          <strong className="text-indigo-950">Step 1 · Onboard Your Class:</strong>{" "}
+          Share your Class Join Code (e.g. <code className="font-mono font-bold text-indigo-800">SGX4E1</code>) or paste student emails in the <em>Google Workspace &amp; Sheets</em> tab.
+        </div>
+        <div>
+          <strong className="text-indigo-950">Step 2 · Run Weekly Lessons:</strong>{" "}
+          Students invest S$10,000 across 20 Singapore companies and submit a short weekly reflection right from their Portfolio page.
+        </div>
+        <div>
+          <strong className="text-indigo-950">Step 3 · Grade &amp; Debrief:</strong>{" "}
+          Click <em>Export Gradebook for Google Sheets</em> above to download every student&apos;s Net Value, Diversification %, Smart Score, and Reflection count.
+        </div>
       </section>
 
       {statusBanner && (

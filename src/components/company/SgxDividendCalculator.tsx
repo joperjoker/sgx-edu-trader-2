@@ -46,8 +46,7 @@ export default function SgxDividendCalculator({
               SGX Dividend &amp; Compounding Simulator
             </h2>
             <p className="text-[11px] text-slate-500">
-              Singapore Tier-1 Corporate Dividends are 100% tax-exempt for retail
-              investors
+              Dividends are cash rewards paid from company profits to shareholders — 100% tax-free in Singapore
             </p>
           </div>
         </div>
@@ -114,6 +113,9 @@ export default function SgxDividendCalculator({
             />
             Reinvest dividends (DRIP compounding)
           </label>
+          <p className="mt-1 text-[10px] text-slate-500">
+            DRIP = automatically using cash payouts to buy more shares so future dividends grow faster.
+          </p>
         </div>
 
         {/* Projected Payout Output */}

@@ -86,11 +86,12 @@ export default function LaunchClient({
               Google Sites &amp; Google Cloud Launch Center
             </h1>
             <p className="text-sm leading-relaxed text-slate-600">
-              Deploy <strong>{schoolName}</strong> ({semester}) to{" "}
-              <strong>Google Cloud Run (`asia-southeast1` Singapore)</strong>{" "}
-              and embed the full interactive SGX trading terminal directly inside
-              your school&apos;s <strong>Google Site (`sites.google.com`)</strong>{" "}
-              or <strong>Google Classroom</strong>.
+              Embed the live <strong>{schoolName}</strong> ({semester}) simulator
+              directly inside your school&apos;s{" "}
+              <strong>Google Site (`sites.google.com`)</strong> or share it on{" "}
+              <strong>Google Classroom</strong> in under 60 seconds — hosted 24/7
+              on <strong>Google Cloud &amp; Firebase (`asia-southeast1` Singapore)</strong>{" "}
+              with zero local servers required.
             </p>
           </div>
 

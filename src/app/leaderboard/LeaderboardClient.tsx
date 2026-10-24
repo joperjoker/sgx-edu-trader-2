@@ -93,7 +93,7 @@ export default function LeaderboardClient({
           </h1>
           <p className="text-xs text-slate-500">
             Compare raw portfolio returns against risk-adjusted Smart Investor
-            Scores.
+            Scores that reward diversified investing.
           </p>
         </div>
 
@@ -121,6 +121,18 @@ export default function LeaderboardClient({
             <Sparkles className="h-3.5 w-3.5" />
             By Smart Investor Score
           </button>
+        </div>
+      </section>
+
+      {/* Plain-English Teacher & Student Guide to Leaderboard Scoring */}
+      <section className="grid grid-cols-1 gap-3 rounded-2xl border border-blue-200 bg-blue-50/40 p-4 text-xs text-slate-700 sm:grid-cols-2">
+        <div>
+          <strong className="text-slate-900">1. Portfolio Net Value (Raw Wealth):</strong>{" "}
+          Your uninvested cash plus the current market value of all SGX shares you own (started at S$10,000.00).
+        </div>
+        <div>
+          <strong className="text-sgx-blue">2. Smart Investor Score (Risk-Adjusted Grade):</strong>{" "}
+          Combines your % return with your <strong>Diversification Score (1 − HHI)</strong> so spreading risk across multiple companies beats gambling everything on one stock.
         </div>
       </section>
 

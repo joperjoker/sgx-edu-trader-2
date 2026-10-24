@@ -192,19 +192,19 @@ export default function OnboardingFlow({ user }: Props) {
               <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
                 <span className="font-mono font-bold text-sgx-blue">S$10,000.00</span>
                 <p className="mt-0.5 text-slate-600">
-                  Starting virtual capital across 20 SGX companies
+                  <strong>Starter Fund:</strong> Virtual cash to invest across 20 real Singapore companies.
                 </p>
               </div>
               <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                <span className="font-mono font-bold text-slate-900">100 Shares</span>
+                <span className="font-mono font-bold text-slate-900">100 Shares / Lot</span>
                 <p className="mt-0.5 text-slate-600">
-                  Standard SGX Board Lot size + real CDP & GST fees
+                  <strong>SGX Board Lots:</strong> On SGX, shares are bought in standard bundles of 100.
                 </p>
               </div>
               <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                <span className="font-mono font-bold text-emerald-700">Gemini 2.5</span>
+                <span className="font-mono font-bold text-emerald-700">Smart Score</span>
                 <p className="mt-0.5 text-slate-600">
-                  Socratic AI coach that teaches critical thinking
+                  <strong>How to Win:</strong> Grow your portfolio AND spread risk across different sectors!
                 </p>
               </div>
             </div>

@@ -308,8 +308,8 @@ export default function DashboardClient({
         </div>
 
         <div className="flex flex-wrap items-center gap-4 text-xs">
-          <div className="flex items-center gap-2 font-mono">
-            <span className="text-slate-500">SGX Breadth:</span>
+          <div className="flex items-center gap-2 font-mono" title="Market Breadth shows how many of the 20 SGX companies are trading higher vs. lower today">
+            <span className="text-slate-500">SGX Breadth (Market Mood):</span>
             <span className="rounded bg-emerald-50 px-1.5 py-0.5 font-semibold text-emerald-700">
               ▲ {marketStats.advancers} Up
             </span>
@@ -375,35 +375,47 @@ export default function DashboardClient({
 
           <div className="mt-6 grid grid-cols-2 gap-3 border-t border-slate-100 pt-4 sm:grid-cols-4">
             <div>
-              <p className="text-[11px] font-medium text-slate-500">
+              <p className="text-[11px] font-semibold text-slate-600">
                 Buying Power (Cash)
               </p>
               <p className="mt-0.5 font-mono text-sm font-bold text-slate-900 tabular-nums">
                 S${formatSgd(cashBalance)}
               </p>
+              <p className="text-[10px] text-slate-400">
+                Uninvested cash ready to buy shares
+              </p>
             </div>
             <div>
-              <p className="text-[11px] font-medium text-slate-500">
+              <p className="text-[11px] font-semibold text-slate-600">
                 Invested Holdings
               </p>
               <p className="mt-0.5 font-mono text-sm font-bold text-slate-900 tabular-nums">
                 S${formatSgd(holdingsValue)}
               </p>
+              <p className="text-[10px] text-slate-400">
+                Current market value of your shares
+              </p>
             </div>
             <div>
-              <p className="text-[11px] font-medium text-slate-500">
-                SGX & CDP Fees Paid
+              <p className="text-[11px] font-semibold text-slate-600">
+                SGX &amp; CDP Fees Paid
               </p>
               <p className="mt-0.5 font-mono text-sm font-bold text-slate-900 tabular-nums">
                 S${formatSgd(user.totalFeesPaid)}
               </p>
+              <p className="text-[10px] text-slate-400">
+                Brokerage + clearing + 9% GST paid
+              </p>
             </div>
             <div>
-              <p className="text-[11px] font-medium text-slate-500">
+              <p className="text-[11px] font-semibold text-slate-600">
                 Diversification (1-HHI)
               </p>
               <p className="mt-0.5 font-mono text-sm font-bold text-sgx-blue tabular-nums">
                 {Math.round((1 - (user.hhi ?? 1)) * 100)}%
+              </p>
+              <p className="text-[10px] text-slate-400">
+                How well risk is spread (0–100%)
               </p>
             </div>
           </div>

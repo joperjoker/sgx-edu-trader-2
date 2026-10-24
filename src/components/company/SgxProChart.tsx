@@ -532,6 +532,27 @@ export default function SgxProChart({
 
       {/* TradingView Lightweight Chart Canvas */}
       <div ref={containerRef} className="mt-2 w-full h-[380px]" />
+
+      {/* Student & Teacher Plain-English Chart Indicator Legend */}
+      <div className="mt-3 grid grid-cols-1 gap-2 rounded-xl border border-slate-100 bg-slate-50/80 p-3 text-[11px] text-slate-600 sm:grid-cols-2 lg:grid-cols-3">
+        <div>
+          <strong className="text-slate-800">Candles vs. Mountain:</strong>{" "}
+          Candles show Open, High, Low &amp; Close prices; Mountain shows a clean closing trend line.
+        </div>
+        <div>
+          <strong className="text-sgx-blue">SMA 20</strong> /{" "}
+          <strong className="text-amber-700">SMA 50:</strong> Average closing price over the past 20 or 50 periods to smooth out daily noise.
+        </div>
+        <div>
+          <strong className="text-purple-700">VWAP:</strong> Volume-Weighted Average Price — the average price weighted by where the most shares traded.
+        </div>
+        <div>
+          <strong className="text-slate-900">vs STI Benchmark:</strong> Compares this stock against Singapore&apos;s top 30 Straits Times Index companies.
+        </div>
+        <div className="sm:col-span-2">
+          <strong className="text-slate-800">RSI(14) Momentum:</strong> Measures recent buying vs. selling speed (0–100). Above 70 = Overbought (heated); Below 30 = Oversold.
+        </div>
+      </div>
     </div>
   );
 }

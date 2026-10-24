@@ -295,7 +295,10 @@ export default function PortfolioClient({
             <h1 className="mt-1 font-display text-3xl font-extrabold text-slate-900">
               {user.nickname}&apos;s Portfolio
             </h1>
-            <p className="font-mono text-xs text-slate-500">{user.email}</p>
+            <p className="mt-0.5 text-xs text-slate-500">
+              In Singapore, the Central Depository (CDP) safely holds the shares you buy on SGX in your personal name.
+            </p>
+            <p className="font-mono text-xs text-slate-400">{user.email}</p>
           </div>
 
           <div className="flex flex-col sm:items-end">
@@ -326,34 +329,39 @@ export default function PortfolioClient({
 
         <div className="mt-6 grid grid-cols-2 gap-4 border-t border-slate-100 pt-4 sm:grid-cols-5 text-xs">
           <div>
-            <p className="text-slate-500">Cash Buying Power</p>
+            <p className="font-semibold text-slate-600">Cash Buying Power</p>
             <p className="mt-0.5 font-mono text-base font-bold text-slate-900 tabular-nums">
               S${formatSgd(cashBalance)}
             </p>
+            <p className="text-[10px] text-slate-400">Ready for new orders</p>
           </div>
           <div>
-            <p className="text-slate-500">Securities Value</p>
+            <p className="font-semibold text-slate-600">Securities Value</p>
             <p className="mt-0.5 font-mono text-base font-bold text-slate-900 tabular-nums">
               S${formatSgd(holdingsValue)}
             </p>
+            <p className="text-[10px] text-slate-400">Value of stocks owned</p>
           </div>
           <div>
-            <p className="text-slate-500">Cumulative Fees Paid</p>
+            <p className="font-semibold text-slate-600">Cumulative Fees Paid</p>
             <p className="mt-0.5 font-mono text-base font-bold text-amber-700 tabular-nums">
               S${formatSgd(user.totalFeesPaid)}
             </p>
+            <p className="text-[10px] text-slate-400">Brokerage + CDP + GST</p>
           </div>
           <div>
-            <p className="text-slate-500">Diversification (1-HHI)</p>
+            <p className="font-semibold text-slate-600">Diversification (1-HHI)</p>
             <p className="mt-0.5 font-mono text-base font-bold text-sgx-blue tabular-nums">
               {Math.round((1 - (user.hhi ?? 1)) * 100)}%
             </p>
+            <p className="text-[10px] text-slate-400">Risk spread (0–100%)</p>
           </div>
           <div>
-            <p className="text-slate-500">Smart Investor Score</p>
+            <p className="font-semibold text-slate-600">Smart Investor Score</p>
             <p className="mt-0.5 font-mono text-base font-bold text-emerald-700 tabular-nums">
               {smartScore >= 0 ? `+${smartScore.toFixed(2)}` : smartScore.toFixed(2)}
             </p>
+            <p className="text-[10px] text-slate-400">Return × Diversification</p>
           </div>
         </div>
       </section>
@@ -464,10 +472,10 @@ export default function PortfolioClient({
                   <th className="px-4 py-3">Counter</th>
                   <th className="px-4 py-3">Tier</th>
                   <th className="px-4 py-3 text-right">Shares (Lots)</th>
-                  <th className="px-4 py-3 text-right">Avg Paid</th>
-                  <th className="px-4 py-3 text-right">Last Price</th>
-                  <th className="px-4 py-3 text-right">Market Value</th>
-                  <th className="px-4 py-3 text-right">Unrealized P&amp;L</th>
+                  <th className="px-4 py-3 text-right" title="Average price you paid per share">Avg Paid (Cost)</th>
+                  <th className="px-4 py-3 text-right" title="Current live SGX share price">Last Price</th>
+                  <th className="px-4 py-3 text-right" title="Current total value of these shares">Market Value</th>
+                  <th className="px-4 py-3 text-right" title="Paper profit or loss if you sold right now">Unrealized P&amp;L (Paper)</th>
                   <th className="px-4 py-3 text-right">Action</th>
                 </tr>
               </thead>
