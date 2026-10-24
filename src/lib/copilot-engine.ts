@@ -761,7 +761,7 @@ export function evaluateCopilotTurn(
     const lots = explicit ? Math.max(1, Math.round(shares / 100)) : 5;
     const totalShares = lots * 100;
 
-    const yearMatch = lower.match(/(\d+)\s*(?:years?|yrs?)\b/);
+    const yearMatch = lower.match(/(\d+)[\s-]*(?:years?|yrs?)\b/);
     const years = yearMatch
       ? Math.min(30, Math.max(1, parseInt(yearMatch[1], 10)))
       : 5;
@@ -809,7 +809,17 @@ export function evaluateCopilotTurn(
   // =========================================================================
   // 6. MULTI-STOCK SGX COMPARISON TOOL
   // =========================================================================
-  if (lower.includes("compare") || lower.includes(" vs ") || tickers.length >= 2) {
+  const isComparisonIntent =
+    (lower.includes("compare") ||
+      (lower.includes(" vs ") && tickers.length >= 2) ||
+      (lower.includes(" vs. ") && tickers.length >= 2) ||
+      tickers.length >= 2) &&
+    !lower.includes("explain") &&
+    !lower.includes("what is") &&
+    !lower.includes("what are") &&
+    !lower.includes("meaning of");
+
+  if (isComparisonIntent) {
     const compareList =
       tickers.length >= 2
         ? tickers.slice(0, 4)
@@ -1123,7 +1133,7 @@ export function evaluateCopilotTurn(
     lower.includes("rsi") ||
     lower.includes("sma")
   ) {
-    let term = "SGX Bid / Ask Spread & 100-Share Board Lots";
+    let term = "SGX Bid vs. Ask Spread & 100-Share Board Lots";
     let sgxRule =
       "On the Singapore Exchange (SGX), standard Mainboard shares trade in Board Lots of 100 shares. The Ask is the lowest price a seller will accept (your Buy Now price), and the Bid is the highest price a buyer is offering (your Sell Now price).";
     let laymanAnalogy =

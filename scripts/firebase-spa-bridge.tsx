@@ -696,6 +696,7 @@ function AppShell() {
     );
     content = (
       <SgxCopilotClient
+        key={pathname + searchParams.toString()}
         initialUser={currentUser}
         initialSettings={db.appSettings}
         initialSnapshot={db.marketSnapshot}

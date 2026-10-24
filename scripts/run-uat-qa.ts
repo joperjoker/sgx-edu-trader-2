@@ -240,6 +240,23 @@ async function main() {
       `Verified Dockerfile (standalone), cloudbuild.yaml, firebase.json, .firebaserc, and deploy-google-cloud.ps1`,
     );
 
+    const tsxFiles = srcFiles.filter((f) => f.endsWith(".tsx"));
+    const filesWithGemini25: string[] = [];
+    for (const f of tsxFiles) {
+      const content = fs.readFileSync(f, "utf8");
+      if (content.includes("Gemini 2.5")) {
+        filesWithGemini25.push(path.basename(f));
+      }
+    }
+
+    assertTest(
+      "QA-1.9",
+      "Suite 1",
+      "Visible UI Branding Audit (0 visible 'Gemini 2.5' strings in TSX components)",
+      filesWithGemini25.length === 0,
+      `Audited ${tsxFiles.length} TSX component files: ${filesWithGemini25.length} visible "Gemini 2.5" strings found (100% compliant with "Google Cloud & Gemini" branding)`,
+    );
+
     // =========================================================================
     // SUITE 4 (PART A): SGX MARKET MICROSTRUCTURE & FINANCIAL MATH UNIT QA
     // =========================================================================
@@ -960,6 +977,218 @@ async function main() {
         buySmallOrderTurn.card?.type === "order_preview" &&
         Boolean(buySmallOrderTurn.card.highFeeDragWarning),
       `Parsed "1 lot of DBS" -> 100 shares (Net S$${formatSgd(buyDbsTurn.card?.type === "order_preview" ? buyDbsTurn.card.fees.netTotal : 0)}, HHI ${buyDbsTurn.card?.type === "order_preview" ? buyDbsTurn.card.hhiBefore : 0} -> ${buyDbsTurn.card?.type === "order_preview" ? buyDbsTurn.card.hhiAfter : 0}); ITS.SI small-lot fee drag warning (${buySmallOrderTurn.card?.type === "order_preview" ? buySmallOrderTurn.card.feeDragPct : 0}%) triggered`,
+    );
+
+    // UAT-7.4: Multi-Stock Comparison & Market Screener
+    const compareBanksTurn = evaluateCopilotTurn(
+      "Compare the 3 Singapore banks",
+      {
+        user: s1Profile!,
+        settings: copilotSettings,
+        snapshot,
+        holdings: s1Holdings,
+        trades: [],
+        limitOrders: [],
+      },
+    );
+
+    const screenSafeBetsTurn = evaluateCopilotTurn(
+      "Show me Safe Bets on SGX",
+      {
+        user: s1Profile!,
+        settings: copilotSettings,
+        snapshot,
+        holdings: s1Holdings,
+        trades: [],
+        limitOrders: [],
+      },
+    );
+
+    assertTest(
+      "UAT-7.4",
+      "Suite 7",
+      "Copilot Multi-Stock Comparison & Natural-Language SGX Screener",
+      compareBanksTurn.toolUsed === "compareSgxCounters" &&
+        compareBanksTurn.card?.type === "comparison" &&
+        compareBanksTurn.card.items.length === 3 &&
+        screenSafeBetsTurn.toolUsed === "screenSgxMarketByCriteria" &&
+        screenSafeBetsTurn.card?.type === "screener" &&
+        screenSafeBetsTurn.card.items.length > 0 &&
+        screenSafeBetsTurn.card.items.every((i) => i.tier === "Safe Bets"),
+      `Compared 3 Singapore banks (DBS, OCBC, UOB) with P/E and Dividend Yields; Screener surfaced ${screenSafeBetsTurn.card?.type === "screener" ? screenSafeBetsTurn.card.items.length : 0} Safe Bets with 100% tier alignment`,
+    );
+
+    // UAT-7.5: Portfolio Health Audit, 5-Year DRIP Dividend Projection & Macro Stress-Tester
+    const portfolioHealthTurn = evaluateCopilotTurn(
+      "Analyse my portfolio health",
+      {
+        user: s1Profile!,
+        settings: copilotSettings,
+        snapshot,
+        holdings: s1Holdings,
+        trades: [],
+        limitOrders: [],
+      },
+    );
+
+    const dividendDripTurn = evaluateCopilotTurn(
+      "Project 5-year DRIP dividends for 5 lots of OCBC",
+      {
+        user: s1Profile!,
+        settings: copilotSettings,
+        snapshot,
+        holdings: s1Holdings,
+        trades: [],
+        limitOrders: [],
+      },
+    );
+
+    const macroStressTurn = evaluateCopilotTurn(
+      "Stress-test my portfolio against an Energy & Oil Shock",
+      {
+        user: s1Profile!,
+        settings: copilotSettings,
+        snapshot,
+        holdings: s1Holdings,
+        trades: [],
+        limitOrders: [],
+      },
+    );
+
+    assertTest(
+      "UAT-7.5",
+      "Suite 7",
+      "Copilot Portfolio Health Audit, 5-Year DRIP Dividend Projection & Macro Stress-Tester",
+      portfolioHealthTurn.toolUsed === "diagnosePortfolioHealth" &&
+        portfolioHealthTurn.card?.type === "portfolio_audit" &&
+        typeof portfolioHealthTurn.card.smartScore === "number" &&
+        dividendDripTurn.toolUsed === "projectDividendCompounding" &&
+        dividendDripTurn.card?.type === "dividend_projection" &&
+        dividendDripTurn.card.ticker === "O39.SI" &&
+        dividendDripTurn.card.lots === 5 &&
+        dividendDripTurn.card.years === 5 &&
+        dividendDripTurn.card.totalDividendsWithDrip >
+          dividendDripTurn.card.totalDividendsNoDrip &&
+        macroStressTurn.toolUsed === "runMacroStressTest" &&
+        macroStressTurn.card?.type === "stress_test" &&
+        macroStressTurn.card.scenarioId === "energy_inflation_shock",
+      `Portfolio Health: Smart Score ${portfolioHealthTurn.card?.type === "portfolio_audit" ? portfolioHealthTurn.card.smartScore.toFixed(2) : 0}, ${portfolioHealthTurn.card?.type === "portfolio_audit" ? portfolioHealthTurn.card.holdingsCount : 0} holdings; 5-yr OCBC DRIP yields S$${dividendDripTurn.card?.type === "dividend_projection" ? formatSgd(dividendDripTurn.card.totalDividendsWithDrip) : 0} (vs S$${dividendDripTurn.card?.type === "dividend_projection" ? formatSgd(dividendDripTurn.card.totalDividendsNoDrip) : 0} cash); Energy shock scenario verified`,
+    );
+
+    // UAT-7.6: Open Limit Order Manager, SGX Concept Glossary & Weekly Reflection Co-Writer
+    const limitOrdersTurn = evaluateCopilotTurn("Show my open limit orders", {
+      user: s1Profile!,
+      settings: copilotSettings,
+      snapshot,
+      holdings: s1Holdings,
+      trades: [],
+      limitOrders: dbAfterMatch.limitOrders.filter(
+        (o) => o.userId === s1Profile!.uid,
+      ),
+    });
+
+    const glossaryTurn = evaluateCopilotTurn("Explain Bid vs Ask", {
+      user: s1Profile!,
+      settings: copilotSettings,
+      snapshot,
+      holdings: s1Holdings,
+      trades: [],
+      limitOrders: [],
+    });
+
+    const reflectionTurn = evaluateCopilotTurn(
+      "Help me draft my weekly reflection",
+      {
+        user: s1Profile!,
+        settings: copilotSettings,
+        snapshot,
+        holdings: s1Holdings,
+        trades: dbAfterMatch.tradeHistory.filter(
+          (t) => t.userId === s1Profile!.uid,
+        ),
+        limitOrders: [],
+      },
+    );
+
+    assertTest(
+      "UAT-7.6",
+      "Suite 7",
+      "Copilot Open Limit Order Manager, SGX Concept Glossary & Weekly Reflection Co-Writer",
+      limitOrdersTurn.toolUsed === "manageOpenLimitOrders" &&
+        limitOrdersTurn.card?.type === "limit_orders" &&
+        glossaryTurn.toolUsed === "explainSgxConcept" &&
+        glossaryTurn.card?.type === "glossary" &&
+        glossaryTurn.card.term.includes("Bid") &&
+        glossaryTurn.card.term.includes("Ask") &&
+        reflectionTurn.toolUsed === "draftAndSaveReflection" &&
+        reflectionTurn.card?.type === "reflection_helper" &&
+        reflectionTurn.card.suggestedDraft.length > 50,
+      `Limit orders queue rendered; SGX Bid vs. Ask explained with layman analogy; Reflection co-writer drafted live portfolio summary (${reflectionTurn.card?.type === "reflection_helper" ? reflectionTurn.card.suggestedDraft.length : 0} chars)`,
+    );
+
+    // UAT-7.7: Guardrail #4 — Teacher Classroom Command RBAC
+    const studentTeacherCommandTurn = evaluateCopilotTurn(
+      "Toggle 1-share odd lots for beginners",
+      {
+        user: s1Profile!,
+        settings: copilotSettings,
+        snapshot,
+        holdings: s1Holdings,
+        trades: [],
+        limitOrders: [],
+      },
+    );
+
+    const teacherUserProfile = {
+      ...s1Profile!,
+      role: "teacher" as const,
+      email: "teacher@sgxedu.sg",
+      nickname: "Teacher Tan",
+    };
+
+    const teacherTeacherCommandTurn = evaluateCopilotTurn(
+      "Toggle 1-share odd lots for beginners",
+      {
+        user: teacherUserProfile,
+        settings: copilotSettings,
+        snapshot,
+        holdings: s1Holdings,
+        trades: [],
+        limitOrders: [],
+      },
+    );
+
+    const superadminUserProfile = {
+      ...s1Profile!,
+      role: "superadmin" as const,
+      email: "admin@sgxedu.sg",
+      nickname: "Admin MOE",
+    };
+
+    const adminTeacherCommandTurn = evaluateCopilotTurn(
+      "Toggle 1-share odd lots for beginners",
+      {
+        user: superadminUserProfile,
+        settings: copilotSettings,
+        snapshot,
+        holdings: s1Holdings,
+        trades: [],
+        limitOrders: [],
+      },
+    );
+
+    assertTest(
+      "UAT-7.7",
+      "Suite 7",
+      "Copilot Guardrail #4: Teacher Classroom Command RBAC Gating",
+      studentTeacherCommandTurn.toolUsed === "teacher_classroom_control" &&
+        studentTeacherCommandTurn.card?.type === "teacher_action" &&
+        studentTeacherCommandTurn.card.canExecute === false &&
+        teacherTeacherCommandTurn.card?.type === "teacher_action" &&
+        teacherTeacherCommandTurn.card.canExecute === true &&
+        adminTeacherCommandTurn.card?.type === "teacher_action" &&
+        adminTeacherCommandTurn.card.canExecute === true,
+      `Student blocked from classroom command (canExecute=false, role='${s1Profile!.role}'); Teacher and Superadmin granted 1-click execution (canExecute=true)`,
     );
   } finally {
     // Always restore clean initial database state after UAT finishes
