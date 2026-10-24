@@ -80,7 +80,7 @@ export default function PortfolioStressTester() {
           <div>
             <div className="flex items-center gap-2">
               <h2 className="font-display text-lg font-bold text-slate-900">
-                Gemini 2.5 Flash Macroeconomic Portfolio Stress-Tester
+                Google Cloud &amp; Gemini Macroeconomic Portfolio Stress-Tester
               </h2>
               <span className="rounded-full bg-blue-50 border border-blue-200 px-2.5 py-0.5 font-mono text-[10px] font-bold text-sgx-blue">
                 Socratic Risk Lab
@@ -131,7 +131,7 @@ export default function PortfolioStressTester() {
       {isPending && (
         <div className="mt-4 flex items-center gap-2 rounded-2xl border border-blue-200 bg-blue-50/50 p-4 text-xs font-semibold text-sgx-blue">
           <Activity className="h-4 w-4 animate-spin" />
-          Running Gemini 2.5 Flash macroeconomic shock simulation across your
+          Running Gemini macroeconomic shock simulation across your
           SGX holdings…
         </div>
       )}
@@ -213,7 +213,7 @@ export default function PortfolioStressTester() {
           <div className="rounded-2xl border border-blue-200 bg-blue-50/50 p-4 lg:col-span-5 flex flex-col justify-between">
             <div>
               <p className="text-[10px] font-bold uppercase tracking-wider text-sgx-blue">
-                Gemini 2.5 Flash Socratic Risk Debrief
+                Gemini Socratic Risk Debrief
               </p>
               <p className="mt-2 whitespace-pre-line text-xs leading-relaxed text-slate-700">
                 {result.socraticCommentary}

@@ -371,7 +371,7 @@ export default async function CompanyPage({
         </div>
       </div>
 
-      {/* Gemini 2.5 Flash Socratic AI Coach */}
+      {/* Google Cloud & Gemini Socratic AI Coach */}
       <AiCoachSection ticker={ticker} />
     </main>
   );

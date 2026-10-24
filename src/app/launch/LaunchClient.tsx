@@ -154,7 +154,7 @@ export default function LaunchClient({
             <Layers className="h-5 w-5 shrink-0 text-emerald-600 mt-0.5" />
             <div>
               <p className="text-xs font-bold text-slate-900">
-                SGX Market &amp; Gemini 2.5 AI
+                SGX Market &amp; Gemini
               </p>
               <p className="mt-0.5 font-mono text-[11px] text-emerald-800">
                 {tickersCount} SGX Counters Active

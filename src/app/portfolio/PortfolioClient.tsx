@@ -95,7 +95,7 @@ const BADGE_CATALOG = [
     key: "ai_analyst",
     emoji: "🔬",
     label: "Gemini Analyst",
-    description: "Used Socratic Gemini 2.5 AI research modules",
+    description: "Used Socratic Gemini research modules",
   },
   {
     key: "fast_mover",
@@ -602,7 +602,7 @@ export default function PortfolioClient({
         </section>
       )}
 
-      {/* Gemini 2.5 Flash Macroeconomic Portfolio Stress-Tester */}
+      {/* Google Cloud & Gemini Macroeconomic Portfolio Stress-Tester */}
       <PortfolioStressTester />
 
       {/* Server-Persisted Weekly Learning Reflection + Achievement Badges */}

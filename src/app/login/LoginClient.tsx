@@ -221,7 +221,7 @@ export default function LoginClient() {
         <div className="space-y-6 lg:col-span-7">
           <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3.5 py-1.5 text-xs font-semibold text-sgx-blue">
             <Sparkles className="h-3.5 w-3.5" />
-            Singapore Schools Financial Literacy Simulator · Powered by Google Cloud &amp; Gemini 2.5 AI
+            Singapore Schools Financial Literacy Simulator · Powered by Google Cloud &amp; Gemini
           </div>
 
           <h1 className="font-display text-3xl font-extrabold tracking-tight text-slate-900 sm:text-5xl leading-[1.12]">

@@ -747,7 +747,7 @@ async function main() {
         `/company/D05.SI verified with RSI(14) badge, STI Benchmark toggle, and SGX Dividend Simulator`,
       );
 
-      // 11. Verify Portfolio Page Gemini 2.5 Stress-Tester & Printable T+2 Contract Notes UI
+      // 11. Verify Portfolio Page Gemini Stress-Tester & Printable T+2 Contract Notes UI
       const portfolioRes = await fetch(`${baseUrl}/portfolio`, {
         headers: { Cookie: studentCookie },
       });
@@ -758,10 +758,10 @@ async function main() {
         "Portfolio Page Macroeconomic Stress-Tester & Printable T+2 Contract Note Triggers",
         portfolioRes.status === 200 &&
           portfolioHtml.includes(
-            "Gemini 2.5 Flash Macroeconomic Portfolio Stress-Tester",
+            "Macroeconomic Portfolio Stress-Tester",
           ) &&
           portfolioHtml.includes("View T+2 Note"),
-        `/portfolio verified with Gemini 2.5 Macro Stress-Tester and T+2 Electronic Contract Note viewer`,
+        `/portfolio verified with Gemini Macro Stress-Tester and T+2 Electronic Contract Note viewer`,
       );
     } finally {
       serverProc.kill();

@@ -1076,7 +1076,7 @@ export default function AdminClient({
               </h2>
               <p className="text-xs text-slate-500">
                 100% Google Cloud Stack: Firebase App Hosting (Cloud Run), Cloud
-                Firestore, Firebase Auth (Google OAuth), and Gemini 2.5 Flash.
+                Firestore, Firebase Auth (Google OAuth), and Gemini.
               </p>
             </div>
             <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 border border-emerald-200 px-3 py-1 text-xs font-bold text-emerald-700">

@@ -11,7 +11,7 @@ export default function Footer() {
           Singapore Exchange Limited (SGX Group).
         </p>
         <div className="shrink-0 font-mono text-[11px] text-slate-400">
-          Powered by Google Cloud · Firestore · Gemini 2.5
+          Powered by Google Cloud · Firestore · Gemini
         </div>
       </div>
     </footer>

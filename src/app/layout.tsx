@@ -34,7 +34,7 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "SGX Edu-Trader 2.0 · Singapore Exchange Paper Trading Platform",
   description:
-    "Institutional daylight paper trading simulator for Singapore students. Powered by Google Cloud, Firebase, TradingView Charts, and Gemini 2.5 Flash.",
+    "Institutional daylight paper trading simulator for Singapore students. Powered by Google Cloud, Firebase, TradingView Charts, and Gemini.",
 };
 
 export default async function RootLayout({
