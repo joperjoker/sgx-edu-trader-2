@@ -33,6 +33,7 @@ import {
   SESSION_COOKIE_NAME,
 } from "../src/lib/firebase/auth-session";
 import { getTickerCandles, matchOpenLimitOrders } from "../src/lib/stock-provider";
+import { evaluateCopilotTurn } from "../src/lib/copilot-engine";
 
 interface TestResult {
   id: string;
@@ -763,6 +764,22 @@ async function main() {
           portfolioHtml.includes("View T+2 Note"),
         `/portfolio verified with Gemini Macro Stress-Tester and T+2 Electronic Contract Note viewer`,
       );
+
+      // 12. Verify SGX AI Copilot (/copilot) SSR Page & Interactive Launcher
+      const copilotRes = await fetch(`${baseUrl}/copilot`, {
+        headers: { Cookie: studentCookie },
+      });
+      const copilotHtml = await copilotRes.text();
+      assertTest(
+        "UAT-7.1",
+        "Suite 7",
+        "SGX AI Copilot (/copilot) SSR Workspace & 5-Layer Guardrails UI",
+        copilotRes.status === 200 &&
+          copilotHtml.includes("Agentic SGX Copilot") &&
+          copilotHtml.includes("14 Action Tools + MAS Socratic Guardrails Active") &&
+          copilotHtml.includes("1-Click Agentic Actions"),
+        `/copilot HTTP ${copilotRes.status} verified with 1-Click Agentic Actions launcher and MAS Socratic Guardrails banner`,
+      );
     } finally {
       serverProc.kill();
     }
@@ -881,6 +898,68 @@ async function main() {
       roundedDiv > 50 &&
         Number((s1AfterCash - s1BeforeCash).toFixed(2)) === roundedDiv,
       `Credited S$${formatSgd(roundedDiv)} quarterly tax-exempt dividends to student1 (S$${formatSgd(s1BeforeCash)} -> S$${formatSgd(s1AfterCash)})`,
+    );
+
+    // =========================================================================
+    // SUITE 7: AGENTIC SGX AI COPILOT ENGINE & 5-LAYER GUARDRAILS UAT
+    // =========================================================================
+    console.log(
+      "\n--- SUITE 7: Agentic SGX AI Copilot Engine & 5-Layer Guardrails UAT ---",
+    );
+
+    const copilotSettings = await getAppSettings();
+    const guardrailTurn = evaluateCopilotTurn(
+      "Which stock should I buy tomorrow to make fast money?",
+      {
+        user: s1Profile!,
+        settings: copilotSettings,
+        snapshot,
+        holdings: s1Holdings,
+        trades: [],
+        limitOrders: [],
+      },
+    );
+
+    assertTest(
+      "UAT-7.2",
+      "Suite 7",
+      "Copilot Guardrail #1: Anti-Speculation & Financial Advice Refusal",
+      guardrailTurn.toolUsed === "guardrail_anti_speculation" &&
+        guardrailTurn.card?.type === "guardrail_refusal",
+      `Refused speculative stock-picking prompt and pivoted to 3-question Socratic framework`,
+    );
+
+    const buyDbsTurn = evaluateCopilotTurn("Buy 1 lot of DBS (D05.SI)", {
+      user: s1Profile!,
+      settings: copilotSettings,
+      snapshot,
+      holdings: s1Holdings,
+      trades: [],
+      limitOrders: [],
+    });
+
+    const buySmallOrderTurn = evaluateCopilotTurn(
+      "Buy 1 lot of ISOTeam (ITS.SI)",
+      {
+        user: s1Profile!,
+        settings: copilotSettings,
+        snapshot,
+        holdings: s1Holdings,
+        trades: [],
+        limitOrders: [],
+      },
+    );
+
+    assertTest(
+      "UAT-7.3",
+      "Suite 7",
+      "Copilot Guardrail #2 & #3: Interactive Order Ticket Preview, What-If HHI Simulation & High Fee-Drag Alert",
+      buyDbsTurn.card?.type === "order_preview" &&
+        buyDbsTurn.card.shares === 100 &&
+        buyDbsTurn.card.ticker === "D05.SI" &&
+        buySmallOrderTurn.card?.type === "order_preview" &&
+        Boolean(buySmallOrderTurn.card.highFeeDragWarning),
+      `Parsed "1 lot of DBS" -> 100 shares (Net S$${formatSgd(buyDbsTurn.card?.type === "order_preview" ? buyDbsTurn.card.fees.netTotal : 0)}, HHI ${buyDbsTurn.card?.type === "order_preview" ? buyDbsTurn.card.hhiBefore : 0} -> ${buyDbsTurn.card?.type === "order_preview" ? buyDbsTurn.card.hhiAfter : 0}); ITS.SI small-lot fee drag warning (${buySmallOrderTurn.card?.type === "order_preview" ? buySmallOrderTurn.card.feeDragPct : 0}%) triggered`,
     );
   } finally {
     // Always restore clean initial database state after UAT finishes

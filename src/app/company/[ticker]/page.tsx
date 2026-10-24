@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import {
   ArrowLeft,
   BookOpen,
+  Bot,
   Briefcase,
   Building2,
   CheckCircle2,
@@ -98,13 +99,23 @@ export default async function CompanyPage({
     <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 space-y-6">
       {/* Top Breadcrumb & Market Phase Pill */}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <Link
-          href="/dashboard"
-          className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-sm hover:border-sgx-blue hover:text-sgx-blue"
-        >
-          <ArrowLeft className="h-3.5 w-3.5" />
-          Back to SGX Market Screener
-        </Link>
+        <div className="flex flex-wrap items-center gap-2">
+          <Link
+            href="/dashboard"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-sm hover:border-sgx-blue hover:text-sgx-blue"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" />
+            Back to SGX Market Screener
+          </Link>
+
+          <Link
+            href={`/copilot?prompt=${encodeURIComponent(`What if I buy 1 lot of ${ticker}?`)}`}
+            className="inline-flex items-center gap-1.5 rounded-xl border border-blue-200 bg-blue-50 px-3.5 py-1.5 text-xs font-bold text-sgx-blue shadow-sm hover:bg-blue-100"
+          >
+            <Bot className="h-3.5 w-3.5" />
+            Ask SGX AI Copilot to Simulate or Trade {ticker} →
+          </Link>
+        </div>
 
         <span
           className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-bold ${

@@ -3,6 +3,7 @@ import { SESSION_COOKIE_NAME } from "@/lib/firebase/constants";
 
 const PROTECTED_PREFIXES = [
   "/dashboard",
+  "/copilot",
   "/company",
   "/portfolio",
   "/leaderboard",

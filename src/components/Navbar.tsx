@@ -17,6 +17,7 @@ import {
   Wallet,
   Briefcase,
   Sparkles,
+  Bot,
 } from "lucide-react";
 import {
   getFirebaseBrowserAuth,
@@ -158,6 +159,7 @@ export default function Navbar({ initialUser }: Props) {
 
   const navItems = [
     { href: "/dashboard", label: "SGX Market", icon: LayoutDashboard },
+    { href: "/copilot", label: "SGX AI Copilot", icon: Bot },
     { href: "/portfolio", label: "My Portfolio", icon: PieChart },
     { href: "/leaderboard", label: "Leaderboard", icon: Trophy },
     { href: "/launch", label: "Google Launch", icon: Sparkles },

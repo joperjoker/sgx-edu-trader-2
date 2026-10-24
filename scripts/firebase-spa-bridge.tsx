@@ -55,11 +55,12 @@ import LeaderboardClient, {
 } from "../src/app/leaderboard/LeaderboardClient";
 import AdminClient from "../src/app/admin/AdminClient";
 import LaunchClient from "../src/app/launch/LaunchClient";
+import SgxCopilotClient from "../src/app/copilot/CopilotClient";
 import SgxProChart from "../src/components/company/SgxProChart";
 import SgxOrderTicket from "../src/components/company/SgxOrderTicket";
 import SgxDividendCalculator from "../src/components/company/SgxDividendCalculator";
 import AiCoachSection from "../src/components/ai/AiCoachSection";
-import { ArrowLeft, BookOpen, Briefcase, Building2, CheckCircle2, HelpCircle } from "lucide-react";
+import { ArrowLeft, BookOpen, Bot, Briefcase, Building2, CheckCircle2, HelpCircle } from "lucide-react";
 
 declare const __INITIAL_SEED_DB__: {
   appSettings: AppSettingsDoc;
@@ -370,14 +371,29 @@ function CompanyView({
   return (
     <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <button
-          type="button"
-          onClick={() => navigate("/dashboard")}
-          className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-sm hover:border-sgx-blue hover:text-sgx-blue"
-        >
-          <ArrowLeft className="h-3.5 w-3.5" />
-          Back to SGX Market Screener
-        </button>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={() => navigate("/dashboard")}
+            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-sm hover:border-sgx-blue hover:text-sgx-blue"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" />
+            Back to SGX Market Screener
+          </button>
+
+          <button
+            type="button"
+            onClick={() =>
+              navigate(
+                `/copilot?prompt=${encodeURIComponent(`What if I buy 1 lot of ${cleanTicker}?`)}`,
+              )
+            }
+            className="inline-flex items-center gap-1.5 rounded-xl border border-blue-200 bg-blue-50 px-3.5 py-1.5 text-xs font-bold text-sgx-blue shadow-sm hover:bg-blue-100"
+          >
+            <Bot className="h-3.5 w-3.5" />
+            Ask SGX AI Copilot to Simulate or Trade {cleanTicker} →
+          </button>
+        </div>
 
         <span
           className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-bold ${
@@ -666,6 +682,26 @@ function AppShell() {
       <LoginClient
         schoolName={db.appSettings.schoolName}
         isFirebaseConfigured={true}
+      />
+    );
+  } else if (pathname === "/copilot") {
+    const rawHoldings = Object.values(db.holdings[currentUser.uid] ?? {}).filter(
+      (h) => h.shares > 0,
+    );
+    const userTrades = db.tradeHistory.filter(
+      (t) => t.userId === currentUser.uid,
+    );
+    const userLimits = db.limitOrders.filter(
+      (o) => o.userId === currentUser.uid,
+    );
+    content = (
+      <SgxCopilotClient
+        initialUser={currentUser}
+        initialSettings={db.appSettings}
+        initialSnapshot={db.marketSnapshot}
+        initialHoldings={rawHoldings}
+        initialTrades={userTrades}
+        initialLimitOrders={userLimits}
       />
     );
   } else if (pathname.startsWith("/company/")) {

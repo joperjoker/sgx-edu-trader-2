@@ -319,6 +319,7 @@ Start with S$10,000.00 in virtual cash to invest across ${tickersCount} real Sin
                 className="mt-1 w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-900 focus:border-sgx-blue focus:bg-white focus:outline-none"
               >
                 <option value="/dashboard">Market Screener (/dashboard)</option>
+                <option value="/copilot">SGX AI Copilot (/copilot)</option>
                 <option value="/login">Gmail Sign-In &amp; Welcome (/login)</option>
                 <option value="/leaderboard">
                   Class Leaderboard (/leaderboard)

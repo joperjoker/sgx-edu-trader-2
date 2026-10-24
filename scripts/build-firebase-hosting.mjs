@@ -92,6 +92,7 @@ fs.writeFileSync(
   path.join(shimDir, "actions-shim.ts"),
   `import { getBrowserDb, saveBrowserDb, getActiveUid } from "../scripts/firebase-spa-bridge";
 import { TICKER_META, VALID_TICKERS } from "../src/utils/tickers";
+import { evaluateCopilotTurn } from "../src/lib/copilot-engine";
 import {
   calculateAdminBidAsk,
   calculatePortfolioHhi,
@@ -625,6 +626,25 @@ export async function distributeClassDividendsAction(classId = "ALL") {
   saveBrowserDb(db);
   return { success: true, data: { studentsCredited, totalDividendSgd, timestamp: new Date().toISOString() } };
 }
+
+export async function runSgxCopilotAction(prompt: string, _optionalClientApiKey?: string) {
+  const db = getBrowserDb();
+  const uid = getActiveUid();
+  const user = db.users[uid] ?? db.users["user-student-1"] ?? Object.values(db.users)[0];
+  if (!user) return { success: false, error: "Please sign in first." };
+  const holdings = Object.values(db.holdings[user.uid] ?? {}).filter((h: any) => h.shares > 0);
+  const trades = db.tradeHistory.filter((t: any) => t.userId === user.uid);
+  const limitOrders = db.limitOrders.filter((o: any) => o.userId === user.uid);
+  const result = evaluateCopilotTurn(prompt, {
+    user,
+    settings: db.appSettings,
+    snapshot: db.marketSnapshot,
+    holdings,
+    trades,
+    limitOrders,
+  });
+  return { success: true, data: result };
+}
 `,
 );
 
@@ -719,7 +739,7 @@ const aliasPlugin = {
       path: path.join(shimDir, "firebase-client-shim.ts"),
     }));
     build.onResolve(
-      { filter: /^@\/actions\/(trade|admin|ai|onboarding|reflection)$/ },
+      { filter: /^@\/actions\/(trade|admin|ai|onboarding|reflection|copilot)$/ },
       () => ({
         path: path.join(shimDir, "actions-shim.ts"),
       }),
