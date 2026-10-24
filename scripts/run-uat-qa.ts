@@ -782,7 +782,7 @@ async function main() {
         `/portfolio verified with Gemini Macro Stress-Tester and T+2 Electronic Contract Note viewer`,
       );
 
-      // 12. Verify EFL AI Copilot (/copilot) SSR Page & Interactive Launcher
+      // 12. Verify EduFinLit AI Copilot (/copilot) SSR Page & Interactive Launcher
       const copilotRes = await fetch(`${baseUrl}/copilot`, {
         headers: { Cookie: studentCookie },
       });
@@ -790,13 +790,13 @@ async function main() {
       assertTest(
         "UAT-7.1",
         "Suite 7",
-        "EFL AI Copilot (/copilot) SSR Workspace & 5-Layer Guardrails UI",
+        "EduFinLit AI Copilot (/copilot) SSR Workspace & 5-Layer Guardrails UI",
         copilotRes.status === 200 &&
-          copilotHtml.includes("EFL · EduFinLit · Agentic AI Copilot") &&
+          copilotHtml.includes("EduFinLit · Agentic AI Copilot") &&
           copilotHtml.includes("/efl-logo.png") &&
           copilotHtml.includes("14 Action Tools + MAS Socratic Guardrails Active") &&
           copilotHtml.includes("1-Click Agentic Actions"),
-        `/copilot HTTP ${copilotRes.status} verified with EFL · EduFinLit logo, 1-Click Agentic Actions launcher, and MAS Socratic Guardrails banner`,
+        `/copilot HTTP ${copilotRes.status} verified with EduFinLit logo, 1-Click Agentic Actions launcher, and MAS Socratic Guardrails banner`,
       );
     } finally {
       serverProc.kill();

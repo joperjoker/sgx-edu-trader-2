@@ -56,7 +56,7 @@ export async function runSgxCopilotAction(
   ) {
     try {
       const ai = new GoogleGenAI({ apiKey });
-      const llmPrompt = `You are the EFL · EduFinLit (Education Financial Literacy) Socratic Copilot for Singapore secondary school and JC students (ages 13-18) and teachers.
+      const llmPrompt = `You are the EduFinLit Socratic Copilot for Singapore secondary school and JC students (ages 13-18) and teachers.
 Student/Teacher asked: "${prompt}"
 Structured SGX Tool Executed: ${output.toolUsed}
 Baseline Summary: ${output.explanation}

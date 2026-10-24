@@ -38,7 +38,7 @@ export async function generateMetadata({
   const ticker = params.ticker.toUpperCase();
   const meta = TICKER_META[ticker];
   return {
-    title: `${meta?.name ?? ticker} (${ticker}) · SGX Market · EFL · EduFinLit`,
+    title: `${meta?.name ?? ticker} (${ticker}) · SGX Market · EduFinLit`,
     description: `Live SGX candlestick chart, order book depth, and paper trading terminal for ${meta?.name ?? ticker}.`,
   };
 }

@@ -15,7 +15,7 @@ export default async function LoginPage() {
     <Suspense
       fallback={
         <div className="min-h-screen bg-sgx-canvas flex items-center justify-center text-sm text-slate-500">
-          Loading EFL · EduFinLit…
+          Loading EduFinLit…
         </div>
       }
     >

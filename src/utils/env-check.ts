@@ -58,7 +58,7 @@ export function getEnvStatus(): EnvStatus {
     teacherEmails,
     schoolName:
       process.env.NEXT_PUBLIC_SCHOOL_NAME ?? "Singapore Academy of Finance",
-    appName: process.env.NEXT_PUBLIC_APP_NAME ?? "EFL · EduFinLit",
+    appName: process.env.NEXT_PUBLIC_APP_NAME ?? "EduFinLit",
   };
 }
 

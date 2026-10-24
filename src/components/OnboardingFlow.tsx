@@ -179,7 +179,7 @@ export default function OnboardingFlow({ user }: Props) {
               id="onboarding-welcome-title"
               className="mt-4 font-display text-2xl font-bold text-slate-900"
             >
-              Welcome to EFL · EduFinLit 📈
+              Welcome to EduFinLit 📈
             </h2>
             <p className="mt-1 text-sm text-slate-600">
               Signed in with Google as{" "}

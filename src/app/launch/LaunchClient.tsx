@@ -61,7 +61,7 @@ export default function LaunchClient({
 
   const googleSitesIframeSnippet = `<iframe
   src="${fullEmbedUrl}"
-  title="${schoolName} — EFL · EduFinLit"
+  title="${schoolName} — EduFinLit"
   width="100%"
   height="${iframeHeight}px"
   style="border: 1px solid #E2E8F0; border-radius: 16px; background: #F8FAFC;"
@@ -69,7 +69,7 @@ export default function LaunchClient({
   allowfullscreen
 ></iframe>`;
 
-  const studentInviteMessage = `Welcome to ${schoolName} — EFL · EduFinLit (${semester})!
+  const studentInviteMessage = `Welcome to ${schoolName} — EduFinLit (${semester})!
 Start with S$10,000.00 in virtual cash to invest across ${tickersCount} real Singapore Exchange (SGX) companies.
 
 1. Open our live cloud platform: ${cleanBase}

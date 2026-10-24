@@ -5,9 +5,9 @@ import LaunchClient from "./LaunchClient";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Google Sites & Cloud Run Launch Center · EFL · EduFinLit",
+  title: "Google Sites & Cloud Run Launch Center · EduFinLit",
   description:
-    "Deploy EFL · EduFinLit to Google Cloud Run / Firebase App Hosting and generate a full-page embed for Google Sites.",
+    "Deploy EduFinLit to Google Cloud Run / Firebase App Hosting and generate a full-page embed for Google Sites.",
 };
 
 export default async function LaunchPage() {

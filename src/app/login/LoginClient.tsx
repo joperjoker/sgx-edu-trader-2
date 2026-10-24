@@ -170,21 +170,16 @@ export default function LoginClient() {
       {/* Top Institutional SGX Ribbon */}
       <header className="border-b border-slate-200 bg-white/90 backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/efl-logo.png"
-              alt="EFL · EduFinLit Logo"
-              className="h-10 w-10 rounded-xl border border-slate-200 bg-white object-contain p-0.5 shadow-sm"
+              alt="EduFinLit Logo"
+              className="h-9 w-9 shrink-0 rounded-xl border border-slate-200 bg-white object-contain p-0.5 shadow-sm"
             />
-            <div>
-              <span className="font-mono text-sm font-bold tracking-wider text-slate-900">
-                EFL · EDUFINLIT
-              </span>
-              <span className="ml-2 hidden rounded-md bg-blue-50 border border-blue-200 px-2 py-0.5 text-[11px] font-semibold text-sgx-blue sm:inline-block">
-                Education Financial Literacy · Google Cloud
-              </span>
-            </div>
+            <span className="font-display text-base font-extrabold tracking-tight text-slate-900 whitespace-nowrap">
+              EduFinLit
+            </span>
           </div>
 
           <div className="flex items-center gap-3 text-xs">
@@ -508,7 +503,7 @@ export default function LoginClient() {
       {/* Mandatory MAS & SGX Compliance Footer */}
       <footer className="border-t border-slate-200 bg-white py-5 px-4">
         <div className="mx-auto max-w-5xl text-center text-[11px] leading-relaxed text-slate-500">
-          EFL · EduFinLit (Education Financial Literacy) is a paper trading simulation for educational purposes
+          EduFinLit is a paper trading simulation for educational purposes
           only. No real securities transactions are conducted and no real money is
           involved. Not licensed by the Monetary Authority of Singapore (MAS). Not
           financial advice under the Financial Advisers Act (Cap. 110) or
