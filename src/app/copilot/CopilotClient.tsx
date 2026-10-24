@@ -1072,6 +1072,7 @@ export default function SgxCopilotClient({
             <input
               id="copilot-gemini-key-input"
               name="geminiApiKey"
+              aria-label="Google Gemini API Key"
               type="password"
               value={geminiApiKey}
               onChange={(e) => {
@@ -1246,6 +1247,7 @@ export default function SgxCopilotClient({
               <input
                 id="copilot-chat-input"
                 name="copilotPrompt"
+                aria-label="Ask SGX AI Copilot"
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
