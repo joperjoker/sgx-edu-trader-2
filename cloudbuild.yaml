@@ -1,0 +1,43 @@
+# =============================================================================
+# Google Cloud Build -> Cloud Run Automated Deployment (Singapore Region)
+# Run with: gcloud builds submit --config cloudbuild.yaml
+# =============================================================================
+steps:
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      - "build"
+      - "-t"
+      - "asia-southeast1-docker.pkg.dev/$PROJECT_ID/sgx-edu-trader/web:$COMMIT_SHA"
+      - "-t"
+      - "asia-southeast1-docker.pkg.dev/$PROJECT_ID/sgx-edu-trader/web:latest"
+      - "."
+
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      - "push"
+      - "asia-southeast1-docker.pkg.dev/$PROJECT_ID/sgx-edu-trader/web:latest"
+
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    entrypoint: gcloud
+    args:
+      - "run"
+      - "deploy"
+      - "sgx-edu-trader"
+      - "--image"
+      - "asia-southeast1-docker.pkg.dev/$PROJECT_ID/sgx-edu-trader/web:latest"
+      - "--region"
+      - "asia-southeast1"
+      - "--platform"
+      - "managed"
+      - "--allow-unauthenticated"
+      - "--memory"
+      - "1Gi"
+      - "--cpu"
+      - "1"
+      - "--min-instances"
+      - "0"
+      - "--max-instances"
+      - "10"
+
+images:
+  - "asia-southeast1-docker.pkg.dev/$PROJECT_ID/sgx-edu-trader/web:latest"

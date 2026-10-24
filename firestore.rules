@@ -1,0 +1,88 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function getUserRole() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    }
+
+    function isTeacherOrAdmin() {
+      return isSignedIn() && (getUserRole() == 'teacher' || getUserRole() == 'superadmin');
+    }
+
+    function isSuperAdmin() {
+      return isSignedIn() && getUserRole() == 'superadmin';
+    }
+
+    // System & Market live snapshots are readable by all authenticated students/teachers
+    // Writes happen strictly via Firebase Admin SDK in Server Actions / Cloud Scheduler
+    match /system/{docId} {
+      allow read: if isSignedIn();
+      allow write: if isSuperAdmin();
+    }
+
+    match /market/{docId} {
+      allow read: if isSignedIn();
+      allow write: if false;
+    }
+
+    match /market_candles/{docId} {
+      allow read: if isSignedIn();
+      allow write: if false;
+    }
+
+    match /stock_prices/{ticker} {
+      allow read: if isSignedIn();
+      allow write: if false;
+    }
+
+    // Users can read their own profile; Leaderboard reads sanitized student metrics
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow write: if false;
+
+      match /holdings/{ticker} {
+        allow read: if isSignedIn() && (request.auth.uid == userId || isTeacherOrAdmin());
+        allow write: if false;
+      }
+    }
+
+    match /trade_history/{tradeId} {
+      allow read: if isSignedIn() && (resource.data.userId == request.auth.uid || isTeacherOrAdmin());
+      allow write: if false;
+    }
+
+    match /portfolio_history/{snapshotId} {
+      allow read: if isSignedIn() && (resource.data.userId == request.auth.uid || isTeacherOrAdmin());
+      allow write: if false;
+    }
+
+    match /limit_orders/{orderId} {
+      allow read: if isSignedIn() && (resource.data.userId == request.auth.uid || isTeacherOrAdmin());
+      allow write: if false;
+    }
+
+    match /class_groups/{classId} {
+      allow read: if isSignedIn();
+      allow write: if isSuperAdmin();
+    }
+
+    match /weekly_challenges/{challengeId} {
+      allow read: if isSignedIn();
+      allow write: if isTeacherOrAdmin();
+    }
+
+    match /reflections/{reflectionId} {
+      allow read: if isSignedIn() && (resource.data.userId == request.auth.uid || isTeacherOrAdmin());
+      allow write: if false;
+    }
+
+    match /preauthorized_users/{emailLower} {
+      allow read, write: if isSuperAdmin();
+    }
+  }
+}
