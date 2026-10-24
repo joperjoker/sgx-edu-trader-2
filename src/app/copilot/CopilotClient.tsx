@@ -154,7 +154,7 @@ export default function SgxCopilotClient({
         hour: "2-digit",
         minute: "2-digit",
       }),
-      text: `Welcome to the Google Cloud & Gemini Agentic SGX Copilot, ${initialUser.nickname}! You currently have S$${formatSgd(initialUser.cashBalance)} in buying power and ${initialHoldings.filter((h) => h.shares > 0).length} active SGX holdings (Net Value: S$${formatSgd(initialUser.netValue)} · Diversification: ${Math.round((1 - (initialUser.hhi ?? 1)) * 100)}%).\n\nAsk me in plain English to buy or sell SGX Board Lots, simulate 'What-If' diversification & fee impacts, compare SGX companies, project tax-free dividends, stress-test your portfolio, or save your weekly reflection!`,
+      text: `Welcome to the EFL · EduFinLit Agentic AI Copilot, ${initialUser.nickname}! You currently have S$${formatSgd(initialUser.cashBalance)} in buying power and ${initialHoldings.filter((h) => h.shares > 0).length} active SGX Market holdings (Net Value: S$${formatSgd(initialUser.netValue)} · Diversification: ${Math.round((1 - (initialUser.hhi ?? 1)) * 100)}%).\n\nAsk me in plain English to buy or sell Board Lots, simulate 'What-If' diversification & fee impacts, compare companies, project tax-free dividends, stress-test your portfolio, or save your weekly reflection!`,
       output: {
         toolUsed: "welcome_assistant",
         headline: "Ready for Natural-Language SGX Orders & Socratic Coaching",
@@ -1010,7 +1010,7 @@ export default function SgxCopilotClient({
           <div>
             <div className="flex flex-wrap items-center gap-2">
               <h1 className="font-display text-xl font-extrabold text-slate-900 sm:text-2xl">
-                Google Cloud &amp; Gemini · Agentic SGX Copilot
+                EFL · EduFinLit · Agentic AI Copilot
               </h1>
               <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 font-mono text-[10px] font-bold text-emerald-700">
                 14 Action Tools + MAS Socratic Guardrails Active
@@ -1169,7 +1169,7 @@ export default function SgxCopilotClient({
                       <span className="font-bold uppercase tracking-wider">
                         {isUser
                           ? `${user.nickname} (${user.role})`
-                          : `SGX AI Copilot · ${m.output?.toolUsed ?? "assistant"}`}
+                          : `EFL AI Copilot · ${m.output?.toolUsed ?? "assistant"}`}
                       </span>
                       <span className="font-mono">{m.timestamp}</span>
                     </div>
@@ -1228,7 +1228,7 @@ export default function SgxCopilotClient({
             {isPending && (
               <div className="flex items-center gap-2 text-xs font-semibold text-sgx-blue px-2">
                 <RefreshCw className="h-4 w-4 animate-spin" />
-                SGX AI Copilot is running financial calculations &amp; guardrails…
+                EFL AI Copilot is running financial calculations &amp; guardrails…
               </div>
             )}
 
@@ -1247,11 +1247,11 @@ export default function SgxCopilotClient({
               <input
                 id="copilot-chat-input"
                 name="copilotPrompt"
-                aria-label="Ask SGX AI Copilot"
+                aria-label="Ask EFL AI Copilot"
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask SGX Copilot to buy/sell lots, simulate What-If trades, compare stocks, or explain concepts…"
+                placeholder="Ask EFL AI Copilot to buy/sell lots, simulate What-If trades, compare stocks, or explain concepts…"
                 className="h-11 flex-1 rounded-xl border border-slate-300 bg-white px-4 text-xs text-slate-900 placeholder-slate-400 outline-none focus:border-sgx-blue focus:ring-2 focus:ring-sgx-blue/20"
               />
               <button
@@ -1266,7 +1266,7 @@ export default function SgxCopilotClient({
             <p className="mt-2 text-[11px] text-slate-500 flex items-center gap-1.5">
               <ShieldCheck className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
               <span>
-                <strong>MAS &amp; MOE Educational Guardrail:</strong> SGX AI
+                <strong>MAS &amp; MOE Educational Guardrail:</strong> EFL AI
                 Copilot prepares transparent order tickets and Socratic analysis
                 but never recommends which stock to buy or sell.
               </span>

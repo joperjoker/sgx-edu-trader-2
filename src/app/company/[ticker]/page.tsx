@@ -38,7 +38,7 @@ export async function generateMetadata({
   const ticker = params.ticker.toUpperCase();
   const meta = TICKER_META[ticker];
   return {
-    title: `${meta?.name ?? ticker} (${ticker}) · SGX Edu-Trader 2.0`,
+    title: `${meta?.name ?? ticker} (${ticker}) · SGX Market · EFL · EduFinLit`,
     description: `Live SGX candlestick chart, order book depth, and paper trading terminal for ${meta?.name ?? ticker}.`,
   };
 }
@@ -113,7 +113,7 @@ export default async function CompanyPage({
             className="inline-flex items-center gap-1.5 rounded-xl border border-blue-200 bg-blue-50 px-3.5 py-1.5 text-xs font-bold text-sgx-blue shadow-sm hover:bg-blue-100"
           >
             <Bot className="h-3.5 w-3.5" />
-            Ask SGX AI Copilot to Simulate or Trade {ticker} →
+            Ask AI Copilot to Simulate or Trade {ticker} →
           </Link>
         </div>
 

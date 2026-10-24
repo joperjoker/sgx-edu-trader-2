@@ -531,7 +531,7 @@ export function evaluateCopilotTurn(
       toolUsed: "guardrail_anti_speculation",
       headline: "Educational Guardrail: Socratic Coach Does Not Pick Stocks",
       explanation:
-        "Under Monetary Authority of Singapore (MAS) educational guidelines and SGX Edu-Trader's Socratic learning rules, I never tell you which stock to buy or predict future prices. Instead, I can help you compare companies across our 4 SGX Risk Tiers so YOU make the investment decision!",
+        "Under Monetary Authority of Singapore (MAS) educational guidelines and EFL · EduFinLit's Socratic learning rules, I never tell you which stock to buy or predict future prices. Instead, I can help you compare companies across our 4 SGX Market Risk Tiers so YOU make the investment decision!",
       socraticQuestion:
         "Would you rather start with a steady dividend-paying company in 'Safe Bets' (like DBS, OCBC, or Singtel) or compare everyday consumer brands like Sheng Siong and ComfortDelGro?",
       card: {

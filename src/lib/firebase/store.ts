@@ -449,7 +449,7 @@ function buildInitialDb(): LocalDbSchema {
       leaderboardMode: "named",
       maintenanceMode: false,
       maintenanceMessage:
-        "SGX Edu-Trader 2.0 is undergoing scheduled exchange maintenance. Please check back shortly.",
+        "EFL · EduFinLit is undergoing scheduled maintenance. Please check back shortly.",
       schoolName:
         process.env.NEXT_PUBLIC_SCHOOL_NAME ?? "Singapore Academy of Finance",
       currentSemester: "2026-S2",

@@ -391,7 +391,7 @@ function CompanyView({
             className="inline-flex items-center gap-1.5 rounded-xl border border-blue-200 bg-blue-50 px-3.5 py-1.5 text-xs font-bold text-sgx-blue shadow-sm hover:bg-blue-100"
           >
             <Bot className="h-3.5 w-3.5" />
-            Ask SGX AI Copilot to Simulate or Trade {cleanTicker} →
+            Ask AI Copilot to Simulate or Trade {cleanTicker} →
           </button>
         </div>
 

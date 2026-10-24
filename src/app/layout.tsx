@@ -32,9 +32,13 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SGX Edu-Trader 2.0 · Singapore Exchange Paper Trading Platform",
+  title: "EFL · EduFinLit — Education Financial Literacy & Student Growth Simulator",
   description:
-    "Institutional daylight paper trading simulator for Singapore students. Powered by Google Cloud, Firebase, TradingView Charts, and Gemini.",
+    "Institutional daylight financial literacy and paper trading platform for Singapore students. Powered by Google Cloud, Firebase, TradingView Charts, and Gemini.",
+  icons: {
+    icon: "/efl-logo.png",
+    apple: "/efl-logo.png",
+  },
 };
 
 export default async function RootLayout({

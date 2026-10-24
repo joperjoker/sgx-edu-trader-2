@@ -13,9 +13,9 @@ import SgxCopilotClient from "./CopilotClient";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "SGX AI Copilot · Agentic Trading & Socratic Coach · SGX Edu-Trader 2.0",
+  title: "AI Copilot · Agentic Trading & Socratic Coach · EFL · EduFinLit",
   description:
-    "Natural-language SGX order ticket execution, What-If diversification simulator, and Socratic financial literacy copilot powered by Google Cloud & Gemini.",
+    "Natural-language order ticket execution, What-If diversification simulator, and Socratic financial literacy copilot powered by Google Cloud & Gemini.",
 };
 
 export default async function CopilotPage() {

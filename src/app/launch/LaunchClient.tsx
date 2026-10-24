@@ -61,7 +61,7 @@ export default function LaunchClient({
 
   const googleSitesIframeSnippet = `<iframe
   src="${fullEmbedUrl}"
-  title="${schoolName} — SGX Edu-Trader 2.0"
+  title="${schoolName} — EFL · EduFinLit"
   width="100%"
   height="${iframeHeight}px"
   style="border: 1px solid #E2E8F0; border-radius: 16px; background: #F8FAFC;"
@@ -69,7 +69,7 @@ export default function LaunchClient({
   allowfullscreen
 ></iframe>`;
 
-  const studentInviteMessage = `Welcome to ${schoolName} — SGX Edu-Trader 2.0 (${semester})!
+  const studentInviteMessage = `Welcome to ${schoolName} — EFL · EduFinLit (${semester})!
 Start with S$10,000.00 in virtual cash to invest across ${tickersCount} real Singapore Exchange (SGX) companies.
 
 1. Open our live cloud platform: ${cleanBase}
@@ -318,8 +318,8 @@ Start with S$10,000.00 in virtual cash to invest across ${tickersCount} real Sin
                 onChange={(e) => setLandingPath(e.target.value)}
                 className="mt-1 w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-900 focus:border-sgx-blue focus:bg-white focus:outline-none"
               >
-                <option value="/dashboard">Market Screener (/dashboard)</option>
-                <option value="/copilot">SGX AI Copilot (/copilot)</option>
+                <option value="/dashboard">SGX Market Screener (/dashboard)</option>
+                <option value="/copilot">AI Copilot (/copilot)</option>
                 <option value="/login">Gmail Sign-In &amp; Welcome (/login)</option>
                 <option value="/leaderboard">
                   Class Leaderboard (/leaderboard)

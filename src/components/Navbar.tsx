@@ -159,7 +159,7 @@ export default function Navbar({ initialUser }: Props) {
 
   const navItems = [
     { href: "/dashboard", label: "SGX Market", icon: LayoutDashboard },
-    { href: "/copilot", label: "SGX AI Copilot", icon: Bot },
+    { href: "/copilot", label: "AI Copilot", icon: Bot },
     { href: "/portfolio", label: "My Portfolio", icon: PieChart },
     { href: "/leaderboard", label: "Leaderboard", icon: Trophy },
     { href: "/launch", label: "Google Launch", icon: Sparkles },
@@ -192,22 +192,25 @@ export default function Navbar({ initialUser }: Props) {
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200/90 bg-white/90 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6">
-        {/* Left: SGX Brand Identity */}
+        {/* Left: EFL · EduFinLit Brand Identity & Main App Logo */}
         <div className="flex items-center gap-6">
           <Link
             href="/dashboard"
             className="flex items-center gap-2.5 group focus:outline-none"
           >
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-sgx-blue text-white font-mono text-xs font-bold shadow-sm transition group-hover:bg-blue-700">
-              SGX
-            </div>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/efl-logo.png"
+              alt="EFL · EduFinLit Logo"
+              className="h-10 w-10 rounded-xl border border-slate-200 bg-white object-contain p-0.5 shadow-sm transition group-hover:border-sgx-blue"
+            />
             <div className="flex flex-col">
               <span className="font-mono text-sm font-bold tracking-wider text-slate-900">
-                SGX EDU-TRADER
+                EFL · EDUFINLIT
               </span>
               <span className="text-[10px] font-medium text-slate-500 flex items-center gap-1">
                 <Sparkles className="h-2.5 w-2.5 text-sgx-blue" />
-                Google Cloud · Singapore Exchange Sim
+                Education Financial Literacy
               </span>
             </div>
           </Link>
