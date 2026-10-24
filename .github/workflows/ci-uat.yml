@@ -1,0 +1,38 @@
+name: SGX Edu-Trader 2.0 CI & UAT Verification
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  build-and-uat:
+    name: Typecheck, Lint, Standalone Build & 30-Suite UAT
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run TypeScript Typecheck
+        run: npm run typecheck
+
+      - name: Run Next.js ESLint
+        run: npm run lint
+
+      - name: Build Production Standalone Bundle
+        run: npm run build
+
+      - name: Execute 30-Suite Automated & Live Server UAT/QA
+        run: npm run uat
