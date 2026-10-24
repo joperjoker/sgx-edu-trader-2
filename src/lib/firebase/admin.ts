@@ -26,7 +26,10 @@ export function getFirebaseAdminApp(): AdminApp {
     return adminAppInstance;
   }
 
-  const rawServiceAccount = process.env.FIREBASE_SERVICE_ACCOUNT_JSON ?? "";
+  const rawServiceAccount =
+    process.env.FIREBASE_SERVICE_ACCOUNT_JSON ??
+    process.env.FIREBASE_SERVICE_ACCOUNT_KEY ??
+    "";
   if (rawServiceAccount.trim().startsWith("{")) {
     const parsed = JSON.parse(rawServiceAccount) as Record<string, string>;
     if (parsed.private_key) {

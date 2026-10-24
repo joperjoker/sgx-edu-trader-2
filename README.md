@@ -2,6 +2,10 @@
 
 **An institutional-grade, 100% Google Cloud & Bright Daylight paper trading simulator for Singapore secondary school and junior college students.**
 
+- 🌐 **Live Hosted URL (Google Firebase Hosting):** **[https://sgx-edu-trader-2-sg.web.app](https://sgx-edu-trader-2-sg.web.app)**
+- 🏫 **Google Sites Direct Embed URL:** `https://sgx-edu-trader-2-sg.web.app/dashboard`
+- 🚀 **Launch & Google Sites Embed Center:** [https://sgx-edu-trader-2-sg.web.app/launch](https://sgx-edu-trader-2-sg.web.app/launch)
+
 Students manage **S$10,000.00** in virtual SGD capital across **20 real Singapore Exchange (SGX) listed companies**, learning authentic SGX market rules, board lots, Bid/Ask order book depth, transaction fee math (Brokerage + CDP Clearing + SGX Trading Fee + 9% GST), portfolio diversification, and Socratic financial reasoning powered by **Google Gemini 2.5 Flash**.
 
 ---

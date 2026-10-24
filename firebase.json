@@ -4,15 +4,12 @@
     "indexes": "firestore.indexes.json"
   },
   "hosting": {
-    "public": "public",
+    "public": "dist-hosting",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "rewrites": [
       {
         "source": "**",
-        "run": {
-          "serviceId": "sgx-edu-trader",
-          "region": "asia-southeast1"
-        }
+        "destination": "/index.html"
       }
     ],
     "headers": [

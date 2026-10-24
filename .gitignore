@@ -9,6 +9,8 @@
 
 # production
 /build
+/dist-hosting
+/.next-hosting-shims
 
 # misc
 .DS_Store

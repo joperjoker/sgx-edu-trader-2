@@ -20,7 +20,10 @@ export function getEnvStatus(): EnvStatus {
       !projectId.includes("your-project"),
   );
 
-  const serviceAccountJson = process.env.FIREBASE_SERVICE_ACCOUNT_JSON ?? "";
+  const serviceAccountJson =
+    process.env.FIREBASE_SERVICE_ACCOUNT_JSON ??
+    process.env.FIREBASE_SERVICE_ACCOUNT_KEY ??
+    "";
   const isFirebaseAdminConfigured = Boolean(
     serviceAccountJson.trim().startsWith("{") && isFirebaseClientConfigured,
   );
@@ -31,7 +34,9 @@ export function getEnvStatus(): EnvStatus {
   );
 
   const superadminEmails = (
-    process.env.SUPERADMIN_EMAILS ?? "admin@sgxedu.sg,eugene@sgxedu.sg"
+    process.env.SUPERADMIN_EMAILS ??
+    process.env.SUPERADMIN_EMAIL ??
+    "medthilda.teo.qing.cong@gmail.com,admin@sgxedu.sg,eugene@sgxedu.sg"
   )
     .split(",")
     .map((e) => e.trim().toLowerCase())
