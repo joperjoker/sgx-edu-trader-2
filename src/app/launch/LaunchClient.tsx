@@ -29,7 +29,7 @@ export default function LaunchClient({
   tickersCount,
   classCodes,
 }: Props) {
-  const [baseUrl, setBaseUrl] = useState("https://sgx-edu-trader-sg.web.app");
+  const [baseUrl, setBaseUrl] = useState("https://sgx-edu-trader-2-sg.web.app");
   const [landingPath, setLandingPath] = useState("/dashboard");
   const [iframeHeight, setIframeHeight] = useState("920");
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
@@ -58,7 +58,7 @@ export default function LaunchClient({
   allowfullscreen
 ></iframe>`;
 
-  const powerShellDeployCmd = `.\\scripts\\deploy-google-cloud.ps1 -ProjectId "sgx-edu-trader-sg" -Region "asia-southeast1"`;
+  const powerShellDeployCmd = `.\\scripts\\deploy-google-cloud.ps1 -ProjectId "sgx-edu-trader-2-sg" -Region "asia-southeast1"`;
 
   const gcloudDirectCmd = `gcloud run deploy sgx-edu-trader --source . --region asia-southeast1 --allow-unauthenticated --memory 1Gi && npx firebase-tools deploy --only firestore,hosting`;
 

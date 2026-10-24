@@ -474,6 +474,12 @@ function buildInitialDb(): LocalDbSchema {
     },
     reflections,
     preauthorizedUsers: {
+      "medthilda.teo.qing.cong@gmail.com": {
+        email: "medthilda.teo.qing.cong@gmail.com",
+        role: "superadmin",
+        nickname: "Eugene Teo (Superadmin)",
+        createdAt: now,
+      },
       "admin@sgxedu.sg": {
         email: "admin@sgxedu.sg",
         role: "superadmin",
