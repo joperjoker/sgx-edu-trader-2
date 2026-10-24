@@ -359,6 +359,17 @@ export default function LoginClient() {
               </span>
             </button>
 
+            <div className="mt-2 text-center">
+              <a
+                href="https://sgx-edu-trader-2-sg.web.app/login"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1 text-[11px] font-medium text-slate-500 hover:text-sgx-blue hover:underline"
+              >
+                Viewing inside an embedded Google Site? Open Full-Screen in New Tab ↗
+              </a>
+            </div>
+
             {/* Mode Switcher: Quick Classroom Accounts vs Custom Gmail */}
             <div className="mt-6">
               <div className="grid grid-cols-2 gap-1 rounded-xl bg-slate-100 p-1 text-xs font-semibold">
