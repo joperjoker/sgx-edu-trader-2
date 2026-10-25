@@ -14,12 +14,7 @@ import {
   ChevronRight,
   ChevronLeft,
   Sparkles,
-  Layers,
-  GraduationCap,
-  TrendingUp,
   Bot,
-  PieChart,
-  ShieldCheck,
   ExternalLink,
   Table as TableIcon,
   Video as VideoIcon,
@@ -90,7 +85,6 @@ export default function InteractiveVideoPlayer({
         utterance.rate = playbackSpeed * 1.05;
         utterance.pitch = 1.0;
 
-        // Try to pick English voice
         const voices = window.speechSynthesis.getVoices();
         const preferredVoice =
           voices.find(
@@ -141,7 +135,6 @@ export default function InteractiveVideoPlayer({
     return () => clearInterval(interval);
   }, [isPlaying, playbackSpeed, activeEpisode.durationSec]);
 
-  // Reset when episode changes
   const switchEpisode = (epId: string) => {
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
       window.speechSynthesis.cancel();
@@ -227,20 +220,20 @@ export default function InteractiveVideoPlayer({
   return (
     <div
       ref={playerContainerRef}
-      className="rounded-3xl border border-slate-200 bg-white shadow-xl overflow-hidden transition-all"
+      className="rounded-3xl border border-slate-200 bg-white shadow-sm overflow-hidden transition-all"
     >
-      {/* Top Episode Selector Bar */}
-      <div className="border-b border-slate-200 bg-slate-900 text-white px-4 py-3 sm:px-6">
+      {/* Top Episode Selector Bar (Daylight Bright Mode) */}
+      <div className="border-b border-slate-200 bg-slate-50/90 text-slate-900 px-4 py-3.5 sm:px-6">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex items-center gap-2.5">
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-600 text-white shadow-sm font-black text-xs">
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-50 border border-blue-200 text-sgx-blue shadow-xs font-black text-xs">
               ▶
             </span>
             <div>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-blue-400">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-sgx-blue">
                 EduFinLit Video Walkthrough Studio
               </span>
-              <h3 className="font-display text-sm sm:text-base font-extrabold text-white">
+              <h3 className="font-display text-sm sm:text-base font-extrabold text-slate-900">
                 {activeEpisode.number}: {activeEpisode.title}
               </h3>
             </div>
@@ -248,14 +241,14 @@ export default function InteractiveVideoPlayer({
 
           {/* Mode Switcher & Copy Script */}
           <div className="flex flex-wrap items-center gap-2">
-            <div className="inline-flex rounded-xl bg-slate-800 p-0.5 border border-slate-700 text-xs">
+            <div className="inline-flex rounded-xl bg-slate-100 p-0.5 border border-slate-200 text-xs">
               <button
                 type="button"
                 onClick={() => setViewMode("video")}
                 className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 font-semibold transition ${
                   viewMode === "video"
-                    ? "bg-blue-600 text-white shadow-xs"
-                    : "text-slate-400 hover:text-white"
+                    ? "bg-white text-sgx-blue shadow-2xs border border-blue-200"
+                    : "text-slate-600 hover:text-slate-900"
                 }`}
               >
                 <VideoIcon className="h-3.5 w-3.5" />
@@ -266,8 +259,8 @@ export default function InteractiveVideoPlayer({
                 onClick={() => setViewMode("script")}
                 className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 font-semibold transition ${
                   viewMode === "script"
-                    ? "bg-blue-600 text-white shadow-xs"
-                    : "text-slate-400 hover:text-white"
+                    ? "bg-white text-sgx-blue shadow-2xs border border-blue-200"
+                    : "text-slate-600 hover:text-slate-900"
                 }`}
               >
                 <TableIcon className="h-3.5 w-3.5" />
@@ -289,11 +282,11 @@ export default function InteractiveVideoPlayer({
                   `# ${activeEpisode.number}: ${activeEpisode.title}\n${activeEpisode.subtitle}\nDuration: ${activeEpisode.duration}\n\n${scriptFull}`,
                 );
               }}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-slate-700 bg-slate-800/80 px-2.5 py-1 text-xs font-semibold text-slate-300 hover:bg-slate-700 hover:text-white transition"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 shadow-2xs hover:bg-slate-50 hover:text-slate-900 transition"
             >
               {copiedKey === `script-${activeEpisode.id}` ? (
                 <>
-                  <Check className="h-3.5 w-3.5 text-emerald-400" />
+                  <Check className="h-3.5 w-3.5 text-emerald-600" />
                   Copied!
                 </>
               ) : (
@@ -317,8 +310,8 @@ export default function InteractiveVideoPlayer({
                 onClick={() => switchEpisode(ep.id)}
                 className={`inline-flex shrink-0 items-center gap-2 rounded-xl px-3 py-1.5 text-xs font-bold transition border ${
                   isActive
-                    ? "bg-blue-600 text-white border-blue-400 shadow-md"
-                    : "bg-slate-800/70 text-slate-300 border-slate-700 hover:bg-slate-800 hover:text-white"
+                    ? "bg-blue-50 text-sgx-blue border-blue-300 shadow-2xs"
+                    : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50 hover:text-slate-900"
                 }`}
               >
                 <span className="font-mono text-[10px] opacity-80">
@@ -327,7 +320,11 @@ export default function InteractiveVideoPlayer({
                 <span className="truncate max-w-[150px] sm:max-w-[200px]">
                   {ep.title}
                 </span>
-                <span className="rounded bg-black/30 px-1 py-0.2 font-mono text-[10px] text-slate-200">
+                <span
+                  className={`rounded px-1.5 py-0.2 font-mono text-[10px] ${
+                    isActive ? "bg-blue-100 text-sgx-blue" : "bg-slate-100 text-slate-600"
+                  }`}
+                >
                   {ep.duration}
                 </span>
               </button>
@@ -338,11 +335,11 @@ export default function InteractiveVideoPlayer({
 
       {viewMode === "video" ? (
         <div>
-          {/* Main Simulated Screen Viewport */}
-          <div className="relative aspect-video w-full bg-slate-950 overflow-hidden select-none flex flex-col justify-between">
+          {/* Main Simulated Screen Viewport (Daylight Bright Theme) */}
+          <div className="relative aspect-video w-full bg-slate-100/70 overflow-hidden select-none flex flex-col justify-between border-b border-slate-200">
             {/* Visual Simulator Canvas / Screen Cue Render */}
             <div className="absolute inset-0 z-0">
-              {renderSimulatedScene(
+              {renderSimulatedSceneDaylight(
                 currentBeat.sceneType,
                 activeEpisode,
                 currentBeat,
@@ -351,32 +348,32 @@ export default function InteractiveVideoPlayer({
               )}
             </div>
 
-            {/* Top Overlay: Active Screen Cue & Role Badge */}
-            <div className="relative z-10 flex items-center justify-between p-4 bg-gradient-to-b from-black/80 via-black/40 to-transparent">
+            {/* Top Overlay: Active Screen Cue & Kinetic Callout */}
+            <div className="relative z-10 flex items-center justify-between p-4 bg-gradient-to-b from-white/90 via-white/50 to-transparent">
               <div className="flex items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-600/90 backdrop-blur-md px-3 py-0.5 font-mono text-[11px] font-bold text-white shadow-sm">
-                  <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-white/95 backdrop-blur-md px-3 py-0.5 font-mono text-[11px] font-bold text-sgx-blue border border-blue-200 shadow-2xs">
+                  <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
                   {currentBeat.time}
                 </span>
-                <span className="rounded-full bg-white/20 backdrop-blur-md px-2.5 py-0.5 text-[11px] font-semibold text-white">
+                <span className="rounded-full bg-white/90 backdrop-blur-md px-2.5 py-0.5 text-[11px] font-semibold text-slate-700 border border-slate-200 shadow-2xs">
                   {currentBeat.cue}
                 </span>
               </div>
 
               {/* Kinetic On-Screen Callout Pill */}
-              <div className="hidden sm:inline-flex items-center gap-1.5 rounded-xl border border-white/20 bg-slate-900/80 backdrop-blur-md px-3 py-1 font-mono text-xs font-bold text-amber-300 shadow-lg animate-pulse">
-                <Sparkles className="h-3.5 w-3.5 text-amber-400" />
+              <div className="hidden sm:inline-flex items-center gap-1.5 rounded-xl border border-amber-200 bg-amber-50/95 backdrop-blur-md px-3 py-1 font-mono text-xs font-bold text-amber-900 shadow-sm animate-pulse">
+                <Sparkles className="h-3.5 w-3.5 text-amber-600" />
                 {currentBeat.callout}
               </div>
             </div>
 
             {/* Center Big Play Button (when paused) */}
             {!isPlaying && (
-              <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/40 backdrop-blur-[2px]">
+              <div className="absolute inset-0 z-20 flex items-center justify-center bg-slate-900/10 backdrop-blur-[1px]">
                 <button
                   type="button"
                   onClick={handlePlayPause}
-                  className="group flex h-20 w-20 items-center justify-center rounded-full bg-blue-600 text-white shadow-2xl transition hover:scale-110 hover:bg-blue-500 focus:outline-none"
+                  className="group flex h-20 w-20 items-center justify-center rounded-full bg-sgx-blue text-white shadow-2xl transition hover:scale-110 hover:bg-blue-600 focus:outline-none"
                   aria-label="Play Walkthrough"
                 >
                   <Play className="h-9 w-9 translate-x-0.5 fill-white" />
@@ -384,20 +381,20 @@ export default function InteractiveVideoPlayer({
               </div>
             )}
 
-            {/* Bottom Overlay: Closed Captions Subtitle Box */}
-            <div className="relative z-10 p-4 sm:p-6 bg-gradient-to-t from-black/90 via-black/60 to-transparent">
+            {/* Bottom Overlay: Closed Captions Subtitle Box (Daylight) */}
+            <div className="relative z-10 p-4 sm:p-6 bg-gradient-to-t from-white/95 via-white/60 to-transparent">
               {showCaptions && (
-                <div className="mx-auto max-w-3xl rounded-2xl bg-black/75 backdrop-blur-md border border-white/10 p-3 sm:p-4 text-center shadow-xl">
-                  <p className="font-sans text-xs sm:text-sm font-semibold text-white leading-relaxed tracking-wide">
+                <div className="mx-auto max-w-3xl rounded-2xl bg-white/95 backdrop-blur-md border border-slate-200/90 p-3 sm:p-4 text-center shadow-md">
+                  <p className="font-sans text-xs sm:text-sm font-semibold text-slate-900 leading-relaxed tracking-wide">
                     &ldquo;{currentBeat.vo}&rdquo;
                   </p>
                   <div className="mt-1.5 flex items-center justify-center gap-2">
-                    <span className="rounded bg-blue-500/30 px-2 py-0.5 font-mono text-[10px] text-blue-300">
-                      CC · SGX EduFinLit Voiceover
+                    <span className="rounded bg-blue-50 border border-blue-200 px-2 py-0.5 font-mono text-[10px] font-bold text-sgx-blue">
+                      CC · EduFinLit Voiceover
                     </span>
                     {audioEnabled && isPlaying && (
-                      <span className="inline-flex items-center gap-1 font-mono text-[10px] text-emerald-400">
-                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping" />
+                      <span className="inline-flex items-center gap-1 font-mono text-[10px] text-emerald-700">
+                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-ping" />
                         Speaking…
                       </span>
                     )}
@@ -407,8 +404,8 @@ export default function InteractiveVideoPlayer({
             </div>
           </div>
 
-          {/* Video Scrub Bar & Interactive Controls */}
-          <div className="border-t border-slate-200 bg-slate-900 text-white p-3 sm:p-4 space-y-3">
+          {/* Video Scrub Bar & Interactive Controls (Daylight Bright Mode) */}
+          <div className="border-t border-slate-200 bg-white text-slate-800 p-3 sm:p-4 space-y-3">
             {/* Scrubber Progress Bar with Chapter Markers */}
             <div className="relative">
               <div
@@ -418,10 +415,10 @@ export default function InteractiveVideoPlayer({
                   const ratio = clickX / rect.width;
                   handleScrub(ratio * activeEpisode.durationSec);
                 }}
-                className="group relative h-2.5 w-full cursor-pointer rounded-full bg-slate-700/80 overflow-hidden"
+                className="group relative h-2.5 w-full cursor-pointer rounded-full bg-slate-200 overflow-hidden"
               >
                 <div
-                  className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 transition-all duration-100 ease-linear"
+                  className="h-full bg-gradient-to-r from-blue-600 to-indigo-600 transition-all duration-100 ease-linear"
                   style={{ width: `${progressPercent}%` }}
                 />
               </div>
@@ -434,7 +431,7 @@ export default function InteractiveVideoPlayer({
                     <div
                       key={b.id}
                       style={{ left: `${tickPercent}%` }}
-                      className="absolute top-0 h-2.5 w-0.5 bg-white/40"
+                      className="absolute top-0 h-2.5 w-0.5 bg-slate-400/80"
                       title={b.cue}
                     />
                   );
@@ -449,7 +446,7 @@ export default function InteractiveVideoPlayer({
                 <button
                   type="button"
                   onClick={handlePlayPause}
-                  className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-600 text-white shadow-xs hover:bg-blue-500 transition"
+                  className="flex h-9 w-9 items-center justify-center rounded-xl bg-sgx-blue text-white shadow-xs hover:bg-blue-700 transition"
                   aria-label={isPlaying ? "Pause" : "Play"}
                 >
                   {isPlaying ? (
@@ -463,7 +460,7 @@ export default function InteractiveVideoPlayer({
                 <button
                   type="button"
                   onClick={handleRestart}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition"
+                  className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition"
                   title="Restart Episode"
                 >
                   <RotateCcw className="h-4 w-4" />
@@ -473,7 +470,7 @@ export default function InteractiveVideoPlayer({
                 <button
                   type="button"
                   onClick={handlePrevBeat}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition"
+                  className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition"
                   title="Previous Chapter"
                 >
                   <ChevronLeft className="h-4 w-4" />
@@ -483,18 +480,18 @@ export default function InteractiveVideoPlayer({
                 <button
                   type="button"
                   onClick={handleNextBeat}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition"
+                  className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition"
                   title="Next Chapter"
                 >
                   <ChevronRight className="h-4 w-4" />
                 </button>
 
                 {/* Time Display */}
-                <div className="font-mono text-xs font-semibold text-slate-300 pl-1">
-                  <span className="text-white font-bold">
+                <div className="font-mono text-xs font-semibold text-slate-600 pl-1">
+                  <span className="text-slate-900 font-bold">
                     {formatTime(currentTimeSec)}
                   </span>
-                  <span className="text-slate-500"> / </span>
+                  <span className="text-slate-400"> / </span>
                   <span>{formatTime(activeEpisode.durationSec)}</span>
                 </div>
               </div>
@@ -512,19 +509,19 @@ export default function InteractiveVideoPlayer({
                   }}
                   className={`inline-flex items-center gap-1 rounded-xl px-2.5 py-1 text-xs font-semibold transition border ${
                     audioEnabled
-                      ? "bg-emerald-900/60 text-emerald-300 border-emerald-700/60"
-                      : "bg-slate-800 text-slate-400 border-slate-700"
+                      ? "bg-emerald-50 text-emerald-800 border-emerald-200"
+                      : "bg-slate-100 text-slate-600 border-slate-200"
                   }`}
                   title="Toggle Browser Voiceover Audio"
                 >
                   {audioEnabled ? (
                     <>
-                      <Volume2 className="h-3.5 w-3.5 text-emerald-400" />
+                      <Volume2 className="h-3.5 w-3.5 text-emerald-600" />
                       <span className="hidden sm:inline">Voiceover ON</span>
                     </>
                   ) : (
                     <>
-                      <VolumeX className="h-3.5 w-3.5 text-slate-400" />
+                      <VolumeX className="h-3.5 w-3.5 text-slate-500" />
                       <span className="hidden sm:inline">Muted</span>
                     </>
                   )}
@@ -536,8 +533,8 @@ export default function InteractiveVideoPlayer({
                   onClick={() => setShowCaptions(!showCaptions)}
                   className={`rounded-xl px-2.5 py-1 font-mono text-xs font-bold transition border ${
                     showCaptions
-                      ? "bg-blue-900/60 text-blue-300 border-blue-700/60"
-                      : "bg-slate-800 text-slate-400 border-slate-700"
+                      ? "bg-blue-50 text-sgx-blue border-blue-200"
+                      : "bg-slate-100 text-slate-600 border-slate-200"
                   }`}
                   title="Toggle Subtitles"
                 >
@@ -545,7 +542,7 @@ export default function InteractiveVideoPlayer({
                 </button>
 
                 {/* Speed Control */}
-                <div className="flex items-center rounded-xl bg-slate-800 border border-slate-700 p-0.5">
+                <div className="flex items-center rounded-xl bg-slate-100 border border-slate-200 p-0.5">
                   {([1, 1.25, 1.5, 2] as const).map((spd) => (
                     <button
                       key={spd}
@@ -553,8 +550,8 @@ export default function InteractiveVideoPlayer({
                       onClick={() => setPlaybackSpeed(spd)}
                       className={`rounded-lg px-1.5 py-0.5 font-mono text-[11px] font-bold transition ${
                         playbackSpeed === spd
-                          ? "bg-blue-600 text-white"
-                          : "text-slate-400 hover:text-white"
+                          ? "bg-sgx-blue text-white shadow-2xs"
+                          : "text-slate-600 hover:text-slate-900"
                       }`}
                     >
                       {spd}x
@@ -566,7 +563,7 @@ export default function InteractiveVideoPlayer({
                 <button
                   type="button"
                   onClick={toggleFullscreen}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition"
+                  className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition"
                   title="Fullscreen"
                 >
                   <Maximize2 className="h-4 w-4" />
@@ -576,8 +573,8 @@ export default function InteractiveVideoPlayer({
           </div>
         </div>
       ) : (
-        /* Full 3-Column Production Script Table View */
-        <div className="p-4 sm:p-6 space-y-4">
+        /* Full 3-Column Production Script Table View (Daylight Theme) */
+        <div className="p-4 sm:p-6 space-y-4 bg-white">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200 pb-3">
             <div>
               <h4 className="font-display text-base font-extrabold text-slate-900">
@@ -624,7 +621,7 @@ export default function InteractiveVideoPlayer({
                           handleScrub(b.startSec);
                           setIsPlaying(true);
                         }}
-                        className="mt-2 inline-flex items-center gap-1 rounded bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-700 hover:bg-blue-600 hover:text-white transition"
+                        className="mt-2 inline-flex items-center gap-1 rounded bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-700 hover:bg-sgx-blue hover:text-white transition"
                       >
                         <Play className="h-2.5 w-2.5" /> Jump to Beat
                       </button>
@@ -675,9 +672,9 @@ export default function InteractiveVideoPlayer({
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// High-Fidelity Animated Visual Scene Simulators
+// High-Fidelity Daylight Visual Scene Simulators (SGX Institutional Daylight)
 // ─────────────────────────────────────────────────────────────────────────────
-function renderSimulatedScene(
+function renderSimulatedSceneDaylight(
   sceneType: VideoBeat["sceneType"],
   episode: EpisodeData,
   beat: VideoBeat,
@@ -688,9 +685,9 @@ function renderSimulatedScene(
     case "intro":
     case "outro":
       return (
-        <div className="h-full w-full bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 flex flex-col items-center justify-center p-6 text-center text-white space-y-4">
+        <div className="h-full w-full bg-gradient-to-br from-blue-50/80 via-white to-indigo-50/60 flex flex-col items-center justify-center p-6 text-center text-slate-900 space-y-4">
           <div className="relative">
-            <div className="h-20 w-20 rounded-3xl bg-white p-2 shadow-2xl border-2 border-blue-400 flex items-center justify-center">
+            <div className="h-20 w-20 rounded-3xl bg-white p-2 shadow-lg border border-slate-200 flex items-center justify-center">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/efl-logo.png"
@@ -698,29 +695,29 @@ function renderSimulatedScene(
                 className="h-full w-full object-contain"
               />
             </div>
-            <span className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500 font-bold text-[10px] text-white">
+            <span className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-emerald-600 font-bold text-[10px] text-white shadow-sm">
               S$
             </span>
           </div>
           <div>
-            <span className="rounded-full bg-blue-500/20 border border-blue-400/40 px-3 py-1 font-mono text-xs font-bold text-blue-300">
+            <span className="rounded-full bg-blue-50 border border-blue-200 px-3 py-1 font-mono text-xs font-bold text-sgx-blue">
               {episode.number} · {episode.duration}
             </span>
-            <h2 className="mt-2 font-display text-xl sm:text-3xl font-extrabold text-white tracking-tight max-w-xl">
+            <h2 className="mt-2 font-display text-xl sm:text-3xl font-extrabold text-slate-900 tracking-tight max-w-xl">
               {episode.title}
             </h2>
-            <p className="mt-1 text-xs sm:text-sm text-slate-300 max-w-lg">
+            <p className="mt-1 text-xs sm:text-sm text-slate-600 max-w-lg">
               {episode.subtitle}
             </p>
           </div>
           <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
-            <span className="rounded-lg bg-white/10 px-2.5 py-1 text-[11px] font-mono text-emerald-300">
+            <span className="rounded-lg bg-white border border-slate-200 px-2.5 py-1 text-[11px] font-mono text-emerald-800 shadow-2xs font-semibold">
               S$10,000 Starting Capital
             </span>
-            <span className="rounded-lg bg-white/10 px-2.5 py-1 text-[11px] font-mono text-blue-300">
+            <span className="rounded-lg bg-white border border-slate-200 px-2.5 py-1 text-[11px] font-mono text-sgx-blue shadow-2xs font-semibold">
               20 SGX Blue Chips
             </span>
-            <span className="rounded-lg bg-white/10 px-2.5 py-1 text-[11px] font-mono text-amber-300">
+            <span className="rounded-lg bg-white border border-slate-200 px-2.5 py-1 text-[11px] font-mono text-indigo-800 shadow-2xs font-semibold">
               TradingView Pro Charts
             </span>
           </div>
@@ -729,15 +726,17 @@ function renderSimulatedScene(
 
     case "login_onboarding":
       return (
-        <div className="h-full w-full bg-slate-900 flex items-center justify-center p-4 sm:p-8">
-          <div className="w-full max-w-md rounded-2xl border border-slate-700 bg-white p-5 shadow-2xl text-slate-900 space-y-4 animate-in fade-in zoom-in-95 duration-500">
+        <div className="h-full w-full bg-slate-100/60 flex items-center justify-center p-4 sm:p-8">
+          <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-5 shadow-lg text-slate-900 space-y-4 animate-in fade-in zoom-in-95 duration-500">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/efl-logo.png" alt="Logo" className="h-7 w-7 rounded-lg" />
-                <span className="font-display text-sm font-extrabold">EduFinLit</span>
+                <span className="font-display text-sm font-extrabold text-slate-900">
+                  EduFinLit
+                </span>
               </div>
-              <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
+              <span className="rounded-full bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 text-[10px] font-bold text-emerald-800">
                 Singapore Cloud Ready
               </span>
             </div>
@@ -752,7 +751,7 @@ function renderSimulatedScene(
                     type="text"
                     readOnly
                     value="SGX4E1"
-                    className="w-full rounded-xl border border-blue-400 bg-blue-50/50 px-3 py-2 font-mono text-sm font-bold text-blue-900"
+                    className="w-full rounded-xl border border-blue-300 bg-blue-50/40 px-3 py-2 font-mono text-sm font-bold text-blue-900"
                   />
                   <span className="absolute right-2.5 top-2.5 text-[10px] font-bold text-emerald-600">
                     ✓ Verified Class
@@ -776,7 +775,7 @@ function renderSimulatedScene(
                   S$10,000.00 SGD
                 </span>
               </div>
-              <span className="rounded-lg bg-emerald-100 px-2.5 py-1 text-[11px] font-bold text-emerald-800">
+              <span className="rounded-lg bg-emerald-100 border border-emerald-200 px-2.5 py-1 text-[11px] font-bold text-emerald-800">
                 T+2 Real SGX Rules
               </span>
             </div>
@@ -786,17 +785,17 @@ function renderSimulatedScene(
 
     case "market_screener":
       return (
-        <div className="h-full w-full bg-slate-900 p-4 sm:p-6 flex flex-col justify-between">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-2.5 text-white">
+        <div className="h-full w-full bg-slate-100/60 p-4 sm:p-6 flex flex-col justify-between">
+          <div className="flex items-center justify-between border-b border-slate-200 pb-2.5 text-slate-900">
             <div className="flex items-center gap-2">
-              <span className="font-display text-xs sm:text-sm font-bold">
+              <span className="font-display text-xs sm:text-sm font-extrabold text-slate-900">
                 SGX Market Screener
               </span>
-              <span className="rounded-full bg-emerald-500/20 px-2 py-0.5 font-mono text-[10px] font-bold text-emerald-400">
+              <span className="rounded-full bg-emerald-50 border border-emerald-200 px-2 py-0.5 font-mono text-[10px] font-bold text-emerald-700">
                 LIVE · Singapore Morning Session
               </span>
             </div>
-            <div className="font-mono text-[11px] text-slate-400">
+            <div className="font-mono text-[11px] text-slate-500 font-semibold">
               SGT 10:45:22 · SGX Cash Market OPEN
             </div>
           </div>
@@ -838,32 +837,34 @@ function renderSimulatedScene(
             ].map((st) => (
               <div
                 key={st.ticker}
-                className="rounded-xl border border-slate-700 bg-slate-800/90 p-3 text-white space-y-1 shadow-md"
+                className="rounded-xl border border-slate-200 bg-white p-3 text-slate-900 space-y-1 shadow-2xs"
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-mono text-xs font-bold text-blue-400">
+                  <span className="font-mono text-xs font-bold text-sgx-blue">
                     {st.ticker}
                   </span>
                   <span
-                    className={`font-mono text-[10px] font-bold px-1.5 py-0.2 rounded ${
+                    className={`font-mono text-[10px] font-bold px-1.5 py-0.2 rounded border ${
                       st.up
-                        ? "bg-emerald-500/20 text-emerald-300"
-                        : "bg-rose-500/20 text-rose-300"
+                        ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                        : "bg-rose-50 text-rose-700 border-rose-200"
                     }`}
                   >
                     {st.chg}
                   </span>
                 </div>
-                <div className="text-[11px] text-slate-300 truncate">{st.name}</div>
-                <div className="font-mono text-sm font-extrabold">{st.price}</div>
-                <span className="inline-block text-[9px] text-slate-400 border border-slate-700 rounded px-1">
+                <div className="text-[11px] text-slate-600 truncate">{st.name}</div>
+                <div className="font-mono text-sm font-extrabold text-slate-900">
+                  {st.price}
+                </div>
+                <span className="inline-block text-[9px] text-slate-500 border border-slate-200 rounded px-1.5 py-0.2 bg-slate-50">
                   {st.tier}
                 </span>
               </div>
             ))}
           </div>
 
-          <div className="rounded-xl bg-slate-800/60 border border-slate-700/60 p-2.5 text-center text-[11px] text-slate-300 font-mono">
+          <div className="rounded-xl bg-white border border-slate-200 p-2.5 text-center text-[11px] text-slate-600 font-mono shadow-2xs">
             SGX Tick Precision: 0.1¢ below S$0.20 · 0.5¢ below S$2.00 · 1.0¢ above S$2.00
           </div>
         </div>
@@ -881,18 +882,18 @@ function renderSimulatedScene(
       const feeDragPct = (totalFees / gross) * 100;
 
       return (
-        <div className="h-full w-full bg-slate-900 p-4 sm:p-6 flex items-center justify-center">
-          <div className="w-full max-w-lg rounded-2xl border border-slate-700 bg-slate-800 p-4 sm:p-5 text-white space-y-3.5 shadow-2xl">
-            <div className="flex items-center justify-between border-b border-slate-700 pb-2">
+        <div className="h-full w-full bg-slate-100/60 p-4 sm:p-6 flex items-center justify-center">
+          <div className="w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 text-slate-900 space-y-3.5 shadow-md">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-2">
               <div>
-                <span className="font-mono text-xs font-bold text-emerald-400">
+                <span className="font-mono text-xs font-bold text-emerald-700">
                   BUY OV8.SI · Sheng Siong Group
                 </span>
-                <p className="text-[11px] text-slate-400">
+                <p className="text-[11px] text-slate-500">
                   SGX Board Lot = 100 Shares @ S$1.580
                 </p>
               </div>
-              <span className="rounded-full bg-blue-500/20 border border-blue-400 px-2 py-0.5 font-mono text-[10px] text-blue-300 font-bold">
+              <span className="rounded-full bg-blue-50 border border-blue-200 px-2.5 py-0.5 font-mono text-[10px] text-sgx-blue font-bold">
                 FL-C2 Fee Sizing
               </span>
             </div>
@@ -900,8 +901,8 @@ function renderSimulatedScene(
             {/* Interactive Quantity Slider */}
             <div className="space-y-1.5">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-slate-300">Position Size (Lots):</span>
-                <span className="font-mono font-bold text-white">
+                <span className="text-slate-600 font-medium">Position Size (Lots):</span>
+                <span className="font-mono font-bold text-slate-900">
                   {interactiveLots} Lots ({shares.toLocaleString()} Shares) = S$
                   {gross.toFixed(2)}
                 </span>
@@ -912,7 +913,7 @@ function renderSimulatedScene(
                   onClick={() =>
                     setInteractiveLots((prev) => Math.max(1, prev - 1))
                   }
-                  className="rounded-lg bg-slate-700 px-2.5 py-1 text-xs font-bold text-white hover:bg-slate-600"
+                  className="rounded-lg bg-slate-100 border border-slate-200 px-2.5 py-1 text-xs font-bold text-slate-800 hover:bg-slate-200"
                 >
                   -1 Lot
                 </button>
@@ -922,14 +923,14 @@ function renderSimulatedScene(
                   max="15"
                   value={interactiveLots}
                   onChange={(e) => setInteractiveLots(Number(e.target.value))}
-                  className="h-2 flex-1 cursor-pointer accent-blue-500 rounded-lg bg-slate-700"
+                  className="h-2 flex-1 cursor-pointer accent-blue-600 rounded-lg bg-slate-200"
                 />
                 <button
                   type="button"
                   onClick={() =>
                     setInteractiveLots((prev) => Math.min(15, prev + 1))
                   }
-                  className="rounded-lg bg-slate-700 px-2.5 py-1 text-xs font-bold text-white hover:bg-slate-600"
+                  className="rounded-lg bg-slate-100 border border-slate-200 px-2.5 py-1 text-xs font-bold text-slate-800 hover:bg-slate-200"
                 >
                   +1 Lot
                 </button>
@@ -940,10 +941,10 @@ function renderSimulatedScene(
             <div
               className={`rounded-xl border p-3 space-y-1.5 transition-colors ${
                 feeDragPct > 3.0
-                  ? "border-rose-500/50 bg-rose-950/40 text-rose-200"
+                  ? "border-rose-200 bg-rose-50/80 text-rose-900"
                   : feeDragPct > 1.5
-                  ? "border-amber-500/50 bg-amber-950/40 text-amber-200"
-                  : "border-emerald-500/50 bg-emerald-950/40 text-emerald-200"
+                  ? "border-amber-200 bg-amber-50/80 text-amber-900"
+                  : "border-emerald-200 bg-emerald-50/80 text-emerald-900"
               }`}
             >
               <div className="flex items-center justify-between text-xs font-bold">
@@ -952,14 +953,14 @@ function renderSimulatedScene(
                   {feeDragPct.toFixed(2)}% (S${totalFees.toFixed(2)} Total)
                 </span>
               </div>
-              <div className="h-2 w-full rounded-full bg-black/40 overflow-hidden">
+              <div className="h-2 w-full rounded-full bg-slate-200 overflow-hidden">
                 <div
                   className={`h-full transition-all duration-300 ${
                     feeDragPct > 3.0
-                      ? "bg-rose-500"
+                      ? "bg-rose-600"
                       : feeDragPct > 1.5
-                      ? "bg-amber-400"
-                      : "bg-emerald-400"
+                      ? "bg-amber-500"
+                      : "bg-emerald-600"
                   }`}
                   style={{ width: `${Math.min(100, (feeDragPct / 7) * 100)}%` }}
                 />
@@ -976,25 +977,25 @@ function renderSimulatedScene(
 
     case "candlestick_charts":
       return (
-        <div className="h-full w-full bg-slate-900 p-4 sm:p-6 flex flex-col justify-between">
-          <div className="flex items-center justify-between text-white border-b border-slate-800 pb-2">
+        <div className="h-full w-full bg-white p-4 sm:p-6 flex flex-col justify-between">
+          <div className="flex items-center justify-between text-slate-900 border-b border-slate-100 pb-2">
             <div className="flex items-center gap-2">
-              <span className="font-mono text-xs font-bold text-blue-400">
+              <span className="font-mono text-xs font-bold text-sgx-blue">
                 D05.SI · DBS Group Holdings
               </span>
-              <span className="rounded bg-blue-500/20 px-2 py-0.5 text-[10px] font-mono text-blue-300">
+              <span className="rounded bg-blue-50 border border-blue-200 px-2 py-0.5 text-[10px] font-mono text-sgx-blue font-semibold">
                 TradingView Lightweight Engine
               </span>
             </div>
             <div className="flex items-center gap-2 text-[10px] font-mono">
-              <span className="text-blue-400 font-bold">SMA 20: S$35.90</span>
-              <span className="text-amber-400 font-bold">SMA 50: S$34.80</span>
-              <span className="text-emerald-400 font-bold">VWAP: S$36.15</span>
+              <span className="text-sgx-blue font-bold">SMA 20: S$35.90</span>
+              <span className="text-amber-700 font-bold">SMA 50: S$34.80</span>
+              <span className="text-emerald-700 font-bold">VWAP: S$36.15</span>
             </div>
           </div>
 
-          {/* Simulated Candlesticks */}
-          <div className="my-auto flex items-end justify-center gap-3 h-36 px-4">
+          {/* Simulated Candlesticks (Daylight) */}
+          <div className="my-auto flex items-end justify-center gap-3 h-36 px-4 bg-slate-50/50 rounded-xl border border-slate-100">
             {[
               { h: 60, bull: true, wickT: 10, wickB: 12 },
               { h: 45, bull: false, wickT: 8, wickB: 10 },
@@ -1008,24 +1009,24 @@ function renderSimulatedScene(
             ].map((c, i) => (
               <div key={i} className="flex flex-col items-center">
                 <div
-                  className={`w-0.5 ${c.bull ? "bg-emerald-400" : "bg-rose-400"}`}
+                  className={`w-0.5 ${c.bull ? "bg-emerald-600" : "bg-rose-500"}`}
                   style={{ height: `${c.wickT}px` }}
                 />
                 <div
-                  className={`w-4 rounded-xs shadow-xs ${
+                  className={`w-4 rounded-xs shadow-2xs ${
                     c.bull ? "bg-emerald-500" : "bg-rose-500"
                   }`}
                   style={{ height: `${c.h}px` }}
                 />
                 <div
-                  className={`w-0.5 ${c.bull ? "bg-emerald-400" : "bg-rose-400"}`}
+                  className={`w-0.5 ${c.bull ? "bg-emerald-600" : "bg-rose-500"}`}
                   style={{ height: `${c.wickB}px` }}
                 />
               </div>
             ))}
           </div>
 
-          <div className="rounded-xl bg-slate-800/80 border border-slate-700 p-2 text-center text-[10px] font-mono text-slate-300">
+          <div className="rounded-xl bg-slate-50 border border-slate-200 p-2 text-center text-[10px] font-mono text-slate-600">
             RSI(14): 58.4 (Neutral Bullish) · MACD Bullish Cross Confirmed
           </div>
         </div>
@@ -1033,13 +1034,13 @@ function renderSimulatedScene(
 
     case "level2_depth":
       return (
-        <div className="h-full w-full bg-slate-900 p-4 sm:p-6 flex flex-col justify-center items-center">
-          <div className="w-full max-w-lg rounded-2xl border border-slate-700 bg-slate-800 p-4 text-white space-y-3">
-            <div className="flex items-center justify-between border-b border-slate-700 pb-2">
-              <span className="font-mono text-xs font-bold text-amber-300">
+        <div className="h-full w-full bg-slate-100/60 p-4 sm:p-6 flex flex-col justify-center items-center">
+          <div className="w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-4 text-slate-900 space-y-3 shadow-md">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+              <span className="font-mono text-xs font-bold text-slate-900">
                 SGX 5-Level Bid / Ask Depth Book (DBS D05.SI)
               </span>
-              <span className="font-mono text-[10px] text-slate-400">
+              <span className="font-mono text-[10px] text-slate-500">
                 Spread: S$0.01 (0.03%)
               </span>
             </div>
@@ -1047,7 +1048,7 @@ function renderSimulatedScene(
             <div className="grid grid-cols-2 gap-3 text-xs font-mono">
               {/* Bids */}
               <div className="space-y-1">
-                <div className="text-[10px] font-bold text-emerald-400 uppercase">
+                <div className="text-[10px] font-bold text-emerald-700 uppercase">
                   Bids (Buyers)
                 </div>
                 {[
@@ -1057,23 +1058,23 @@ function renderSimulatedScene(
                 ].map((b, i) => (
                   <div
                     key={i}
-                    className="relative flex justify-between p-1 rounded bg-slate-700/40 overflow-hidden"
+                    className="relative flex justify-between p-1 rounded bg-slate-50 border border-slate-100 overflow-hidden"
                   >
                     <div
-                      className="absolute inset-y-0 left-0 bg-emerald-500/20"
+                      className="absolute inset-y-0 left-0 bg-emerald-100"
                       style={{ width: b.bar }}
                     />
-                    <span className="relative text-emerald-300 font-bold">
+                    <span className="relative text-emerald-800 font-bold">
                       {b.price}
                     </span>
-                    <span className="relative text-slate-300">{b.qty}</span>
+                    <span className="relative text-slate-700">{b.qty}</span>
                   </div>
                 ))}
               </div>
 
               {/* Asks */}
               <div className="space-y-1">
-                <div className="text-[10px] font-bold text-rose-400 uppercase">
+                <div className="text-[10px] font-bold text-rose-700 uppercase">
                   Asks (Sellers)
                 </div>
                 {[
@@ -1083,14 +1084,14 @@ function renderSimulatedScene(
                 ].map((a, i) => (
                   <div
                     key={i}
-                    className="relative flex justify-between p-1 rounded bg-slate-700/40 overflow-hidden"
+                    className="relative flex justify-between p-1 rounded bg-slate-50 border border-slate-100 overflow-hidden"
                   >
                     <div
-                      className="absolute inset-y-0 right-0 bg-rose-500/20"
+                      className="absolute inset-y-0 right-0 bg-rose-100"
                       style={{ width: a.bar }}
                     />
-                    <span className="relative text-slate-300">{a.qty}</span>
-                    <span className="relative text-rose-300 font-bold">
+                    <span className="relative text-slate-700">{a.qty}</span>
+                    <span className="relative text-rose-800 font-bold">
                       {a.price}
                     </span>
                   </div>
@@ -1103,52 +1104,52 @@ function renderSimulatedScene(
 
     case "ai_copilot_chat":
       return (
-        <div className="h-full w-full bg-slate-900 p-4 sm:p-6 flex flex-col justify-center items-center">
-          <div className="w-full max-w-lg rounded-2xl border border-slate-700 bg-slate-800 p-4 text-white space-y-3 shadow-2xl">
-            <div className="flex items-center gap-2 border-b border-slate-700 pb-2">
-              <Bot className="h-4 w-4 text-blue-400" />
-              <span className="font-display text-xs font-bold text-blue-300">
+        <div className="h-full w-full bg-slate-100/60 p-4 sm:p-6 flex flex-col justify-center items-center">
+          <div className="w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-4 text-slate-900 space-y-3 shadow-md">
+            <div className="flex items-center gap-2 border-b border-slate-100 pb-2">
+              <Bot className="h-4 w-4 text-sgx-blue" />
+              <span className="font-display text-xs font-bold text-slate-900">
                 Agentic Socratic Trading Copilot
               </span>
             </div>
 
             {/* User message */}
             <div className="flex justify-end">
-              <div className="rounded-xl rounded-tr-xs bg-blue-600 px-3 py-1.5 text-xs text-white max-w-[80%]">
+              <div className="rounded-xl rounded-tr-xs bg-sgx-blue px-3 py-1.5 text-xs text-white max-w-[80%] shadow-2xs">
                 Compare DBS vs Singtel yields and stage 100 shares for higher yield.
               </div>
             </div>
 
             {/* AI Response Card */}
-            <div className="rounded-xl border border-blue-500/40 bg-blue-950/40 p-3 text-xs space-y-2">
-              <div className="flex items-center gap-1.5 text-blue-300 font-bold text-[11px]">
-                <Sparkles className="h-3 w-3 text-amber-400" />
+            <div className="rounded-xl border border-blue-200 bg-blue-50/50 p-3 text-xs space-y-2">
+              <div className="flex items-center gap-1.5 text-sgx-blue font-bold text-[11px]">
+                <Sparkles className="h-3 w-3 text-amber-500" />
                 Socratic Analysis &amp; Staged Order:
               </div>
-              <p className="text-[11px] text-slate-300 leading-relaxed">
-                Singtel (\`Z74.SI\`) yields <strong>5.8%</strong> vs DBS (\`D05.SI\`) at <strong>5.2%</strong>. Here is your staged order for 100 shares of Singtel at S$2.42:
+              <p className="text-[11px] text-slate-700 leading-relaxed">
+                Singtel (<code>Z74.SI</code>) yields <strong>5.8%</strong> vs DBS (<code>D05.SI</code>) at <strong>5.2%</strong>. Here is your staged order for 100 shares of Singtel at S$2.42:
               </p>
 
               {/* Staged Order Box */}
-              <div className="rounded-lg border border-slate-700 bg-slate-900 p-2.5 flex items-center justify-between">
+              <div className="rounded-lg border border-slate-200 bg-white p-2.5 flex items-center justify-between shadow-2xs">
                 <div>
-                  <span className="font-mono text-xs font-bold text-emerald-400">
+                  <span className="font-mono text-xs font-bold text-emerald-700">
                     BUY 100 Z74.SI @ S$2.42
                   </span>
-                  <span className="block text-[10px] text-slate-400">
+                  <span className="block text-[10px] text-slate-500">
                     Gross S$242.00 · Fee S$10.96
                   </span>
                 </div>
                 <div className="flex items-center gap-1">
                   <button
                     type="button"
-                    className="rounded bg-slate-800 px-2 py-1 text-[10px] font-bold text-slate-300"
+                    className="rounded bg-slate-100 border border-slate-200 px-2 py-1 text-[10px] font-bold text-slate-700"
                   >
                     +1 Lot
                   </button>
                   <button
                     type="button"
-                    className="rounded bg-blue-600 px-2.5 py-1 text-[10px] font-bold text-white shadow-xs"
+                    className="rounded bg-sgx-blue px-2.5 py-1 text-[10px] font-bold text-white shadow-xs"
                   >
                     Execute
                   </button>
@@ -1161,50 +1162,50 @@ function renderSimulatedScene(
 
     case "leaderboard_hhi":
       return (
-        <div className="h-full w-full bg-slate-900 p-4 sm:p-6 flex flex-col justify-center items-center">
-          <div className="w-full max-w-lg rounded-2xl border border-slate-700 bg-slate-800 p-4 text-white space-y-3">
-            <div className="flex items-center justify-between border-b border-slate-700 pb-2">
-              <span className="font-display text-xs font-bold text-amber-400">
+        <div className="h-full w-full bg-slate-100/60 p-4 sm:p-6 flex flex-col justify-center items-center">
+          <div className="w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-4 text-slate-900 space-y-3 shadow-md">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+              <span className="font-display text-xs font-bold text-slate-900">
                 EduFinLit Smart Investor Score Podium
               </span>
-              <span className="font-mono text-[10px] text-slate-400">
+              <span className="font-mono text-[10px] text-slate-500 font-semibold">
                 Score = Return × (1 + (1 − HHI))
               </span>
             </div>
 
             <div className="grid grid-cols-2 gap-3 text-xs">
-              <div className="rounded-xl border border-rose-500/40 bg-rose-950/30 p-3 space-y-1">
-                <span className="font-bold text-rose-300 block">
+              <div className="rounded-xl border border-rose-200 bg-rose-50/50 p-3 space-y-1">
+                <span className="font-bold text-rose-900 block">
                   Gambler Portfolio
                 </span>
-                <span className="text-[10px] text-slate-400 block">
+                <span className="text-[10px] text-slate-500 block">
                   100% in 1 Penny Stock
                 </span>
-                <div className="font-mono text-xs text-slate-200">
+                <div className="font-mono text-xs text-slate-700">
                   Return: +12.0%
                 </div>
-                <div className="font-mono text-xs text-slate-200">
+                <div className="font-mono text-xs text-slate-700">
                   HHI: 1.0 (Multiplier: 1.0x)
                 </div>
-                <div className="pt-1 font-mono text-sm font-extrabold text-rose-400">
+                <div className="pt-1 font-mono text-sm font-extrabold text-rose-700">
                   Final: 12.00 Pts
                 </div>
               </div>
 
-              <div className="rounded-xl border border-emerald-500/40 bg-emerald-950/30 p-3 space-y-1">
-                <span className="font-bold text-emerald-300 block">
+              <div className="rounded-xl border border-emerald-200 bg-emerald-50/50 p-3 space-y-1">
+                <span className="font-bold text-emerald-900 block">
                   Diversified Student 🏆
                 </span>
-                <span className="text-[10px] text-slate-400 block">
+                <span className="text-[10px] text-slate-500 block">
                   4 Stocks @ 25% Each
                 </span>
-                <div className="font-mono text-xs text-slate-200">
+                <div className="font-mono text-xs text-slate-700">
                   Return: +10.0%
                 </div>
-                <div className="font-mono text-xs text-slate-200">
+                <div className="font-mono text-xs text-slate-700">
                   HHI: 0.25 (Multiplier: 1.75x!)
                 </div>
-                <div className="pt-1 font-mono text-sm font-extrabold text-emerald-400">
+                <div className="pt-1 font-mono text-sm font-extrabold text-emerald-700">
                   Final: 17.50 Pts
                 </div>
               </div>
@@ -1218,13 +1219,13 @@ function renderSimulatedScene(
     case "teacher_solo_taxonomy":
     case "teacher_comments_export":
       return (
-        <div className="h-full w-full bg-slate-900 p-4 sm:p-6 flex flex-col justify-center items-center">
-          <div className="w-full max-w-lg rounded-2xl border border-slate-700 bg-slate-800 p-4 text-white space-y-3">
-            <div className="flex items-center justify-between border-b border-slate-700 pb-2">
-              <span className="font-display text-xs font-bold text-blue-300">
+        <div className="h-full w-full bg-slate-100/60 p-4 sm:p-6 flex flex-col justify-center items-center">
+          <div className="w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-4 text-slate-900 space-y-3 shadow-md">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+              <span className="font-display text-xs font-bold text-slate-900">
                 Cognitive Science 5-Pillar Competency Radar (FL-C1 to FL-C5)
               </span>
-              <span className="rounded bg-emerald-500/20 px-2 py-0.5 font-mono text-[10px] font-bold text-emerald-400">
+              <span className="rounded bg-emerald-50 border border-emerald-200 px-2 py-0.5 font-mono text-[10px] font-bold text-emerald-800">
                 Mastery Score: 84 / 100
               </span>
             </div>
@@ -1239,14 +1240,14 @@ function renderSimulatedScene(
               ].map((c) => (
                 <div key={c.name} className="space-y-0.5">
                   <div className="flex justify-between text-[11px]">
-                    <span className="text-slate-300">{c.name}</span>
-                    <span className="font-mono font-bold text-emerald-400">
+                    <span className="text-slate-600 font-medium">{c.name}</span>
+                    <span className="font-mono font-bold text-emerald-700">
                       {c.score}%
                     </span>
                   </div>
-                  <div className="h-1.5 w-full rounded-full bg-slate-700 overflow-hidden">
+                  <div className="h-1.5 w-full rounded-full bg-slate-100 overflow-hidden border border-slate-200">
                     <div
-                      className="h-full bg-gradient-to-r from-blue-500 to-emerald-400"
+                      className="h-full bg-gradient-to-r from-blue-600 to-emerald-500"
                       style={{ width: `${c.score}%` }}
                     />
                   </div>
@@ -1269,15 +1270,15 @@ function renderSimulatedScene(
     case "drip_simulator":
     default:
       return (
-        <div className="h-full w-full bg-slate-900 p-6 flex flex-col justify-center items-center text-center text-white space-y-3">
-          <div className="rounded-2xl border border-slate-700 bg-slate-800 p-6 max-w-md space-y-2 shadow-xl">
-            <span className="rounded-full bg-blue-500/20 border border-blue-400 px-3 py-1 font-mono text-[10px] font-bold text-blue-300">
+        <div className="h-full w-full bg-slate-100/60 p-6 flex flex-col justify-center items-center text-center text-slate-900 space-y-3">
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 max-w-md space-y-2 shadow-md">
+            <span className="rounded-full bg-blue-50 border border-blue-200 px-3 py-1 font-mono text-[10px] font-bold text-sgx-blue">
               {beat.cue}
             </span>
-            <h3 className="font-display text-base font-extrabold text-white">
+            <h3 className="font-display text-base font-extrabold text-slate-900">
               {beat.callout}
             </h3>
-            <p className="text-xs text-slate-300 leading-relaxed">
+            <p className="text-xs text-slate-600 leading-relaxed">
               &ldquo;{beat.vo}&rdquo;
             </p>
           </div>

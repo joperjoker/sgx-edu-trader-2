@@ -246,7 +246,7 @@ export default function HandbookClient() {
           {/* Handbook Header */}
           <div className="border-b border-slate-200 pb-5 space-y-2">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="rounded-lg bg-slate-900 px-2.5 py-1 font-mono text-xs font-bold text-white uppercase">
+              <span className="rounded-lg bg-blue-50 border border-blue-200 px-2.5 py-1 font-mono text-xs font-bold text-sgx-blue uppercase">
                 {currentHandbook.role} EDITION
               </span>
               <span className="rounded-lg bg-blue-50 border border-blue-200 px-2.5 py-1 text-xs font-semibold text-sgx-blue">
@@ -319,7 +319,7 @@ export default function HandbookClient() {
                       return (
                         <pre
                           key={pIdx}
-                          className="rounded-xl border border-slate-800 bg-slate-900 p-3.5 font-mono text-xs text-emerald-400 overflow-x-auto shadow-inner"
+                          className="rounded-xl border border-slate-200 bg-slate-50 p-3.5 font-mono text-xs text-slate-800 overflow-x-auto shadow-2xs"
                         >
                           <code>{codeContent}</code>
                         </pre>
@@ -392,7 +392,7 @@ export default function HandbookClient() {
               </button>
               <Link
                 href="/launch"
-                className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-3.5 py-1.5 text-xs font-bold text-white shadow-xs hover:bg-sgx-blue transition"
+                className="inline-flex items-center gap-1.5 rounded-xl bg-sgx-blue px-3.5 py-1.5 text-xs font-bold text-white shadow-xs hover:bg-blue-700 transition"
               >
                 Go to Google Launch Center
                 <ArrowRight className="h-3.5 w-3.5" />
