@@ -28,6 +28,7 @@ import {
   getSgxTickSize,
   roundToSgxTick,
 } from "@/utils/sgx-market";
+import { PRE_TRADE_THESIS_OPTIONS } from "@/utils/learning-science";
 
 interface Props {
   ticker: string;
@@ -90,6 +91,10 @@ export default function SgxOrderTicket({
   const [achievementKey, setAchievementKey] = useState<string | null>(null);
   const [showTutorial, setShowTutorial] = useState(!hasCompletedTutorial);
   const [tutorialStep, setTutorialStep] = useState(0);
+  const [selectedThesisId, setSelectedThesisId] = useState<string>(
+    PRE_TRADE_THESIS_OPTIONS[0].id,
+  );
+  const [confidenceLevel, setConfidenceLevel] = useState<number>(4);
   const [isPending, startTransition] = useTransition();
   const lastSubmitRef = useRef<number>(0);
 
@@ -559,6 +564,53 @@ export default function SgxOrderTicket({
             )}
           </div>
 
+          {/* Pre-Trade Metacognitive Calibration (Pillar C5: Think Before You Trade) */}
+          <div className="rounded-2xl border border-indigo-200/80 bg-indigo-50/40 p-3 text-xs space-y-2">
+            <div className="flex items-center justify-between gap-2">
+              <span className="font-bold text-indigo-950 flex items-center gap-1">
+                🧠 Pre-Trade Thesis (Metacognitive Check)
+              </span>
+              <span className="rounded-full bg-white border border-indigo-200 px-2 py-0.5 font-mono text-[10px] font-bold text-indigo-700">
+                Rubric C5
+              </span>
+            </div>
+            <select
+              id="pre-trade-thesis-select"
+              name="preTradeThesis"
+              aria-label="Select Pre-Trade Investment Thesis"
+              value={selectedThesisId}
+              onChange={(e) => setSelectedThesisId(e.target.value)}
+              className="w-full rounded-xl border border-indigo-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-800 outline-none focus:border-sgx-blue"
+            >
+              {PRE_TRADE_THESIS_OPTIONS.map((opt) => (
+                <option key={opt.id} value={opt.id}>
+                  [{opt.competencyId}] {opt.label}
+                </option>
+              ))}
+            </select>
+            <div className="flex items-center justify-between pt-0.5">
+              <span className="text-[11px] text-slate-600">
+                Confidence Calibration:
+              </span>
+              <div className="flex items-center gap-1">
+                {[1, 2, 3, 4, 5].map((lvl) => (
+                  <button
+                    key={lvl}
+                    type="button"
+                    onClick={() => setConfidenceLevel(lvl)}
+                    className={`h-6 w-6 rounded-lg font-mono text-[11px] font-bold transition ${
+                      confidenceLevel === lvl
+                        ? "bg-sgx-blue text-white shadow-2xs"
+                        : "bg-white border border-slate-200 text-slate-600 hover:border-sgx-blue"
+                    }`}
+                  >
+                    {lvl}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
           {errorMsg && (
             <div
               role="alert"
@@ -757,6 +809,13 @@ export default function SgxOrderTicket({
               <span className="font-mono font-bold text-slate-900">
                 S${formatSgd(contractNoteModal.cashBalance)}
               </span>
+            </div>
+
+            <div className="mt-3 rounded-xl border border-indigo-200 bg-indigo-50/50 p-2.5 text-[11px] text-indigo-950">
+              <strong>Logged Pre-Trade Thesis (Rubric C5):</strong>{" "}
+              {PRE_TRADE_THESIS_OPTIONS.find((o) => o.id === selectedThesisId)
+                ?.label ?? "Dividend Yield"}{" "}
+              · Confidence: <strong>{confidenceLevel}/5</strong>
             </div>
 
             <button

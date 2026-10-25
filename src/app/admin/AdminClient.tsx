@@ -48,6 +48,7 @@ import {
   formatSgd,
   formatSgxPrice,
 } from "@/utils/sgx-market";
+import { computeStudentCompetencyProfile } from "@/utils/learning-science";
 
 interface Props {
   currentUser: UserProfileDoc;
@@ -121,17 +122,106 @@ export default function AdminClient({
     [users, selectedClassId],
   );
 
+  // Compute standards-aligned 5-Pillar Financial Literacy Mastery Profile for each student
+  const studentProfiles = useMemo(() => {
+    const map = new Map<
+      string,
+      ReturnType<typeof computeStudentCompetencyProfile>
+    >();
+    students.forEach((s) => {
+      const sTrades = trades.filter((t) => t.userId === s.uid);
+      const sRefls = reflections.filter((r) => r.userId === s.uid);
+      const syntheticHoldings = Array.from(
+        new Set(sTrades.map((t) => t.ticker)),
+      ).map((ticker) => ({
+        ticker,
+        shares: 100,
+        avgPrice: 10,
+        updatedAt: new Date().toISOString(),
+      }));
+      map.set(
+        s.uid,
+        computeStudentCompetencyProfile({
+          user: s,
+          holdings:
+            syntheticHoldings.length > 0
+              ? syntheticHoldings
+              : s.holdingsValue > 0
+                ? [
+                    {
+                      ticker: "D05.SI",
+                      shares: 100,
+                      avgPrice: 35,
+                      updatedAt: new Date().toISOString(),
+                    },
+                    {
+                      ticker: "OV8.SI",
+                      shares: 100,
+                      avgPrice: 1.6,
+                      updatedAt: new Date().toISOString(),
+                    },
+                  ]
+                : [],
+          trades: sTrades,
+          limitOrders: [],
+          reflections: sRefls,
+        }),
+      );
+    });
+    return map;
+  }, [students, trades, reflections]);
+
+  const classLearningSummary = useMemo(() => {
+    const list = Array.from(studentProfiles.values());
+    if (list.length === 0) {
+      return {
+        avgMasteryPct: 0,
+        proficientStudentsCount: 0,
+        c1Avg: 0,
+        c2Avg: 0,
+        c3Avg: 0,
+        c4Avg: 0,
+        c5Avg: 0,
+      };
+    }
+    const avg = (idx: number) =>
+      Math.round(
+        list.reduce((a, p) => a + (p.competencies[idx]?.scorePct ?? 0), 0) /
+          list.length,
+      );
+    return {
+      avgMasteryPct: Math.round(
+        list.reduce((a, p) => a + p.overallScorePct, 0) / list.length,
+      ),
+      proficientStudentsCount: list.filter((p) => p.overallScorePct >= 70)
+        .length,
+      c1Avg: avg(0),
+      c2Avg: avg(1),
+      c3Avg: avg(2),
+      c4Avg: avg(3),
+      c5Avg: avg(4),
+    };
+  }, [studentProfiles]);
+
   const notify = (msg: string) => {
     setStatusBanner(msg);
     setTimeout(() => setStatusBanner(null), 5000);
   };
 
-  // Export Classroom Gradebook to Google Sheets (CSV)
+  // Export Classroom Gradebook + 5-Pillar Competency Rubric to Google Sheets (CSV)
   const handleExportGoogleSheetsCsv = () => {
     const header = [
       "Email (Google Account)",
       "Nickname",
       "Class Group",
+      "Overall Competency Mastery (%)",
+      "Proficiency Band",
+      "SOLO Taxonomy Stage",
+      "C1 Market Mechanics (%)",
+      "C2 Fee-Drag Math (%)",
+      "C3 Diversification 1-HHI (%)",
+      "C4 Valuation & DRIP (%)",
+      "C5 Metacognition (%)",
       "Net Value (S$)",
       "Cash Balance (S$)",
       "Holdings Value (S$)",
@@ -140,6 +230,7 @@ export default function AdminClient({
       "Smart Investor Score",
       "Total Fees Paid (S$)",
       "Reflections Submitted",
+      "Formative Report Card Narrative",
     ];
 
     const classLookup = new Map<string, string>();
@@ -158,11 +249,20 @@ export default function AdminClient({
       const className =
         s.classGroupIds.map((id) => classLookup.get(id) ?? id).join("; ") ||
         "Unassigned";
+      const prof = studentProfiles.get(s.uid);
 
       return [
         s.email,
         `"${s.nickname.replace(/"/g, '""')}"`,
         `"${className}"`,
+        String(prof?.overallScorePct ?? 50),
+        `"${prof?.overallLevel ?? "Level 2: Developing"}"`,
+        `"${prof?.overallSoloStage ?? "Multistructural"}"`,
+        String(prof?.competencies[0]?.scorePct ?? 50),
+        String(prof?.competencies[1]?.scorePct ?? 50),
+        String(prof?.competencies[2]?.scorePct ?? 50),
+        String(prof?.competencies[3]?.scorePct ?? 50),
+        String(prof?.competencies[4]?.scorePct ?? 50),
         s.netValue.toFixed(2),
         s.cashBalance.toFixed(2),
         s.holdingsValue.toFixed(2),
@@ -171,6 +271,7 @@ export default function AdminClient({
         smart,
         s.totalFeesPaid.toFixed(2),
         String(reflCount),
+        `"${(prof?.teacherReportComment ?? "").replace(/"/g, '""')}"`,
       ].join(",");
     });
 
@@ -179,10 +280,12 @@ export default function AdminClient({
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `SGX-EduTrader-GoogleSheets-Gradebook-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.download = `EduFinLit-Learning-Rubric-Gradebook-${new Date().toISOString().slice(0, 10)}.csv`;
     a.click();
     URL.revokeObjectURL(url);
-    notify("Exported Google Sheets Gradebook CSV.");
+    notify(
+      "Exported Google Sheets Gradebook + 5-Pillar Financial Literacy Rubric CSV.",
+    );
   };
 
   const handleImportRoster = (e: React.FormEvent) => {
@@ -317,6 +420,181 @@ export default function AdminClient({
       {/* TAB 1: CLASSROOM ROSTER & WEEKLY REFLECTIONS */}
       {activeTab === "roster" && (
         <div className="space-y-6">
+          {/* School & HOD Pedagogical Impact Report + Class 5-Pillar Competency Heatmap Matrix */}
+          <section className="rounded-3xl border border-indigo-200 bg-gradient-to-br from-indigo-50/40 via-white to-blue-50/30 p-6 shadow-sm space-y-5">
+            <div className="flex flex-wrap items-start justify-between gap-4 border-b border-slate-200/80 pb-4">
+              <div className="space-y-1 max-w-3xl">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-0.5 text-[11px] font-bold text-indigo-800">
+                    🏫 School &amp; HOD Pedagogical Impact Report
+                  </span>
+                  <span className="rounded-full border border-slate-200 bg-white px-2.5 py-0.5 font-mono text-[10px] font-semibold text-slate-600">
+                    OECD/PISA · CEE Investing Standards · Bloom&apos;s &amp; SOLO Taxonomy
+                  </span>
+                </div>
+                <h2 className="font-display text-xl font-extrabold text-slate-900">
+                  Class Financial Literacy Competency Heatmap &amp; Learning Outcomes
+                </h2>
+                <p className="text-xs text-slate-600">
+                  Tracks demonstrated student mastery across 5 core Financial
+                  Literacy Pillars (<strong>C1</strong> Market Mechanics,{" "}
+                  <strong>C2</strong> Fee-Drag Math, <strong>C3</strong>{" "}
+                  Diversification 1−HHI, <strong>C4</strong> Valuation &amp;
+                  DRIP, <strong>C5</strong> Metacognition) for school
+                  leadership, HOD reviews, and parent-teacher reporting.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => window.print()}
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-xs font-bold text-slate-800 hover:border-sgx-blue hover:text-sgx-blue"
+                >
+                  🖨️ Print School Impact Report (PDF)
+                </button>
+                <button
+                  type="button"
+                  onClick={handleExportGoogleSheetsCsv}
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-sgx-blue px-3.5 py-2 text-xs font-bold text-white shadow-xs hover:bg-blue-700"
+                >
+                  <Download className="h-3.5 w-3.5" />
+                  Export Rubric + Gradebook CSV
+                </button>
+              </div>
+            </div>
+
+            {/* Class-Wide Competency KPI Strip */}
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-6">
+              <div className="rounded-2xl border border-indigo-200 bg-white p-3">
+                <p className="text-[10px] font-bold uppercase text-slate-500">
+                  Class Avg Mastery
+                </p>
+                <p className="mt-1 font-mono text-xl font-extrabold text-indigo-700">
+                  {classLearningSummary.avgMasteryPct}%
+                </p>
+                <p className="text-[10px] text-slate-500">
+                  {classLearningSummary.proficientStudentsCount}/{students.length}{" "}
+                  Proficient (≥70%)
+                </p>
+              </div>
+              {[
+                {
+                  code: "C1: Mechanics",
+                  val: classLearningSummary.c1Avg,
+                  sub: "Lots & Bid/Ask",
+                },
+                {
+                  code: "C2: Fee Math",
+                  val: classLearningSummary.c2Avg,
+                  sub: "<1.5% Fee Drag",
+                },
+                {
+                  code: "C3: Risk (1−HHI)",
+                  val: classLearningSummary.c3Avg,
+                  sub: "Cross-Tier Spread",
+                },
+                {
+                  code: "C4: Valuation",
+                  val: classLearningSummary.c4Avg,
+                  sub: "P/E & DRIP Yield",
+                },
+                {
+                  code: "C5: Metacognition",
+                  val: classLearningSummary.c5Avg,
+                  sub: "Thesis & Journal",
+                },
+              ].map((kpi) => (
+                <div
+                  key={kpi.code}
+                  className="rounded-2xl border border-slate-200 bg-white p-3"
+                >
+                  <p className="text-[10px] font-bold uppercase text-slate-500">
+                    {kpi.code}
+                  </p>
+                  <p
+                    className={`mt-1 font-mono text-lg font-extrabold ${
+                      kpi.val >= 70
+                        ? "text-emerald-700"
+                        : kpi.val >= 50
+                          ? "text-amber-700"
+                          : "text-rose-700"
+                    }`}
+                  >
+                    {kpi.val}%
+                  </p>
+                  <p className="text-[10px] text-slate-400">{kpi.sub}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* Class 5-Pillar Competency Heatmap Matrix */}
+            <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white">
+              <table className="min-w-full text-xs">
+                <thead className="border-b border-slate-200 bg-slate-50 text-left uppercase tracking-wider text-slate-500">
+                  <tr>
+                    <th className="px-3 py-2.5">Student</th>
+                    <th className="px-3 py-2.5">Overall Rubric Band</th>
+                    <th className="px-3 py-2.5 text-center">C1 Mechanics</th>
+                    <th className="px-3 py-2.5 text-center">C2 Fee Math</th>
+                    <th className="px-3 py-2.5 text-center">C3 Risk (1−HHI)</th>
+                    <th className="px-3 py-2.5 text-center">C4 Valuation</th>
+                    <th className="px-3 py-2.5 text-center">C5 Metacognition</th>
+                    <th className="px-3 py-2.5">Formative Teacher Guidance</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {students.map((s) => {
+                    const prof = studentProfiles.get(s.uid);
+                    if (!prof) return null;
+                    const cellBadge = (pct: number) => {
+                      if (pct >= 85)
+                        return "bg-emerald-100 text-emerald-900 border-emerald-300";
+                      if (pct >= 70)
+                        return "bg-emerald-50 text-emerald-800 border-emerald-200";
+                      if (pct >= 50)
+                        return "bg-amber-50 text-amber-800 border-amber-200";
+                      return "bg-rose-50 text-rose-700 border-rose-200";
+                    };
+                    return (
+                      <tr key={s.uid} className="hover:bg-slate-50/80">
+                        <td className="px-3 py-2.5 font-bold text-slate-900">
+                          {s.nickname}
+                        </td>
+                        <td className="px-3 py-2.5">
+                          <span
+                            className={`inline-block rounded-full border px-2.5 py-0.5 font-mono text-[10px] font-bold ${cellBadge(
+                              prof.overallScorePct,
+                            )}`}
+                          >
+                            {prof.overallLevel} ({prof.overallScorePct}%)
+                          </span>
+                          <span className="ml-1.5 text-[10px] text-slate-400">
+                            SOLO: {prof.overallSoloStage}
+                          </span>
+                        </td>
+                        {prof.competencies.map((c) => (
+                          <td key={c.id} className="px-3 py-2.5 text-center">
+                            <span
+                              className={`inline-block rounded-lg border px-2 py-0.5 font-mono text-[11px] font-bold ${cellBadge(
+                                c.scorePct,
+                              )}`}
+                            >
+                              {c.scorePct}%
+                            </span>
+                          </td>
+                        ))}
+                        <td className="px-3 py-2.5 text-[11px] text-slate-600 max-w-xs">
+                          Focus: <strong>{prof.growthAreas[0]}</strong>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </section>
+
           <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
             <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
               <div className="flex items-center gap-3">

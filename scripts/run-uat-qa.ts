@@ -37,6 +37,11 @@ import {
   buildOrderPreviewCard,
   evaluateCopilotTurn,
 } from "../src/lib/copilot-engine";
+import {
+  computeStudentCompetencyProfile,
+  RETRIEVAL_PRACTICE_BANK,
+  WORKED_EXAMPLES_BANK,
+} from "../src/utils/learning-science";
 
 interface TestResult {
   id: string;
@@ -1246,6 +1251,80 @@ async function main() {
         adjustedCard.shares === 200 &&
         adjustedCard.ticker === "OV8.SI",
       `Open-ended Socratic Q&A grounded in live student cash & sector weights; buildOrderPreviewCard adjusted OV8.SI to 200 shares (2 lots, Net S$${formatSgd(adjustedCard.fees.netTotal)})`,
+    );
+
+    // =========================================================================
+    // SUITE 8: COGNITIVE SCIENCE ENGINE & STANDARDS-ALIGNED RUBRIC UAT
+    // =========================================================================
+    console.log(
+      "\n--- SUITE 8: Cognitive Science Engine & 5-Pillar Financial Literacy Rubric UAT ---",
+    );
+
+    const activeStudentTrades = dbAfterMatch.tradeHistory.filter(
+      (t) => t.userId === s1Profile!.uid,
+    );
+    const activeStudentReflections = await getAllReflections();
+    const s1CompetencyProfile = computeStudentCompetencyProfile({
+      user: s1Profile!,
+      holdings: s1Holdings,
+      trades: activeStudentTrades,
+      limitOrders: [],
+      reflections: activeStudentReflections.filter(
+        (r) => r.userId === s1Profile!.uid,
+      ),
+      completedRetrievalIds: ["rq-c1-bid-ask", "rq-c2-min-fee"],
+      completedWorkedExampleIds: ["we-fee-drag", "we-hhi-diversification"],
+    });
+
+    // Critic Anti-Gaming Check: Uninvested student with 0 trades must NOT get Proficient/Advanced on C2 Fee Math
+    const uninvestedProfile = computeStudentCompetencyProfile({
+      user: {
+        ...s1Profile!,
+        cashBalance: 10000,
+        holdingsValue: 0,
+        netValue: 10000,
+        totalFeesPaid: 0,
+        hhi: 1,
+      },
+      holdings: [],
+      trades: [],
+      limitOrders: [],
+      reflections: [],
+    });
+
+    assertTest(
+      "UAT-8.1",
+      "Suite 8",
+      "5-Pillar Financial Literacy Rubric (OECD/PISA, CEE, Bloom's & SOLO) + Zero-Trade Anti-Gaming Guard",
+      s1CompetencyProfile.competencies.length === 5 &&
+        s1CompetencyProfile.overallScorePct >= 65 &&
+        uninvestedProfile.competencies[1].scorePct < 50 &&
+        uninvestedProfile.competencies[1].level === "Level 1: Novice",
+      `Active student overall mastery=${s1CompetencyProfile.overallScorePct}% (${s1CompetencyProfile.overallLevel}, SOLO ${s1CompetencyProfile.overallSoloStage}); Uninvested 0-trade C2 Fee Math capped at ${uninvestedProfile.competencies[1].scorePct}% (${uninvestedProfile.competencies[1].level})`,
+    );
+
+    const copilotMasteryTurn = evaluateCopilotTurn(
+      "Show my Financial Literacy Mastery & Learning Report",
+      {
+        user: s1Profile!,
+        settings: copilotSettings,
+        snapshot,
+        holdings: s1Holdings,
+        trades: activeStudentTrades,
+        limitOrders: [],
+      },
+    );
+
+    assertTest(
+      "UAT-8.2",
+      "Suite 8",
+      "Worked Examples (Cognitive Load Theory), Spaced Retrieval Bank & Copilot Mastery Report Tool",
+      WORKED_EXAMPLES_BANK.length === 4 &&
+        RETRIEVAL_PRACTICE_BANK.length === 6 &&
+        copilotMasteryTurn.toolUsed === "learning_mastery_report" &&
+        copilotMasteryTurn.explanation.includes("OECD/PISA") &&
+        copilotMasteryTurn.explanation.includes("FL-C1"),
+      `Verified ${WORKED_EXAMPLES_BANK.length} Faded Worked Examples, ${RETRIEVAL_PRACTICE_BANK.length} Active Retrieval questions, and Copilot 'learning_mastery_report' tool`,
     );
   } finally {
     // Always restore clean initial database state after UAT finishes

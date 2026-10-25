@@ -46,6 +46,7 @@ import {
 } from "@/actions/admin";
 import {
   buildOrderPreviewCard,
+  getToolPedagogicalTag,
   type CopilotCard,
   type CopilotTurnOutput,
 } from "@/lib/copilot-engine";
@@ -111,6 +112,7 @@ const QUICK_CATEGORIES = [
   {
     title: "🎓 Learn, Reflect & Guardrails",
     prompts: [
+      "Show my Financial Literacy Mastery & Learning Report",
       "Explain Bid vs Ask and 100-share Board Lots",
       "Explain P/E Ratio simply",
       "Help me draft my weekly reflection",
@@ -1447,6 +1449,12 @@ export default function SgxCopilotClient({
                             {isGeminiEnriched
                               ? "✨ Gemini LLM + SGX Math"
                               : "⚡ SGX Math Engine"}
+                          </span>
+                        )}
+                        {!isUser && m.output?.toolUsed && (
+                          <span className="rounded-full bg-indigo-50 border border-indigo-200 px-2 py-0.5 font-mono text-[9px] font-bold text-indigo-800">
+                            🎓 {getToolPedagogicalTag(m.output.toolUsed).pillar} ·{" "}
+                            {getToolPedagogicalTag(m.output.toolUsed).approach}
                           </span>
                         )}
                       </div>

@@ -28,6 +28,7 @@ import { cancelLimitOrderAction } from "@/actions/trade";
 import { submitWeeklyReflectionAction } from "@/actions/reflection";
 import PortfolioStressTester from "@/components/portfolio/PortfolioStressTester";
 import SgxContractNoteModal from "@/components/portfolio/SgxContractNoteModal";
+import CognitiveLearningPassport from "@/components/portfolio/CognitiveLearningPassport";
 import type {
   LimitOrderDoc,
   PortfolioSnapshotDoc,
@@ -374,6 +375,20 @@ export default function PortfolioClient({
         </div>
       </section>
 
+      {/* Cognitive Science Learning Passport & 5-Pillar Financial Literacy Rubric */}
+      <CognitiveLearningPassport
+        user={user}
+        holdings={holdings.map((h) => ({
+          ticker: h.ticker,
+          shares: h.shares,
+          avgPrice: h.avgPrice,
+          updatedAt: new Date().toISOString(),
+        }))}
+        trades={trades}
+        limitOrders={limitOrders}
+        reflections={reflections}
+      />
+
       {/* Performance Curve + Risk Tier Allocation */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
         <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm lg:col-span-7">
@@ -635,6 +650,9 @@ export default function PortfolioClient({
 
           <form onSubmit={handleSaveReflection} className="mt-4 space-y-3">
             <textarea
+              id="weekly-reflection-textarea"
+              name="weeklyReflection"
+              aria-label="Weekly Investment Reflection"
               rows={4}
               value={reflectionText}
               onChange={(e) => setReflectionText(e.target.value)}

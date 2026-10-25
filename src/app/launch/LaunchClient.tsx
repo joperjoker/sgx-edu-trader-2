@@ -686,6 +686,105 @@ Start with S$10,000.00 in virtual cash to invest across ${tickersCount} real Sin
           </div>
         </section>
       </div>
+
+      {/* Cognitive Science & Pedagogical Architecture Showcase (For Schools, HODs & Sales Partners) */}
+      <section className="rounded-3xl border border-indigo-200 bg-gradient-to-br from-indigo-50/40 via-white to-blue-50/40 p-6 shadow-sm space-y-5">
+        <div className="flex flex-wrap items-start justify-between gap-4 border-b border-slate-200/80 pb-4">
+          <div className="space-y-1 max-w-3xl">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-0.5 text-[11px] font-bold text-indigo-800">
+              🎓 For Schools, HODs &amp; Educational Partners · Cognitive Science Architecture
+            </span>
+            <h2 className="font-display text-xl font-extrabold text-slate-900">
+              How EduFinLit Embeds Cognitive Science &amp; Standards-Aligned Mastery Rubrics
+            </h2>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Every module in <strong>EduFinLit</strong> is mapped to{" "}
+              <strong>OECD/PISA Youth Financial Literacy Competencies</strong>,{" "}
+              <strong>Council for Economic Education (CEE) Investing Standards</strong>,{" "}
+              <strong>Bloom&apos;s Revised Taxonomy</strong>, and{" "}
+              <strong>SOLO Taxonomy</strong> — giving schools measurable proof of
+              student financial literacy growth.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Link
+              href="/portfolio"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-sgx-blue px-3.5 py-2 text-xs font-bold text-white shadow-xs hover:bg-blue-700"
+            >
+              Open Student Learning Passport →
+            </Link>
+            <Link
+              href="/admin"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-indigo-200 bg-white px-3.5 py-2 text-xs font-bold text-indigo-800 hover:bg-indigo-50"
+            >
+              Open Teacher &amp; HOD Impact Report →
+            </Link>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-5 text-xs">
+          {[
+            {
+              code: "FL-C1",
+              title: "Market Mechanics & Order Discipline",
+              cog: "Procedural Schema & Worked Examples",
+              std: "OECD/PISA Planning · Bloom's Understand & Apply",
+              desc: "100-share SGX Board Lots, Bid/Ask spread execution, Tick Size bands, and price-disciplined Limit Orders.",
+            },
+            {
+              code: "FL-C2",
+              title: "Transaction Cost & Fee-Drag Math",
+              cog: "Sweller's Cognitive Load (Faded Examples)",
+              std: "CEE Cost-Benefit Std · Bloom's Apply & Analyze",
+              desc: "Sizing orders so SGX + CDP + 9% GST fees (S$10 min brokerage) stay under the 1.50% fee-drag threshold.",
+            },
+            {
+              code: "FL-C3",
+              title: "Diversification & Risk Architecture",
+              cog: "Counterfactual What-If Mental Modeling",
+              std: "OECD/PISA Risk & Reward · Bloom's Analyze & Evaluate",
+              desc: "Cross-tier capital allocation across 4 SGX Risk Tiers and Herfindahl-Hirschman Index (1 − HHI) optimization.",
+            },
+            {
+              code: "FL-C4",
+              title: "Fundamental Valuation & DRIP",
+              cog: "Comparative Elaborative Interrogation",
+              std: "CEE Earnings & Compounding · Bloom's Evaluate",
+              desc: "Evaluating P/E earnings multiples alongside Tier-1 tax-exempt Dividend Yield and 5-year DRIP compounding.",
+            },
+            {
+              code: "FL-C5",
+              title: "Metacognitive Self-Regulation",
+              cog: "Pre-Trade Calibration & Active Retrieval",
+              std: "Flavell Metacognitive Framework · Bloom's Create",
+              desc: "Pre-trade thesis & confidence tagging (1–5), macro stress-testing, and weekly reflective encoding.",
+            },
+          ].map((item) => (
+            <div
+              key={item.code}
+              className="rounded-2xl border border-slate-200 bg-white p-4 shadow-2xs space-y-2 flex flex-col justify-between"
+            >
+              <div className="space-y-1.5">
+                <span className="inline-block rounded-lg bg-slate-900 px-2 py-0.5 font-mono text-[10px] font-bold text-white">
+                  {item.code}
+                </span>
+                <h3 className="font-display text-xs font-extrabold text-slate-900">
+                  {item.title}
+                </h3>
+                <p className="text-[11px] font-semibold text-indigo-700">
+                  🧠 {item.cog}
+                </p>
+                <p className="text-[11px] text-slate-600 leading-relaxed">
+                  {item.desc}
+                </p>
+              </div>
+              <p className="pt-2 border-t border-slate-100 font-mono text-[10px] text-slate-500">
+                {item.std}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
     </main>
   );
 }

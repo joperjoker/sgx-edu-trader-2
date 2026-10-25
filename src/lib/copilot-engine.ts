@@ -26,6 +26,7 @@ import {
   VALID_TICKERS,
   type RiskTier,
 } from "@/utils/tickers";
+import { computeStudentCompetencyProfile } from "@/utils/learning-science";
 
 export type CopilotCardType =
   | "guardrail_refusal"
@@ -1254,6 +1255,48 @@ export function evaluateCopilotTurn(
     });
     criteriaLabel = "Affordable SGX Board Lots (Under S$250 per 100-Share Lot)";
   } else if (
+    lower.includes("mastery") ||
+    lower.includes("learning report") ||
+    lower.includes("rubric") ||
+    lower.includes("competenc")
+  ) {
+    const profile = computeStudentCompetencyProfile({
+      user: ctx.user,
+      holdings: ctx.holdings,
+      trades: ctx.trades,
+      limitOrders: ctx.limitOrders,
+      reflections: [],
+      snapshot: ctx.snapshot,
+    });
+    const pillarLines = profile.competencies
+      .map(
+        (c) =>
+          `• **${c.code} ${c.shortTitle}:** **${c.scorePct}%** (${c.level} · SOLO ${c.soloLevel}) — ${c.evidenceSummary}`,
+      )
+      .join("\n");
+    const showcase = ["D05.SI", "Z74.SI", "OV8.SI", "S63.SI"].map((t) =>
+      buildComparisonItem(t, ctx.snapshot),
+    );
+    return {
+      toolUsed: "learning_mastery_report",
+      headline: `Cognitive Learning & 5-Pillar Mastery Report: ${profile.overallLevel} (${profile.overallScorePct}%)`,
+      explanation: `Your demonstrated Financial Literacy Mastery across our OECD/PISA & CEE standards-aligned rubric is **${profile.overallScorePct}% (${profile.overallLevel} · SOLO ${profile.overallSoloStage} Stage · ${profile.cognitiveXp} XP)**:\n${pillarLines}\n\n**Formative Coaching Focus:** ${profile.teacherReportComment}`,
+      socraticQuestion:
+        "Looking at your lowest-scoring competency pillar above, what concrete action (such as staging a Limit order, sizing a lot above S$735, or adding a new sector) will you take next to advance to the next rubric band?",
+      card: {
+        type: "screener",
+        criteriaLabel: "Recommended SGX Counters for Next Competency Milestone",
+        items: showcase,
+      },
+      followUpChips: [
+        "Limit buy 100 shares of Singtel at S$4.05",
+        "What if I buy 2 lots of Sheng Siong (OV8.SI)?",
+        "Project 5-year DRIP dividends for 5 lots of OCBC",
+        "Help me draft my weekly reflection",
+      ],
+      generationMode: "deterministic_engine",
+    };
+  } else if (
     lower.includes("why") ||
     lower.includes("how") ||
     lower.includes("strategy") ||
@@ -1319,6 +1362,71 @@ export function evaluateCopilotTurn(
     ],
     generationMode: "deterministic_engine",
   };
+}
+
+/**
+ * Maps each Copilot tool to its Standards-Aligned Financial Literacy Competency Pillar
+ * and Cognitive Science Learning Strategy for visible pedagogical transparency.
+ */
+export function getToolPedagogicalTag(toolUsed: string): {
+  pillar: string;
+  approach: string;
+} {
+  switch (toolUsed) {
+    case "prepareOrExecuteTrade":
+    case "inspectSingleCounter":
+      return {
+        pillar: "Rubric C1/C2 · Market Mechanics & Fee Math",
+        approach: "Worked Example & Pre-Trade Calibration",
+      };
+    case "manageOpenLimitOrders":
+      return {
+        pillar: "Rubric C1 · Price-Disciplined Limit Execution",
+        approach: "Procedural Schema Practice",
+      };
+    case "simulateWhatIfTrade":
+    case "diagnosePortfolioHealth":
+      return {
+        pillar: "Rubric C3 · Diversification (1−HHI) & Risk",
+        approach: "Counterfactual What-If Modeling",
+      };
+    case "compareSgxCounters":
+    case "screenSgxMarketByCriteria":
+      return {
+        pillar: "Rubric C4 · Fundamental Valuation & Sector Analysis",
+        approach: "Comparative Elaborative Interrogation",
+      };
+    case "projectDividendCompounding":
+      return {
+        pillar: "Rubric C4 · Long-Term DRIP Compounding",
+        approach: "Exponential Schema Calibration",
+      };
+    case "runMacroStressTest":
+      return {
+        pillar: "Rubric C3/C5 · Macroeconomic Resilience",
+        approach: "Scenario Stress-Testing",
+      };
+    case "draftAndSaveReflection":
+      return {
+        pillar: "Rubric C5 · Metacognitive Self-Regulation",
+        approach: "Post-Trade Reflective Encoding",
+      };
+    case "explainSgxConcept":
+      return {
+        pillar: "Rubric C1–C4 · Concept Encoding",
+        approach: "Dual Coding & Layman Analogy",
+      };
+    case "learning_mastery_report":
+      return {
+        pillar: "Rubric C1–C5 · Standards-Aligned Mastery Assessment",
+        approach: "Formative Competency Analytics",
+      };
+    default:
+      return {
+        pillar: "Rubric C1–C5 · Socratic Financial Literacy",
+        approach: "Elaborative Interrogation",
+      };
+  }
 }
 
 /**
