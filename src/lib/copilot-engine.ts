@@ -234,6 +234,11 @@ export interface CopilotExecutionContext {
   limitOrders: LimitOrderDoc[];
 }
 
+export interface CopilotChatHistoryTurn {
+  role: "user" | "assistant";
+  text: string;
+}
+
 export interface CopilotTurnOutput {
   toolUsed: string;
   headline: string;
@@ -241,6 +246,7 @@ export interface CopilotTurnOutput {
   socraticQuestion: string;
   card: CopilotCard | null;
   followUpChips: string[];
+  generationMode?: "gemini_llm" | "deterministic_engine";
 }
 
 const TICKER_ALIASES: Array<{ ticker: string; keywords: string[] }> = [
@@ -384,7 +390,7 @@ function buildComparisonItem(
   };
 }
 
-function buildOrderPreviewCard(
+export function buildOrderPreviewCard(
   ticker: string,
   action: TradeAction,
   orderType: OrderType,
@@ -529,14 +535,14 @@ export function evaluateCopilotTurn(
   if (isAskingForFinancialAdvice) {
     return {
       toolUsed: "guardrail_anti_speculation",
-      headline: "Educational Guardrail: Socratic Coach Does Not Pick Stocks",
+      headline: "EduFinLit Socratic Guardrail: Coach Does Not Pick Stocks",
       explanation:
-        "Under Monetary Authority of Singapore (MAS) educational guidelines and EduFinLit's Socratic learning rules, I never tell you which stock to buy or predict future prices. Instead, I can help you compare companies across our 4 SGX Market Risk Tiers so YOU make the investment decision!",
+        "Under EduFinLit's Socratic learning guardrails, I never tell you which stock to buy or predict future prices. Instead, I help you compare companies across our 4 SGX Market Risk Tiers so YOU build your own investment thesis and make the final decision!",
       socraticQuestion:
         "Would you rather start with a steady dividend-paying company in 'Safe Bets' (like DBS, OCBC, or Singtel) or compare everyday consumer brands like Sheng Siong and ComfortDelGro?",
       card: {
         type: "guardrail_refusal",
-        ruleTriggered: "Zero Financial Advice & Anti-Speculation Guardrail",
+        ruleTriggered: "Zero Financial Advice & Socratic Learning Guardrail",
         educationalReason:
           "Real investing requires building your own thesis around how a company earns revenue, its valuation (P/E Ratio), and how it fits your portfolio diversification (1 − HHI).",
         suggestedExplorations: [
@@ -855,7 +861,8 @@ export function evaluateCopilotTurn(
   if (
     lower.includes("stress") ||
     lower.includes("macro") ||
-    lower.includes("mas ") ||
+    lower.includes("interest rate") ||
+    lower.includes("stronger sgd") ||
     lower.includes("oil shock") ||
     lower.includes("inflation") ||
     lower.includes("changi") ||
@@ -864,7 +871,7 @@ export function evaluateCopilotTurn(
     lower.includes("capex")
   ) {
     let scenarioId: CopilotStressTestCard["scenarioId"] = "mas_tightening";
-    let scenarioTitle = "MAS SGD NEER Tightening & Higher Interest Rates";
+    let scenarioTitle = "Stronger Singapore Dollar (SGD) & Higher Interest Rates";
     let shocks: Record<string, number> = {
       "Banking & Financial Services": 3.8,
       "Financial Services": 3.8,
@@ -1246,6 +1253,42 @@ export function evaluateCopilotTurn(
       return px <= 2.5;
     });
     criteriaLabel = "Affordable SGX Board Lots (Under S$250 per 100-Share Lot)";
+  } else if (
+    lower.includes("why") ||
+    lower.includes("how") ||
+    lower.includes("strategy") ||
+    lower.includes("sector") ||
+    lower.includes("cash") ||
+    lower.includes("balance") ||
+    lower.includes("allocate")
+  ) {
+    const activeHolds = ctx.holdings.filter((h) => h.shares > 0);
+    const heldSectors = Array.from(
+      new Set(activeHolds.map((h) => TICKER_META[h.ticker]?.sector ?? "General")),
+    );
+    const divPct = Math.round((1 - (ctx.user.hhi ?? 1)) * 100);
+    const showcase = ["D05.SI", "Z74.SI", "OV8.SI", "C52.SI", "S63.SI", "AIY.SI"].map(
+      (t) => buildComparisonItem(t, ctx.snapshot),
+    );
+    return {
+      toolUsed: "socratic_qa",
+      headline: `Socratic Strategy Analysis for ${ctx.user.nickname} (Diversification: ${divPct}%)`,
+      explanation: `Here is how your live portfolio connects to your question:\n• **Available Buying Power:** You currently hold **S$${formatSgd(ctx.user.cashBalance)}** in cash and **${activeHolds.length}** active SGX positions across **${heldSectors.length > 0 ? heldSectors.join(", ") : "no sectors yet"}**.\n• **Sector & Yield Trade-Offs:** Mature Singapore banks and telcos (**D05.SI**, **O39.SI**, **Z74.SI**) distribute higher tax-exempt dividends (**4.5%–5.6%**), whereas growth & technology companies (**AIY.SI**, **MZH.SI**) reinvest profits into expansion (trading at higher **P/E Ratios** with lower dividend yields).\n• **Diversification Impact (1 − HHI):** Adding a position from a sector you do not yet own raises your **1 − HHI Diversification Score** and boosts your **Smart Investor Score** on the class leaderboard.`,
+      socraticQuestion:
+        "Looking at the sectors you already hold, which unrepresented industry below would give your portfolio the strongest balance between steady dividend income and growth?",
+      card: {
+        type: "screener",
+        criteriaLabel: "Cross-Sector SGX Benchmark Counters for Portfolio Allocation",
+        items: showcase,
+      },
+      followUpChips: [
+        "Analyse my portfolio health & Smart Score",
+        "Compare the 3 Singapore banks (DBS, OCBC, UOB)",
+        "What if I buy 2 lots of Sheng Siong (OV8.SI)?",
+        "Stress-test my portfolio against an Energy & Oil Shock",
+      ],
+      generationMode: "deterministic_engine",
+    };
   } else {
     // Default showcase of 6 diverse counters across tiers
     filteredTickers = ["D05.SI", "O39.SI", "Z74.SI", "OV8.SI", "C52.SI", "AIY.SI"];
@@ -1260,7 +1303,7 @@ export function evaluateCopilotTurn(
     toolUsed: "screenSgxMarketByCriteria",
     headline: `SGX Market Screener: ${criteriaLabel}`,
     explanation:
-      "Here are the matching SGX-listed companies with their live share price, 100-share Board Lot cost, P/E Ratio, and tax-exempt Dividend Yield. Click 'Prepare Buy Order' on any card to stage an order ticket right in chat!",
+      "Here are the matching SGX-listed companies with their live share price, 100-share Board Lot cost, P/E Ratio, and tax-exempt Dividend Yield. Click 'Buy 1 Lot' on any row to stage an order ticket right in chat!",
     socraticQuestion:
       "Which two companies from different industries below could you combine to boost your 1 − HHI Diversification Score?",
     card: {
@@ -1274,5 +1317,169 @@ export function evaluateCopilotTurn(
       "Analyse my portfolio diversification",
       "Compare the 3 Singapore banks",
     ],
+    generationMode: "deterministic_engine",
   };
+}
+
+/**
+ * Builds the comprehensive RAG system instruction & context payload for Gemini LLM
+ * and enriches the deterministic tool output with bespoke, multi-turn LLM prose.
+ * Works identically in Node.js (Next.js Server Actions) and Browser (Firebase SPA).
+ */
+export async function enrichCopilotTurnWithGemini(
+  prompt: string,
+  baseOutput: CopilotTurnOutput,
+  ctx: CopilotExecutionContext,
+  apiKey?: string,
+  history: CopilotChatHistoryTurn[] = [],
+): Promise<CopilotTurnOutput> {
+  const cleanKey = (apiKey ?? "").trim();
+  if (!cleanKey || cleanKey.includes("your_gemini")) {
+    return {
+      ...baseOutput,
+      generationMode: "deterministic_engine",
+    };
+  }
+
+  try {
+    const activeHoldings = ctx.holdings.filter((h) => h.shares > 0);
+    const holdingsSummary =
+      activeHoldings.length > 0
+        ? activeHoldings
+            .map((h) => {
+              const px = ctx.snapshot.quotes[h.ticker]?.price ?? h.avgPrice;
+              const val = (h.shares * px).toFixed(2);
+              const pnlPct =
+                h.avgPrice > 0
+                  ? (((px - h.avgPrice) / h.avgPrice) * 100).toFixed(2)
+                  : "0.00";
+              const companyLabel = TICKER_META[h.ticker]?.name ?? h.ticker;
+              return `${h.ticker} (${companyLabel}): ${h.shares} sh @ avg S$${h.avgPrice.toFixed(2)}, live S$${px.toFixed(2)}, value S$${val} (${pnlPct}%)`;
+            })
+            .join("; ")
+        : "No stock holdings yet (100% cash).";
+
+    const marketOverview = VALID_TICKERS.map((t) => {
+      const m = TICKER_META[t];
+      const px = ctx.snapshot.quotes[t]?.price ?? m.refPrice;
+      return `${t} (${m.shortName}, Tier=${m.tier}, Sector=${m.sector}, Price=S$${px.toFixed(2)}, 1Lot=S$${(px * 100).toFixed(0)}, P/E=${m.peRatio}x, DivYield=${m.dividendYieldPct}%)`;
+    }).join(" | ");
+
+    const recentHistoryText =
+      history.length > 0
+        ? history
+            .slice(-6)
+            .map((t) => `${t.role.toUpperCase()}: ${t.text}`)
+            .join("\n")
+        : "First turn in conversation.";
+
+    const systemPrompt = `You are the EduFinLit Agentic AI Copilot — a warm, insightful Socratic financial literacy coach and SGX Market trading assistant for Singapore secondary school and junior college students (ages 13-18) and teachers.
+
+LIVE STUDENT PORTFOLIO CONTEXT:
+- Student Name: ${ctx.user.nickname} (Role: ${ctx.user.role})
+- Cash Buying Power: S$${formatSgd(ctx.user.cashBalance)}
+- Net Account Value: S$${formatSgd(ctx.user.netValue)} (Starting Capital: S$${formatSgd(ctx.user.startingCapital || 10000)})
+- Diversification Score (1 - HHI): ${Math.round((1 - (ctx.user.hhi ?? 1)) * 100)}% (HHI=${(ctx.user.hhi ?? 1).toFixed(4)})
+- Total SGX + CDP Fees Paid: S$${formatSgd(ctx.user.totalFeesPaid)}
+- Exchange Settings: ${ctx.settings.allowOddLots ? "1-Share Odd Lots Enabled" : "Standard 100-Share SGX Board Lots"} | Fee Mode: ${ctx.settings.feeMode}
+- Active Holdings: ${holdingsSummary}
+
+20 SGX MARKET STOCKS AVAILABLE:
+${marketOverview}
+
+RECENT CONVERSATION MEMORY:
+${recentHistoryText}
+
+CURRENT USER PROMPT: "${prompt}"
+DETERMINISTIC ENGINE TOOL EXECUTED: ${baseOutput.toolUsed}
+DETERMINISTIC BASELINE HEADLINE: ${baseOutput.headline}
+DETERMINISTIC BASELINE SUMMARY: ${baseOutput.explanation}
+
+STRICT EDUFINLIT SOCRATIC GUARDRAILS:
+1. NEVER claim to be endorsed by or speaking on behalf of MAS or MOE. Refer to safety rules as "EduFinLit Socratic Learning Guardrails".
+2. NEVER recommend which stock to buy or sell, and NEVER predict future stock prices. Always frame comparisons around trade-offs (P/E payback speed, tax-free dividend yield, sector risk, 100-share board lot affordability, and 1-HHI diversification).
+3. ALWAYS cite the student's actual live numbers (Cash S$${formatSgd(ctx.user.cashBalance)}, Diversification ${Math.round((1 - (ctx.user.hhi ?? 1)) * 100)}%, and exact stock prices/fees from the deterministic baseline) so your explanation is 100% accurate.
+4. Use **bold** highlights and bullet points (•) where helpful so students and teachers can scan easily, and define financial terms in plain layman English in brackets.
+
+Return ONLY a valid JSON object matching this exact schema:
+{
+  "headline": "A crisp, engaging 6-12 word headline tailored to the user's question",
+  "explanation": "2 to 4 clear, insightful paragraphs or bullet points in plain student/teacher English with **bold** key terms and exact S$ figures",
+  "socraticQuestion": "1 thought-provoking Socratic question tailored to the student's portfolio and this topic",
+  "followUpChips": ["3 or 4 actionable follow-up prompts the student can click next"],
+  "customReflectionDraft": "Optional: If toolUsed is draftAndSaveReflection, provide a personalized 3-4 sentence first-person weekly reflection draft referencing the student's actual holdings and diversification"
+}`;
+
+    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(cleanKey)}`;
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contents: [{ role: "user", parts: [{ text: systemPrompt }] }],
+        generationConfig: {
+          temperature: 0.35,
+          responseMimeType: "application/json",
+        },
+      }),
+    });
+
+    if (!response.ok) {
+      return { ...baseOutput, generationMode: "deterministic_engine" };
+    }
+
+    const json = (await response.json()) as {
+      candidates?: Array<{
+        content?: { parts?: Array<{ text?: string }> };
+      }>;
+    };
+    const rawText = json.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+    if (!rawText) {
+      return { ...baseOutput, generationMode: "deterministic_engine" };
+    }
+
+    const parsed = JSON.parse(rawText) as {
+      headline?: string;
+      explanation?: string;
+      socraticQuestion?: string;
+      followUpChips?: string[];
+      customReflectionDraft?: string;
+    };
+
+    const nextCard =
+      baseOutput.card?.type === "reflection_helper" &&
+      parsed.customReflectionDraft &&
+      parsed.customReflectionDraft.trim().length > 30
+        ? {
+            ...baseOutput.card,
+            suggestedDraft: parsed.customReflectionDraft.trim(),
+          }
+        : baseOutput.card;
+
+    return {
+      ...baseOutput,
+      headline:
+        parsed.headline && parsed.headline.trim().length > 5
+          ? parsed.headline.trim()
+          : baseOutput.headline,
+      explanation:
+        parsed.explanation && parsed.explanation.trim().length > 20
+          ? parsed.explanation.trim()
+          : baseOutput.explanation,
+      socraticQuestion:
+        parsed.socraticQuestion && parsed.socraticQuestion.trim().length > 10
+          ? parsed.socraticQuestion.trim()
+          : baseOutput.socraticQuestion,
+      followUpChips:
+        Array.isArray(parsed.followUpChips) && parsed.followUpChips.length >= 2
+          ? parsed.followUpChips.slice(0, 4).map((c) => String(c))
+          : baseOutput.followUpChips,
+      card: nextCard,
+      generationMode: "gemini_llm",
+    };
+  } catch {
+    return {
+      ...baseOutput,
+      generationMode: "deterministic_engine",
+    };
+  }
 }

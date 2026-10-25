@@ -456,7 +456,7 @@ export default function LoginClient() {
                       required
                       value={customGmail}
                       onChange={(e) => setCustomGmail(e.target.value)}
-                      placeholder="yourname@gmail.com or student@moe.edu.sg"
+                      placeholder="yourname@gmail.com or student@school.edu.sg"
                       className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 outline-none focus:border-sgx-blue focus:ring-2 focus:ring-sgx-blue/20"
                     />
                   </div>

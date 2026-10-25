@@ -1,12 +1,15 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Link from "next/link";
 import {
   Sparkles,
   Newspaper,
   Activity,
   ShieldCheck,
   AlertCircle,
+  Bot,
+  ArrowUpRight,
 } from "lucide-react";
 import {
   analyseCompanyNewsAction,
@@ -44,11 +47,21 @@ export default function AiCoachSection({ ticker }: { ticker: string }) {
             AI Critical-Thinking Research Modules
           </h2>
         </div>
-        <p className="text-xs text-slate-500 max-w-md">
-          Designed for financial literacy: Gemini explains market concepts and
-          highlights what AI models <strong>miss</strong> — never telling you
-          what to buy or sell.
-        </p>
+        <div className="flex flex-wrap items-center gap-3">
+          <p className="text-xs text-slate-500 max-w-sm">
+            Designed for financial literacy: Gemini explains market concepts and
+            highlights what AI models <strong>miss</strong> — never telling you
+            what to buy or sell.
+          </p>
+          <Link
+            href={`/copilot?prompt=${encodeURIComponent(`What if I buy 1 lot of ${ticker}?`)}`}
+            className="inline-flex items-center gap-1.5 rounded-xl bg-sgx-blue px-3.5 py-2 text-xs font-bold text-white shadow-sm hover:bg-blue-700"
+          >
+            <Bot className="h-3.5 w-3.5" />
+            Simulate {ticker.replace(".SI", "")} in AI Copilot
+            <ArrowUpRight className="h-3.5 w-3.5" />
+          </Link>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">

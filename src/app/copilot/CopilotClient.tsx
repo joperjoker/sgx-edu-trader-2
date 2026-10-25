@@ -44,9 +44,10 @@ import {
   setClassTradingLockAction,
   updateExchangeSettingsAction,
 } from "@/actions/admin";
-import type {
-  CopilotCard,
-  CopilotTurnOutput,
+import {
+  buildOrderPreviewCard,
+  type CopilotCard,
+  type CopilotTurnOutput,
 } from "@/lib/copilot-engine";
 import type {
   AppSettingsDoc,
@@ -130,11 +131,15 @@ const QUICK_CATEGORIES = [
 export default function SgxCopilotClient({
   initialUser,
   initialSettings,
+  initialSnapshot,
   initialHoldings,
+  initialTrades,
+  initialLimitOrders,
 }: Props) {
   const router = useRouter();
   const [user, setUser] = useState<UserProfileDoc>(initialUser);
   const [settings, setSettings] = useState<AppSettingsDoc>(initialSettings);
+  const [activeCategory, setActiveCategory] = useState<string>("ALL");
   const [input, setInput] = useState("");
   const [geminiApiKey, setGeminiApiKey] = useState("");
   const [showKeyModal, setShowKeyModal] = useState(false);
@@ -145,32 +150,35 @@ export default function SgxCopilotClient({
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const handledUrlPromptRef = useRef(false);
 
-  const [messages, setMessages] = useState<ChatMessage[]>(() => [
-    {
-      id: "welcome-msg",
-      role: "assistant",
-      timestamp: new Date().toLocaleTimeString("en-SG", {
-        timeZone: "Asia/Singapore",
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-      text: `Welcome to the EduFinLit Agentic AI Copilot, ${initialUser.nickname}! You currently have S$${formatSgd(initialUser.cashBalance)} in buying power and ${initialHoldings.filter((h) => h.shares > 0).length} active SGX Market holdings (Net Value: S$${formatSgd(initialUser.netValue)} · Diversification: ${Math.round((1 - (initialUser.hhi ?? 1)) * 100)}%).\n\nAsk me in plain English to buy or sell Board Lots, simulate 'What-If' diversification & fee impacts, compare companies, project tax-free dividends, stress-test your portfolio, or save your weekly reflection!`,
-      output: {
-        toolUsed: "welcome_assistant",
-        headline: "Ready for Natural-Language SGX Orders & Socratic Coaching",
-        explanation:
-          "Click any quick action on the left or type a command below (e.g., 'Buy 1 lot of DBS', 'What if I buy 200 shares of Sheng Siong?', or 'Compare DBS, OCBC, and UOB').",
-        socraticQuestion:
-          "Tip: Under MAS educational guardrails, I will never pick stocks for you — instead, I prepare transparent SGX order tickets and comparisons so YOU make the final call.",
-        card: null,
-        followUpChips: [
-          "Buy 1 lot of DBS (D05.SI)",
-          "What if I buy 2 lots of Sheng Siong?",
-          "Compare the 3 Singapore banks",
-          "Analyse my portfolio health",
-        ],
-      },
+  const createWelcomeMessage = (): ChatMessage => ({
+    id: "welcome-msg",
+    role: "assistant",
+    timestamp: new Date().toLocaleTimeString("en-SG", {
+      timeZone: "Asia/Singapore",
+      hour: "2-digit",
+      minute: "2-digit",
+    }),
+    text: `Welcome to the **EduFinLit Agentic AI Copilot**, **${initialUser.nickname}**! You currently have **S$${formatSgd(initialUser.cashBalance)}** in buying power and **${initialHoldings.filter((h) => h.shares > 0).length}** active SGX Market holdings (Net Value: **S$${formatSgd(initialUser.netValue)}** · Diversification: **${Math.round((1 - (initialUser.hhi ?? 1)) * 100)}%**).\n\n• **Stage & Execute Orders:** Ask to buy or sell 100-share Board Lots and adjust quantities inline.\n• **Simulate What-If Trades:** Preview how any trade changes your Diversification (1 − HHI) and Smart Score.\n• **Open-Ended Socratic Q&A:** Ask any question about sector trade-offs, P/E ratios, dividend compounding, or macro shocks!`,
+    output: {
+      toolUsed: "welcome_assistant",
+      headline: "Ready for Natural-Language SGX Orders & Socratic Coaching",
+      explanation:
+        "Click any quick action on the left, click one of your active holdings above, or type any question below.",
+      socraticQuestion:
+        "Tip: Under EduFinLit's Socratic learning guardrails, I never pick stocks for you — instead, I prepare transparent SGX order tickets and comparisons so YOU make the final call.",
+      card: null,
+      followUpChips: [
+        "Buy 1 lot of DBS (D05.SI)",
+        "What if I buy 2 lots of Sheng Siong?",
+        "Compare the 3 Singapore banks",
+        "How should I allocate my remaining cash across sectors?",
+      ],
+      generationMode: "deterministic_engine",
     },
+  });
+
+  const [messages, setMessages] = useState<ChatMessage[]>(() => [
+    createWelcomeMessage(),
   ]);
 
   useEffect(() => {
@@ -204,11 +212,15 @@ export default function SgxCopilotClient({
       text: clean,
     };
 
+    const historyPayload = messages
+      .slice(-6)
+      .map((m) => ({ role: m.role, text: m.text }));
+
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
 
     startTransition(async () => {
-      const res = await runSgxCopilotAction(clean, geminiApiKey);
+      const res = await runSgxCopilotAction(clean, geminiApiKey, historyPayload);
       if (!res.success || !res.data) {
         setMessages((prev) => [
           ...prev,
@@ -253,6 +265,72 @@ export default function SgxCopilotClient({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const handleAdjustOrderPreview = (
+    msgId: string,
+    nextShares: number,
+    nextAction: "buy" | "sell",
+  ) => {
+    const step = settings.allowOddLots ? 1 : 100;
+    const clampedShares = Math.max(step, nextShares);
+    setMessages((prev) =>
+      prev.map((m) => {
+        if (m.id !== msgId || m.output?.card?.type !== "order_preview") {
+          return m;
+        }
+        const curr = m.output.card;
+        const updatedCard = buildOrderPreviewCard(
+          curr.ticker,
+          nextAction,
+          curr.orderType,
+          clampedShares,
+          curr.limitPrice,
+          {
+            user,
+            settings,
+            snapshot: initialSnapshot,
+            holdings: initialHoldings,
+            trades: initialTrades,
+            limitOrders: initialLimitOrders,
+          },
+        );
+        return {
+          ...m,
+          output: {
+            ...m.output,
+            card: updatedCard,
+          },
+        };
+      }),
+    );
+  };
+
+  const renderRichText = (raw: string) => {
+    const lines = raw.split("\n");
+    return (
+      <div className="space-y-1.5 text-xs leading-relaxed">
+        {lines.map((line, idx) => {
+          const trimmed = line.trim();
+          if (!trimmed) return <div key={idx} className="h-1" />;
+          const parts = line.split(/(\*\*[^*]+\*\*)/g);
+          return (
+            <p key={idx} className="leading-relaxed">
+              {parts.map((part, pIdx) => {
+                if (part.startsWith("**") && part.endsWith("**")) {
+                  return (
+                    <strong key={pIdx} className="font-bold text-slate-900">
+                      {part.slice(2, -2)}
+                    </strong>
+                  );
+                }
+                return <span key={pIdx}>{part}</span>;
+              })}
+            </p>
+          );
+        })}
+      </div>
+    );
+  };
 
   const handleConfirmOrderCard = (
     msgId: string,
@@ -484,6 +562,60 @@ export default function SgxCopilotClient({
                 {card.orderType} {card.action} @ S$
                 {formatSgxPrice(card.effectivePrice)}
               </span>
+            </div>
+
+            {/* Inline Quantity & Action Adjuster Bar */}
+            <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2">
+              <div className="flex items-center gap-1.5">
+                <span className="text-[11px] font-semibold text-slate-500">
+                  Adjust Order:
+                </span>
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleAdjustOrderPreview(
+                      msg.id,
+                      card.shares,
+                      card.action === "buy" ? "sell" : "buy",
+                    )
+                  }
+                  className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-1 font-mono text-[11px] font-bold text-slate-700 hover:border-sgx-blue hover:text-sgx-blue"
+                >
+                  Switch to {card.action === "buy" ? "SELL" : "BUY"}
+                </button>
+              </div>
+              <div className="flex items-center gap-1.5 font-mono">
+                <button
+                  type="button"
+                  disabled={card.shares <= (settings.allowOddLots ? 1 : 100)}
+                  onClick={() =>
+                    handleAdjustOrderPreview(
+                      msg.id,
+                      card.shares - (settings.allowOddLots ? 10 : 100),
+                      card.action,
+                    )
+                  }
+                  className="rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-bold text-slate-700 hover:border-sgx-blue hover:text-sgx-blue disabled:opacity-40"
+                >
+                  − {settings.allowOddLots ? "10 sh" : "1 Lot (100 sh)"}
+                </button>
+                <span className="px-2 text-xs font-extrabold text-slate-900">
+                  {card.shares.toLocaleString()} sh
+                </span>
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleAdjustOrderPreview(
+                      msg.id,
+                      card.shares + (settings.allowOddLots ? 10 : 100),
+                      card.action,
+                    )
+                  }
+                  className="rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-bold text-slate-700 hover:border-sgx-blue hover:text-sgx-blue"
+                >
+                  + {settings.allowOddLots ? "10 sh" : "1 Lot (100 sh)"}
+                </button>
+              </div>
             </div>
 
             <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4 font-mono">
@@ -999,41 +1131,141 @@ export default function SgxCopilotClient({
     }
   };
 
+  const activeHoldings = initialHoldings.filter((h) => h.shares > 0);
+  const holdingsValue = activeHoldings.reduce((acc, h) => {
+    const q = initialSnapshot.quotes[h.ticker];
+    return acc + h.shares * (q?.price ?? h.avgPrice);
+  }, 0);
+  const divScorePct = Math.round((1 - (user.hhi ?? 1)) * 100);
+
+  const filteredCategories =
+    activeCategory === "ALL"
+      ? QUICK_CATEGORIES
+      : QUICK_CATEGORIES.filter((c) => c.title.includes(activeCategory));
+
   return (
-    <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 space-y-6">
+    <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 space-y-5">
       {/* Top Copilot Header Bar */}
-      <section className="flex flex-wrap items-center justify-between gap-4 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-        <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-sgx-blue text-white shadow-sm">
-            <Bot className="h-6 w-6" />
-          </div>
-          <div>
-            <div className="flex flex-wrap items-center gap-2">
-              <h1 className="font-display text-xl font-extrabold text-slate-900 sm:text-2xl">
-                EduFinLit · Agentic AI Copilot
-              </h1>
-              <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 font-mono text-[10px] font-bold text-emerald-700">
-                14 Action Tools + MAS Socratic Guardrails Active
-              </span>
+      <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center gap-3.5">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-sgx-blue to-blue-700 text-white shadow-sm">
+              <Bot className="h-6 w-6" />
             </div>
-            <p className="text-xs text-slate-500">
-              Execute SGX Board Lot orders, run What-If diversification &amp;
-              fee simulations, compare stocks, and manage classroom settings via
-              chat.
+            <div>
+              <div className="flex flex-wrap items-center gap-2">
+                <h1 className="font-display text-xl font-extrabold text-slate-900 sm:text-2xl">
+                  EduFinLit · Agentic AI Copilot
+                </h1>
+                <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 font-mono text-[10px] font-bold text-emerald-700">
+                  14 Action Tools + Socratic Learning Guardrails Active
+                </span>
+              </div>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Execute SGX Board Lot orders, run What-If diversification &amp;
+                fee simulations, compare stocks, and ask open-ended financial
+                literacy questions.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                setMessages([createWelcomeMessage()]);
+                showToast("Started a fresh AI Copilot session.");
+              }}
+              className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:border-slate-300 hover:bg-slate-50"
+            >
+              <RefreshCw className="h-3.5 w-3.5 text-slate-500" />
+              New Chat
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowKeyModal((v) => !v)}
+              className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-700 hover:border-sgx-blue hover:text-sgx-blue"
+            >
+              <KeyRound className="h-3.5 w-3.5 text-sgx-blue" />
+              {geminiApiKey
+                ? "✨ Live Gemini Key Connected"
+                : "Connect Gemini Key (Optional)"}
+            </button>
+          </div>
+        </div>
+
+        {/* Live Student Portfolio Telemetry HUD & Active Holdings Quick-Pills */}
+        <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4 pt-3 border-t border-slate-100">
+          <div className="rounded-2xl border border-slate-200/80 bg-slate-50/70 px-3.5 py-2.5">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+              Buying Power (Cash)
+            </p>
+            <p className="mt-0.5 font-mono text-sm font-extrabold text-slate-900 tabular-nums">
+              S${formatSgd(user.cashBalance)}
+            </p>
+          </div>
+          <div className="rounded-2xl border border-slate-200/80 bg-slate-50/70 px-3.5 py-2.5">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+              SGX Holdings Value
+            </p>
+            <p className="mt-0.5 font-mono text-sm font-extrabold text-slate-900 tabular-nums">
+              S${formatSgd(holdingsValue)} ({activeHoldings.length} stocks)
+            </p>
+          </div>
+          <div className="rounded-2xl border border-slate-200/80 bg-slate-50/70 px-3.5 py-2.5">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+              Diversification (1 − HHI)
+            </p>
+            <p className="mt-0.5 font-mono text-sm font-extrabold text-emerald-700 tabular-nums">
+              {divScorePct}% · HHI {(user.hhi ?? 1).toFixed(2)}
+            </p>
+          </div>
+          <div className="rounded-2xl border border-slate-200/80 bg-slate-50/70 px-3.5 py-2.5">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+              Exchange Lot &amp; Fee Mode
+            </p>
+            <p className="mt-0.5 font-mono text-xs font-extrabold text-sgx-blue">
+              {settings.allowOddLots ? "1-Share Odd Lots" : "100-Share Lots"} ·{" "}
+              {settings.feeMode === "sgx_realistic"
+                ? "0.28162% Fees"
+                : "Flat S$10"}
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setShowKeyModal((v) => !v)}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-700 hover:border-sgx-blue hover:text-sgx-blue"
-          >
-            <KeyRound className="h-3.5 w-3.5 text-sgx-blue" />
-            {geminiApiKey ? "Live Gemini Key Connected" : "Connect Gemini Key (Optional)"}
-          </button>
-        </div>
+        {activeHoldings.length > 0 && (
+          <div className="flex flex-wrap items-center gap-1.5 pt-1">
+            <span className="text-[11px] font-bold text-slate-500 mr-1">
+              Your Active SGX Holdings (1-Click Copilot Audit):
+            </span>
+            {activeHoldings.map((h) => {
+              const q = initialSnapshot.quotes[h.ticker];
+              return (
+                <button
+                  key={h.ticker}
+                  type="button"
+                  disabled={isPending}
+                  onClick={() =>
+                    sendPrompt(
+                      `What if I buy 1 more lot of ${h.ticker.replace(".SI", "")} or sell 1 lot?`
+                    )
+                  }
+                  className="inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50/60 px-2.5 py-1 text-[11px] font-semibold text-slate-800 hover:border-sgx-blue hover:bg-blue-100/70 transition"
+                >
+                  <span className="font-mono font-bold text-sgx-blue">
+                    {h.ticker.replace(".SI", "")}
+                  </span>
+                  <span className="text-slate-600">{h.shares} sh</span>
+                  {q && (
+                    <span className="font-mono text-[10px] text-slate-500">
+                      @ S${formatSgxPrice(q.price)}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        )}
       </section>
 
       {statusToast && (
@@ -1065,8 +1297,9 @@ export default function SgxCopilotClient({
             Comparisons, Dividend Calculator, and Stress-Tester) work{" "}
             <strong>100% out of the box with zero API key required</strong>. If
             you optionally paste a Gemini API key below, it is saved locally in
-            your browser to enrich Socratic explanations with live Gemini LLM
-            generation.
+            your browser to synthesize bespoke multi-turn Socratic explanations
+            with live Gemini LLM generation while keeping all SGX math 100%
+            exact.
           </p>
           <div className="flex gap-2">
             <input
@@ -1115,8 +1348,33 @@ export default function SgxCopilotClient({
               </span>
             </div>
 
+            {/* Category Filter Tabs */}
+            <div className="flex flex-wrap gap-1">
+              {[
+                { id: "ALL", label: "All" },
+                { id: "Trade", label: "Trade" },
+                { id: "What-If", label: "What-If" },
+                { id: "Compare", label: "Compare" },
+                { id: "Learn", label: "Learn" },
+                { id: "Teacher", label: "Teacher" },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setActiveCategory(tab.id)}
+                  className={`rounded-lg px-2.5 py-1 text-[11px] font-bold transition ${
+                    activeCategory === tab.id
+                      ? "bg-sgx-blue text-white shadow-xs"
+                      : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
             <div className="space-y-4">
-              {QUICK_CATEGORIES.map((cat) => (
+              {filteredCategories.map((cat) => (
                 <div key={cat.title} className="space-y-1.5">
                   <p className="text-[11px] font-bold text-slate-500">
                     {cat.title}
@@ -1144,9 +1402,11 @@ export default function SgxCopilotClient({
         {/* Right 8 Cols: Interactive Conversational Agent Stream */}
         <section className="flex flex-col justify-between rounded-3xl border border-slate-200 bg-white shadow-sm lg:col-span-8 min-h-[640px]">
           {/* Messages Container */}
-          <div className="flex-1 overflow-y-auto p-5 space-y-5 max-h-[660px]">
+          <div className="flex-1 overflow-y-auto p-5 space-y-5 max-h-[680px]">
             {messages.map((m) => {
               const isUser = m.role === "user";
+              const isGeminiEnriched =
+                m.output?.generationMode === "gemini_llm";
               return (
                 <div
                   key={m.id}
@@ -1165,24 +1425,53 @@ export default function SgxCopilotClient({
                         : "border border-slate-200 bg-white text-slate-800 shadow-sm w-full"
                     }`}
                   >
-                    <div className="flex items-center justify-between gap-2 text-[10px] opacity-75 mb-1">
-                      <span className="font-bold uppercase tracking-wider">
-                        {isUser
-                          ? `${user.nickname} (${user.role})`
-                          : `EduFinLit AI Copilot · ${m.output?.toolUsed ?? "assistant"}`}
+                    <div className="flex flex-wrap items-center justify-between gap-2 text-[10px] mb-1.5">
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <span
+                          className={`font-bold uppercase tracking-wider ${
+                            isUser ? "text-blue-100" : "text-slate-500"
+                          }`}
+                        >
+                          {isUser
+                            ? `${user.nickname} (${user.role})`
+                            : `EduFinLit AI Copilot · ${m.output?.toolUsed ?? "assistant"}`}
+                        </span>
+                        {!isUser && (
+                          <span
+                            className={`rounded-full px-2 py-0.5 font-mono text-[9px] font-bold ${
+                              isGeminiEnriched
+                                ? "bg-purple-50 text-purple-700 border border-purple-200"
+                                : "bg-slate-100 text-slate-600 border border-slate-200"
+                            }`}
+                          >
+                            {isGeminiEnriched
+                              ? "✨ Gemini LLM + SGX Math"
+                              : "⚡ SGX Math Engine"}
+                          </span>
+                        )}
+                      </div>
+                      <span
+                        className={`font-mono ${
+                          isUser ? "text-blue-100" : "text-slate-400"
+                        }`}
+                      >
+                        {m.timestamp}
                       </span>
-                      <span className="font-mono">{m.timestamp}</span>
                     </div>
 
                     {m.output?.headline && !isUser && (
-                      <h3 className="font-display text-sm font-extrabold text-slate-900 mb-1">
+                      <h3 className="font-display text-sm font-extrabold text-slate-900 mb-1.5">
                         {m.output.headline}
                       </h3>
                     )}
 
-                    <p className="text-xs leading-relaxed whitespace-pre-line">
-                      {m.text}
-                    </p>
+                    {isUser ? (
+                      <p className="text-xs leading-relaxed whitespace-pre-line">
+                        {m.text}
+                      </p>
+                    ) : (
+                      renderRichText(m.text)
+                    )}
 
                     {/* Render Structured Interactive Card if present */}
                     {!isUser && m.output?.card && renderCard(m, m.output.card)}
@@ -1228,7 +1517,8 @@ export default function SgxCopilotClient({
             {isPending && (
               <div className="flex items-center gap-2 text-xs font-semibold text-sgx-blue px-2">
                 <RefreshCw className="h-4 w-4 animate-spin" />
-                EduFinLit AI Copilot is running financial calculations &amp; guardrails…
+                EduFinLit AI Copilot is running SGX financial calculations &amp;
+                synthesizing Socratic guidance…
               </div>
             )}
 
@@ -1251,7 +1541,7 @@ export default function SgxCopilotClient({
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask EduFinLit AI Copilot to buy/sell lots, simulate What-If trades, compare stocks, or explain concepts…"
+                placeholder="Ask EduFinLit AI Copilot to buy/sell lots, simulate What-If trades, compare stocks, or ask open-ended strategy questions…"
                 className="h-11 flex-1 rounded-xl border border-slate-300 bg-white px-4 text-xs text-slate-900 placeholder-slate-400 outline-none focus:border-sgx-blue focus:ring-2 focus:ring-sgx-blue/20"
               />
               <button
@@ -1266,9 +1556,10 @@ export default function SgxCopilotClient({
             <p className="mt-2 text-[11px] text-slate-500 flex items-center gap-1.5">
               <ShieldCheck className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
               <span>
-                <strong>MAS &amp; MOE Educational Guardrail:</strong> EduFinLit AI
-                Copilot prepares transparent order tickets and Socratic analysis
-                but never recommends which stock to buy or sell.
+                <strong>EduFinLit Socratic Learning Guardrail:</strong> AI
+                Copilot prepares transparent SGX order tickets and Socratic
+                analysis so you learn by deciding — it never recommends which
+                stock to buy or sell.
               </span>
             </p>
           </form>

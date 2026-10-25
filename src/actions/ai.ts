@@ -232,9 +232,9 @@ const SCENARIO_CATALOG: Record<
   }
 > = {
   mas_tightening: {
-    title: "MAS SGD NEER Tightening & Higher Interest Rates",
+    title: "Stronger Singapore Dollar (SGD) & Higher Interest Rates",
     description:
-      "Monetary Authority of Singapore appreciates the SGD policy band while global interest rates stay elevated.",
+      "Singapore Dollar exchange rate strengthens against regional currencies while global interest rates stay elevated.",
     sectorShocks: {
       "Banking & Financial Services": 3.8,
       "Capital Markets & Wealth": 2.1,

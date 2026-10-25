@@ -298,7 +298,15 @@ export default function PortfolioClient({
             <p className="mt-0.5 text-xs text-slate-500">
               In Singapore, the Central Depository (CDP) safely holds the shares you buy on SGX in your personal name.
             </p>
-            <p className="font-mono text-xs text-slate-400">{user.email}</p>
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              <p className="font-mono text-xs text-slate-400">{user.email}</p>
+              <Link
+                href="/copilot?prompt=Analyse+my+portfolio+health+%26+Smart+Score"
+                className="inline-flex items-center gap-1 rounded-full border border-blue-200 bg-blue-50 px-2.5 py-0.5 text-[11px] font-bold text-sgx-blue hover:bg-blue-100"
+              >
+                Audit Portfolio in AI Copilot →
+              </Link>
+            </div>
           </div>
 
           <div className="flex flex-col sm:items-end">
@@ -644,16 +652,24 @@ export default function PortfolioClient({
               </p>
             )}
 
-            <button
-              type="submit"
-              disabled={isSavingReflection}
-              className="inline-flex items-center gap-2 rounded-xl bg-sgx-blue px-4 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-blue-700 disabled:opacity-50"
-            >
-              <Send className="h-3.5 w-3.5" />
-              {isSavingReflection
-                ? "Saving to Google Cloud Firestore…"
-                : "Save Weekly Reflection"}
-            </button>
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="submit"
+                disabled={isSavingReflection}
+                className="inline-flex items-center gap-2 rounded-xl bg-sgx-blue px-4 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-blue-700 disabled:opacity-50"
+              >
+                <Send className="h-3.5 w-3.5" />
+                {isSavingReflection
+                  ? "Saving to Google Cloud Firestore…"
+                  : "Save Weekly Reflection"}
+              </button>
+              <Link
+                href="/copilot?prompt=Help+me+draft+my+weekly+reflection"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-blue-200 bg-blue-50 px-3.5 py-2.5 text-xs font-bold text-sgx-blue hover:bg-blue-100"
+              >
+                Co-Write Reflection in AI Copilot →
+              </Link>
+            </div>
           </form>
         </section>
 

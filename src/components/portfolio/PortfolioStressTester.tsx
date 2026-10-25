@@ -24,8 +24,8 @@ const SCENARIOS: Array<{
 }> = [
   {
     id: "mas_tightening",
-    shortTitle: "MAS SGD Tightening",
-    subtitle: "Stronger Singapore Dollar (MAS S$NEER policy) & higher interest rates",
+    shortTitle: "Stronger SGD & Higher Rates",
+    subtitle: "Stronger Singapore Dollar exchange rate & higher global interest rates",
     icon: Landmark,
   },
   {

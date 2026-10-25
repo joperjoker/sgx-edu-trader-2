@@ -92,7 +92,7 @@ fs.writeFileSync(
   path.join(shimDir, "actions-shim.ts"),
   `import { getBrowserDb, saveBrowserDb, getActiveUid } from "../scripts/firebase-spa-bridge";
 import { TICKER_META, VALID_TICKERS } from "../src/utils/tickers";
-import { evaluateCopilotTurn } from "../src/lib/copilot-engine";
+import { evaluateCopilotTurn, enrichCopilotTurnWithGemini } from "../src/lib/copilot-engine";
 import {
   calculateAdminBidAsk,
   calculatePortfolioHhi,
@@ -411,7 +411,7 @@ export async function runPortfolioStressTestAction(scenarioId: string) {
   const user = db.users[uid];
   const rawHoldings = Object.values(db.holdings[uid] ?? {}).filter((h: any) => h.shares > 0) as any[];
   const titles: Record<string, string> = {
-    mas_tightening: "MAS SGD NEER Tightening & Higher Interest Rates",
+    mas_tightening: "Stronger Singapore Dollar (SGD) & Higher Interest Rates",
     semi_capex_surge: "Global Semiconductor & AI Infrastructure Boom",
     changi_tourism_boom: "Changi Aviation & ASEAN Tourism Record Surge",
     energy_inflation_shock: "Global Energy & Supply Chain Inflation Shock",
@@ -627,7 +627,7 @@ export async function distributeClassDividendsAction(classId = "ALL") {
   return { success: true, data: { studentsCredited, totalDividendSgd, timestamp: new Date().toISOString() } };
 }
 
-export async function runSgxCopilotAction(prompt: string, _optionalClientApiKey?: string) {
+export async function runSgxCopilotAction(prompt: string, optionalClientApiKey?: string, history: any[] = []) {
   const db = getBrowserDb();
   const uid = getActiveUid();
   const user = db.users[uid] ?? db.users["user-student-1"] ?? Object.values(db.users)[0];
@@ -635,15 +635,24 @@ export async function runSgxCopilotAction(prompt: string, _optionalClientApiKey?
   const holdings = Object.values(db.holdings[user.uid] ?? {}).filter((h: any) => h.shares > 0);
   const trades = db.tradeHistory.filter((t: any) => t.userId === user.uid);
   const limitOrders = db.limitOrders.filter((o: any) => o.userId === user.uid);
-  const result = evaluateCopilotTurn(prompt, {
+  const ctx = {
     user,
     settings: db.appSettings,
     snapshot: db.marketSnapshot,
     holdings,
     trades,
     limitOrders,
-  });
-  return { success: true, data: result };
+  };
+  const baseResult = evaluateCopilotTurn(prompt, ctx);
+  let storedKey = "";
+  try {
+    storedKey = localStorage.getItem("sgx_edu_trader_optional_gemini_key") || "";
+  } catch {
+    // ignore
+  }
+  const effectiveKey = (optionalClientApiKey && optionalClientApiKey.trim()) || storedKey;
+  const enriched = await enrichCopilotTurnWithGemini(prompt, baseResult, ctx, effectiveKey, history);
+  return { success: true, data: enriched };
 }
 `,
 );

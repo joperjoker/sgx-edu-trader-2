@@ -33,7 +33,10 @@ import {
   SESSION_COOKIE_NAME,
 } from "../src/lib/firebase/auth-session";
 import { getTickerCandles, matchOpenLimitOrders } from "../src/lib/stock-provider";
-import { evaluateCopilotTurn } from "../src/lib/copilot-engine";
+import {
+  buildOrderPreviewCard,
+  evaluateCopilotTurn,
+} from "../src/lib/copilot-engine";
 
 interface TestResult {
   id: string;
@@ -242,19 +245,29 @@ async function main() {
 
     const tsxFiles = srcFiles.filter((f) => f.endsWith(".tsx"));
     const filesWithGemini25: string[] = [];
+    const filesWithUnauthorizedMasMoe: string[] = [];
     for (const f of tsxFiles) {
       const content = fs.readFileSync(f, "utf8");
       if (content.includes("Gemini 2.5")) {
         filesWithGemini25.push(path.basename(f));
+      }
+      if (
+        content.includes("MAS & MOE") ||
+        content.includes("MAS &amp; MOE") ||
+        content.includes("MAS Socratic") ||
+        content.includes("MOE ")
+      ) {
+        filesWithUnauthorizedMasMoe.push(path.basename(f));
       }
     }
 
     assertTest(
       "QA-1.9",
       "Suite 1",
-      "Visible UI Branding Audit (0 visible 'Gemini 2.5' strings in TSX components)",
-      filesWithGemini25.length === 0,
-      `Audited ${tsxFiles.length} TSX component files: ${filesWithGemini25.length} visible "Gemini 2.5" strings found (100% compliant with "Google Cloud & Gemini" branding)`,
+      "Visible UI Branding & Guardrail Attribution Audit (0 'Gemini 2.5' & 0 unauthorized MAS/MOE guardrail claims)",
+      filesWithGemini25.length === 0 &&
+        filesWithUnauthorizedMasMoe.length === 0,
+      `Audited ${tsxFiles.length} TSX component files: ${filesWithGemini25.length} "Gemini 2.5" strings and ${filesWithUnauthorizedMasMoe.length} unauthorized MAS/MOE guardrail claims found`,
     );
 
     // =========================================================================
@@ -790,13 +803,15 @@ async function main() {
       assertTest(
         "UAT-7.1",
         "Suite 7",
-        "EduFinLit AI Copilot (/copilot) SSR Workspace & 5-Layer Guardrails UI",
+        "EduFinLit AI Copilot (/copilot) SSR Workspace & Socratic Learning Guardrails UI",
         copilotRes.status === 200 &&
           copilotHtml.includes("EduFinLit · Agentic AI Copilot") &&
           copilotHtml.includes("/efl-logo.png") &&
-          copilotHtml.includes("14 Action Tools + MAS Socratic Guardrails Active") &&
+          copilotHtml.includes(
+            "14 Action Tools + Socratic Learning Guardrails Active",
+          ) &&
           copilotHtml.includes("1-Click Agentic Actions"),
-        `/copilot HTTP ${copilotRes.status} verified with EduFinLit logo, 1-Click Agentic Actions launcher, and MAS Socratic Guardrails banner`,
+        `/copilot HTTP ${copilotRes.status} verified with EduFinLit logo, 1-Click Agentic Actions launcher, and Socratic Learning Guardrails banner`,
       );
     } finally {
       serverProc.kill();
@@ -1163,7 +1178,7 @@ async function main() {
       ...s1Profile!,
       role: "superadmin" as const,
       email: "admin@sgxedu.sg",
-      nickname: "Admin MOE",
+      nickname: "School Admin",
     };
 
     const adminTeacherCommandTurn = evaluateCopilotTurn(
@@ -1190,6 +1205,47 @@ async function main() {
         adminTeacherCommandTurn.card?.type === "teacher_action" &&
         adminTeacherCommandTurn.card.canExecute === true,
       `Student blocked from classroom command (canExecute=false, role='${s1Profile!.role}'); Teacher and Superadmin granted 1-click execution (canExecute=true)`,
+    );
+
+    // UAT-7.8: Open-Ended Socratic Q&A Engine & Inline Order Ticket Adjuster
+    const socraticQaTurn = evaluateCopilotTurn(
+      "How should I allocate my remaining cash across sectors?",
+      {
+        user: s1Profile!,
+        settings: copilotSettings,
+        snapshot,
+        holdings: s1Holdings,
+        trades: [],
+        limitOrders: [],
+      },
+    );
+
+    const adjustedCard = buildOrderPreviewCard(
+      "OV8.SI",
+      "buy",
+      "market",
+      200,
+      null,
+      {
+        user: s1Profile!,
+        settings: copilotSettings,
+        snapshot,
+        holdings: s1Holdings,
+        trades: [],
+        limitOrders: [],
+      },
+    );
+
+    assertTest(
+      "UAT-7.8",
+      "Suite 7",
+      "Copilot Open-Ended Socratic Strategy Q&A & Inline Order Ticket Lot Adjuster",
+      socraticQaTurn.toolUsed === "socratic_qa" &&
+        socraticQaTurn.explanation.includes("S$") &&
+        !socraticQaTurn.explanation.includes("MAS") &&
+        adjustedCard.shares === 200 &&
+        adjustedCard.ticker === "OV8.SI",
+      `Open-ended Socratic Q&A grounded in live student cash & sector weights; buildOrderPreviewCard adjusted OV8.SI to 200 shares (2 lots, Net S$${formatSgd(adjustedCard.fees.netTotal)})`,
     );
   } finally {
     // Always restore clean initial database state after UAT finishes

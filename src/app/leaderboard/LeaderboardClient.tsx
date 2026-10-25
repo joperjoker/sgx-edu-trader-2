@@ -1,8 +1,10 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import {
   Award,
+  Bot,
   Crown,
   Medal,
   Sparkles,
@@ -125,7 +127,7 @@ export default function LeaderboardClient({
       </section>
 
       {/* Plain-English Teacher & Student Guide to Leaderboard Scoring */}
-      <section className="grid grid-cols-1 gap-3 rounded-2xl border border-blue-200 bg-blue-50/40 p-4 text-xs text-slate-700 sm:grid-cols-2">
+      <section className="grid grid-cols-1 gap-3 rounded-2xl border border-blue-200 bg-blue-50/40 p-4 text-xs text-slate-700 sm:grid-cols-3 items-center">
         <div>
           <strong className="text-slate-900">1. Portfolio Net Value (Raw Wealth):</strong>{" "}
           Your uninvested cash plus the current market value of all SGX shares you own (started at S$10,000.00).
@@ -133,6 +135,15 @@ export default function LeaderboardClient({
         <div>
           <strong className="text-sgx-blue">2. Smart Investor Score (Risk-Adjusted Grade):</strong>{" "}
           Combines your % return with your <strong>Diversification Score (1 − HHI)</strong> so spreading risk across multiple companies beats gambling everything on one stock.
+        </div>
+        <div className="flex sm:justify-end">
+          <Link
+            href="/copilot?prompt=How+should+I+allocate+my+remaining+cash+across+sectors%3F"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-sgx-blue px-3.5 py-2 text-xs font-bold text-white shadow-sm hover:bg-blue-700"
+          >
+            <Bot className="h-3.5 w-3.5" />
+            Boost Smart Score in AI Copilot →
+          </Link>
         </div>
       </section>
 
