@@ -1,23 +1,42 @@
-# SGX Edu-Trader 2.0 (v3.0 Institutional Edition) 🇸🇬📈
+# EduFinLit · Student Growth & SGX Market Simulator 🇸🇬📈
 
-**An institutional-grade, 100% Google Cloud & Bright Daylight paper trading simulator for Singapore secondary school and junior college students.**
+<p align="center">
+  <img src="public/efl-logo.png" alt="EduFinLit Crest Logo" width="96" height="96" />
+</p>
+
+**An institutional-grade, 100% Google Cloud & Bright Daylight financial literacy and SGX Market paper trading simulator for Singapore secondary school and junior college students.**
 
 - 🌐 **Live Hosted URL (Google Firebase Hosting):** **[https://sgx-edu-trader-2-sg.web.app](https://sgx-edu-trader-2-sg.web.app)**
+- 🤖 **Agentic AI Copilot Workspace:** **[https://sgx-edu-trader-2-sg.web.app/copilot](https://sgx-edu-trader-2-sg.web.app/copilot)**
 - 🏫 **Google Sites Direct Embed URL:** `https://sgx-edu-trader-2-sg.web.app/dashboard`
-- 🚀 **Launch & Google Sites Embed Center:** [https://sgx-edu-trader-2-sg.web.app/launch](https://sgx-edu-trader-2-sg.web.app/launch)
+- 🚀 **Launch & Google Sites Embed Center:** **[https://sgx-edu-trader-2-sg.web.app/launch](https://sgx-edu-trader-2-sg.web.app/launch)**
 
-Students manage **S$10,000.00** in virtual SGD capital across **20 real Singapore Exchange (SGX) listed companies**, learning authentic SGX market rules, board lots, Bid/Ask order book depth, transaction fee math (Brokerage + CDP Clearing + SGX Trading Fee + 9% GST), portfolio diversification, and Socratic financial reasoning powered by **Google Gemini 2.5 Flash**.
+Students manage **S$10,000.00** in virtual SGD capital across **20 real Singapore Exchange (SGX) listed companies**, learning authentic SGX Market rules, 100-share Board Lots, Bid/Ask order book depth, transaction fee math (Brokerage + CDP Clearing + SGX Trading Fee + 9% GST), portfolio diversification (`1 − HHI`), and Socratic financial reasoning powered by **Google Cloud & Gemini**.
 
 ---
 
 ## ✨ Key Highlights
 
-### 1. "SGX Institutional Daylight" Bright UI System
-- High-contrast, sunlight-legible classroom interface (`#F8FAFC` canvas, `#FFFFFF` cards, `#0F172A` slate ink, `#0052FF` SGX Cobalt accent).
-- Accessible P&L indicators: every price change and portfolio return displays both `▲`/`▼` directional symbols **and** explicit `"profit"`/`"loss"` labels using `JetBrains Mono` (`tabular-nums`).
-- Real-time Navbar cash and net-worth updates with automatic outside-click and route-change menu dismissal.
+### 1. Agentic AI Copilot (`/copilot`) + Multi-Turn Gemini LLM Harness
+- **14 Deterministic SGX Action Tools + Multi-Turn LLM Synthesis (`enrichCopilotTurnWithGemini`):**
+  - Combines exact, zero-hallucination SGX financial math (`0.28162%` fees, `S$10.00` minimum brokerage, SGX minimum tick table, Herfindahl-Hirschman Index `HHI`, and Smart Investor Score) with multi-turn **Google Cloud & Gemini** Socratic coaching grounded in the student's live portfolio holdings and the last 6 conversation turns.
+- **Interactive Staged Order Tickets with Inline Lot Adjuster:**
+  - Ask in natural language (*"Buy 1 lot of DBS"*, *"Buy 2 lots of Sheng Siong"*, *"Limit buy 100 shares of Singtel at S$4.05"*).
+  - Adjust orders inline (`Switch to SELL / BUY`, `− 1 Lot (100 sh)`, `+ 1 Lot (100 sh)`) and see real-time updates to SGX/CDP/GST fees, post-trade cash, and Diversification (`1 − HHI`) before clicking **Confirm & Execute SGX Order**.
+- **What-If Simulator, Multi-Stock Comparator, DRIP Projector & Open-Ended Socratic Q&A (`socratic_qa`):**
+  - Run What-If diversification previews, side-by-side SGX stock comparisons, 5-year Dividend Reinvestment Plan (DRIP) compounding projections, 4-scenario macroeconomic stress tests, weekly reflection co-writing, and open-ended portfolio strategy Q&A.
+- **EduFinLit Socratic Learning Guardrails:**
+  - **Anti-Speculation & Financial Advice Refusal:** Automatically intercepts stock-picking or price-prediction prompts (*"Which stock will go up tomorrow?"*) and pivots to a 3-question Socratic evaluation framework.
+  - **Mandatory 2-Step Order Confirmation:** Never executes a trade silently without student confirmation on an itemized order ticket.
+  - **Small-Order Fee-Drag Alert:** Warns students whenever minimum brokerage fees exceed `1.5%` of trade value.
+  - **Role-Based Classroom Controls:** Restricts teacher commands (Odd-Lot toggle, Fee Mode toggle, Quarterly Dividend distribution, Gradebook CSV export) to `teacher` and `superadmin` accounts.
 
-### 2. Authentic SGX Securities Microstructure & Pro Charting
+### 2. "Institutional Daylight" Bright UI System & Cross-App Deep Links
+- High-contrast, classroom-legible interface (`#F8FAFC` canvas, `#FFFFFF` cards, `#0F172A` slate ink, `#0052FF` cobalt accent) featuring the **EduFinLit** crest logo (`/efl-logo.png`).
+- Accessible P&L indicators: every price change and portfolio return displays both `▲`/`▼` directional symbols **and** explicit `"profit"`/`"loss"` labels using `JetBrains Mono` (`tabular-nums`).
+- **Bidirectional AI Copilot Deep-Links:** 1-click deep links connect the **SGX Market Screener** (`/dashboard`), **Company Pro Terminal** (`/company/[ticker]`), **My Portfolio & Reflection Journal** (`/portfolio`), and **Leaderboard** (`/leaderboard`) directly into `/copilot?prompt=...`.
+
+### 3. Authentic SGX Market Microstructure & Pro Charting
 - **TradingView `lightweight-charts` Pro Terminal:** Interactive Candlestick & Mountain Area modes, Volume histogram, `1D`/`5D`/`1M`/`6M`/`1Y` timeframes, `SMA 20`, `SMA 50`, `VWAP`, `RSI (14)` momentum indicator, `vs STI Benchmark` overlay, and live OHLCV crosshair readout.
 - **Official SGX Minimum Tick Size Table:**
   - Below `S$0.20`: **`S$0.001`** (e.g., `ITS.SI` ISOTeam)
@@ -25,20 +44,19 @@ Students manage **S$10,000.00** in virtual SGD capital across **20 real Singapor
   - `S$1.00` and above: **`S$0.01`** (e.g., `D05.SI` DBS Group, `O39.SI` OCBC, `U11.SI` UOB)
 - **SGX Board Lots & 5-Level Order Book Depth:** Standard `100`-share SGX board lots (with Teacher toggle for `1`-share Odd-Lot beginner mode), live 5-level Bid/Ask Order Book ladder, Market & Limit orders with automatic price-improvement matching, and printable **Official SGX `T+2` Electronic Contract Notes**.
 - **Authentic SGX + CDP + 9% GST Fee Engine:**
-  - Brokerage Commission: `0.08%` of contract value (Minimum `S$10.00`)
+  - Brokerage Commission: `0.20%` of contract value (Minimum `S$10.00`)
   - CDP Clearing Fee: `0.0325%`
   - SGX Trading Access Fee: `0.0075%`
-  - Singapore GST: `9%` on total fees (or Teacher toggle for simplified `S$10.00` flat classroom fee)
+  - Singapore GST: `9%` on total fees (effective `0.28162%`, or Teacher toggle for simplified `S$10.00` flat classroom fee)
 - **Official SGT Exchange Session State Machine:** Models Pre-Open (`08:30–08:59`), Morning Continuous Session (`09:00–12:00`), Midday Intermission (`12:00–13:00`), Afternoon Continuous Session (`13:00–17:00`), Closing Auction (`17:00–17:06`), weekends, and official Singapore Public Holidays.
 
-### 3. 100% Google Ecosystem (Zero Vercel, Zero Supabase)
-- **Hosting & Compute:** Google Cloud Run (`asia-southeast1` Singapore) + Firebase App Hosting (`apphosting.yaml`, `Dockerfile`, `cloudbuild.yaml`, `firebase.json`).
-- **Database:** Google Cloud Firestore (`firestore.rules`, `firestore.indexes.json`) with automatic local JSON emulator sync (`.data/firestore-local.json`) for instant zero-config local classroom testing.
+### 4. 100% Google Cloud Ecosystem (Zero Vercel, Zero Supabase)
+- **Hosting & Compute:** Google Cloud Run (`asia-southeast1` Singapore) + Firebase Hosting (`apphosting.yaml`, `Dockerfile`, `cloudbuild.yaml`, `firebase.json`).
+- **Database:** Google Cloud Firestore (`firestore.rules`, `firestore.indexes.json`) with automatic local JSON emulator sync (`.data/firestore-local.json`) for instant zero-config classroom testing.
 - **Authentication:** Firebase Authentication with 1-click **Continue with Google (Gmail)** OAuth (`GoogleAuthProvider`), HTTP-only `__session` SSR cookies, and 1-click Google Classroom Sandbox accounts.
-- **Socratic AI Coach:** `@google/genai` (`gemini-2.5-flash`) powering Company News Briefs, 30-Session Price Pattern Analysis, Fundamental Health Ratings, and a **4-Scenario Macroeconomic Portfolio Stress-Tester**.
 - **Google Workspace & Google Sites Integration:**
   - 1-click **Google Sheets Gradebook CSV Export** & **CSV/TSV Class Roster Sync**.
-  - Native **Google Sites (`sites.google.com`) Full-Page Embed** support via `Content-Security-Policy: frame-ancestors` headers and the built-in `/launch` Embed Code Generator.
+  - Native **Google Sites (`sites.google.com`) Full-Page Embed** support via `Content-Security-Policy: frame-ancestors` headers and the built-in `/launch` Embed Code Generator with pre-launch readiness checks.
 
 ---
 
@@ -75,32 +93,37 @@ Open **[http://localhost:3000](http://localhost:3000)** in your browser:
 
 ---
 
-## 🧪 Automated QA & UAT Verification Suite (30 Test Suites)
+## 🧪 Automated QA & UAT Verification Suite (39 Test Suites)
 
-Run the complete static analysis, production build, and 30-suite automated + live HTTP/SSR UAT runner:
+Run the complete static analysis, production build, and **39-suite automated + live HTTP/SSR UAT runner** ([`scripts/run-uat-qa.ts`](scripts/run-uat-qa.ts)):
 
 ```bash
 npm run typecheck
 npm run lint
 npm run build
-npm run uat
+npx tsx scripts/run-uat-qa.ts
 ```
 
 ---
 
-## ☁️ Deploying to Google Cloud Run & Embedding in Google Sites
+## ☁️ Deploying to Google Cloud & Embedding in Google Sites
 
-1. **Deploy to Google Cloud Run (`asia-southeast1` Singapore) & Firebase Hosting:**
-   ```powershell
-   .\scripts\deploy-google-cloud.ps1 -ProjectId "your-gcp-project-id" -Region "asia-southeast1"
+1. **Build & Deploy to Firebase Hosting (`sgx-edu-trader-2-sg.web.app`):**
+   ```bash
+   node scripts/build-firebase-hosting.mjs
+   npx firebase-tools deploy --only hosting --project sgx-edu-trader-2-sg
    ```
-2. **Embed in Google Sites (`sites.google.com`):**
+2. **Deploy Full Container to Google Cloud Run (`asia-southeast1` Singapore):**
+   ```powershell
+   .\scripts\deploy-google-cloud.ps1 -ProjectId "sgx-edu-trader-2-sg" -Region "asia-southeast1"
+   ```
+3. **Embed in Google Sites (`sites.google.com`):**
    - Navigate to `/launch` inside the app.
    - Copy the **Option A Direct Embed URL** or **Option B `<iframe ...>` Embed Code**.
-   - In Google Sites, click **Insert → Full page embed**, paste your URL/code, and click **Publish**.
+   - In Google Sites, click **Insert → Embed → By URL (or Embed code)**, paste, and click **Publish**.
 
 ---
 
 ## ⚖️ Regulatory & Educational Disclaimer
 
-> SGX Edu-Trader is a paper trading simulation for educational purposes only. No real securities transactions are conducted and no real money is involved. Not licensed by the Monetary Authority of Singapore (MAS). Not financial advice under the Financial Advisers Act (Cap. 110) or Securities and Futures Act (Cap. 289) of Singapore. Not affiliated with Singapore Exchange Limited (SGX Group).
+> EduFinLit is a paper trading simulation for educational purposes only. No real securities transactions are conducted and no real money is involved. Not licensed by the Monetary Authority of Singapore (MAS). Not financial advice under the Financial Advisers Act (Cap. 110) or Securities and Futures Act (Cap. 289) of Singapore. Not affiliated with Singapore Exchange Limited (SGX Group).
