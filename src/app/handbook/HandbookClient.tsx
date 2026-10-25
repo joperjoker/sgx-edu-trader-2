@@ -21,6 +21,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import InteractiveVideoPlayer from "@/components/video/InteractiveVideoPlayer";
+import MarkdownRenderer from "@/components/common/MarkdownRenderer";
 import {
   ROLE_HANDBOOKS,
   HandbookRole,
@@ -302,71 +303,8 @@ export default function HandbookClient() {
                 </p>
 
                 {/* Section Content Markdown Body */}
-                <div className="prose prose-slate max-w-none text-xs sm:text-sm leading-relaxed text-slate-700 space-y-3 pt-2">
-                  {section.contentMarkdown.split("\n\n").map((para, pIdx) => {
-                    if (para.startsWith("### ")) {
-                      return (
-                        <h4
-                          key={pIdx}
-                          className="font-display text-base font-extrabold text-slate-900 mt-4 mb-2"
-                        >
-                          {para.replace("### ", "")}
-                        </h4>
-                      );
-                    }
-                    if (para.startsWith("```")) {
-                      const codeContent = para.replace(/```[a-z]*\n?/g, "");
-                      return (
-                        <pre
-                          key={pIdx}
-                          className="rounded-xl border border-slate-200 bg-slate-50 p-3.5 font-mono text-xs text-slate-800 overflow-x-auto shadow-2xs"
-                        >
-                          <code>{codeContent}</code>
-                        </pre>
-                      );
-                    }
-                    if (para.startsWith("- ")) {
-                      const bullets = para.split("\n- ");
-                      return (
-                        <ul key={pIdx} className="list-disc pl-5 space-y-1.5 my-2">
-                          {bullets.map((b, bIdx) => {
-                            const cleanBullet = b.replace(/^- /, "");
-                            return (
-                              <li key={bIdx} className="leading-relaxed">
-                                <span
-                                  dangerouslySetInnerHTML={{
-                                    __html: cleanBullet
-                                      .replace(
-                                        /\*\*(.*?)\*\*/g,
-                                        "<strong>$1</strong>",
-                                      )
-                                      .replace(
-                                        /`([^`]+)`/g,
-                                        '<code class="rounded bg-slate-100 px-1 py-0.5 font-mono text-[11px] text-slate-800">$1</code>',
-                                      ),
-                                  }}
-                                />
-                              </li>
-                            );
-                          })}
-                        </ul>
-                      );
-                    }
-                    return (
-                      <p
-                        key={pIdx}
-                        className="leading-relaxed"
-                        dangerouslySetInnerHTML={{
-                          __html: para
-                            .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
-                            .replace(
-                              /`([^`]+)`/g,
-                              '<code class="rounded bg-slate-100 px-1 py-0.5 font-mono text-[11px] text-slate-800">$1</code>',
-                            ),
-                        }}
-                      />
-                    );
-                  })}
+                <div className="pt-2">
+                  <MarkdownRenderer content={section.contentMarkdown} />
                 </div>
               </article>
             ))}
