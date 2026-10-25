@@ -7,6 +7,7 @@
 **An institutional-grade, 100% Google Cloud & Bright Daylight financial literacy and SGX Market paper trading simulator for Singapore secondary school and junior college students.**
 
 - 🌐 **Live Hosted URL (Google Firebase Hosting):** **[https://sgx-edu-trader-2-sg.web.app](https://sgx-edu-trader-2-sg.web.app)**
+- 📖 **Handbooks & Video Walkthrough Studio:** **[https://sgx-edu-trader-2-sg.web.app/handbook](https://sgx-edu-trader-2-sg.web.app/handbook)**
 - 🤖 **Agentic AI Copilot Workspace:** **[https://sgx-edu-trader-2-sg.web.app/copilot](https://sgx-edu-trader-2-sg.web.app/copilot)**
 - 🏫 **Google Sites Direct Embed URL:** `https://sgx-edu-trader-2-sg.web.app/dashboard`
 - 🚀 **Launch & Google Sites Embed Center:** **[https://sgx-edu-trader-2-sg.web.app/launch](https://sgx-edu-trader-2-sg.web.app/launch)**
@@ -49,6 +50,19 @@ Students manage **S$10,000.00** in virtual SGD capital across **20 real Singapor
   - SGX Trading Access Fee: `0.0075%`
   - Singapore GST: `9%` on total fees (effective `0.28162%`, or Teacher toggle for simplified `S$10.00` flat classroom fee)
 - **Official SGT Exchange Session State Machine:** Models Pre-Open (`08:30–08:59`), Morning Continuous Session (`09:00–12:00`), Midday Intermission (`12:00–13:00`), Afternoon Continuous Session (`13:00–17:00`), Closing Auction (`17:00–17:06`), weekends, and official Singapore Public Holidays.
+
+### 5. Role-Based Handbooks & 6-Episode Playable Video Walkthrough Studio (`/handbook`)
+- **Interactive Video Walkthrough Player:**
+  - High-fidelity simulated visual screen cues animating live order tickets, TradingView candlesticks, Level 2 depth books, AI chat turns, 5-Pillar radars, and Google Sites embeds in sync with elapsed time.
+  - Web Speech voiceover audio narration with live toggle, audio waveform, closed captions (CC), playback speed adjustments (`1x`, `1.25x`, `1.5x`, `2x`), and scrubbable chapter markers.
+  - Dual view modes: **Interactive Video Player** and **Full 3-Column Production Script & Storyboard** (`Timestamp & Screen Cue` | `On-Screen Kinetic Callout` | `Creator Voiceover Script`) with 1-click script copying.
+- **Role-Based Handbooks with 1-Click Print & PDF Export:**
+  - **Student Field Handbook:** SGX board lots, tick size schedules, fee-drag formulas, 1 − HHI diversification math, DRIP snowball compounding, and pre-trade hypothesis tagging.
+  - **Teacher & HOD Implementation Manual:** 3-minute zero-prep classroom onboarding, SGX market controls, 5-Pillar Cognitive Science Rubrics (FL-C1 to FL-C5), Biggs' SOLO Taxonomy mastery matrix, automated formative report card comments, and 1-click Google Sheets Gradebook export.
+  - **Superadmin & School IT Operations Manual:** 100% Google Cloud architecture, Google Sites embed codes (Option A & B), Chromebook SameSite cookie troubleshooting, and Cloud Scheduler crons.
+  - **1-Click Actions:** Print / Save as PDF (`@media print` optimized for clean classroom whitepapers) and 1-click Markdown download.
+
+---
 
 ### 4. 100% Google Cloud Ecosystem (Zero Vercel, Zero Supabase)
 - **Hosting & Compute:** Google Cloud Run (`asia-southeast1` Singapore) + Firebase Hosting (`apphosting.yaml`, `Dockerfile`, `cloudbuild.yaml`, `firebase.json`).

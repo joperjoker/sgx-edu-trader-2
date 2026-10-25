@@ -1283,6 +1283,30 @@ School: ${schoolName} · Semester: ${semester} · Portal: ${cleanBase}
           </div>
         </div>
 
+        {/* Dedicated Handbooks & Videos Callout Banner */}
+        <div className="rounded-2xl border border-blue-200 bg-gradient-to-r from-blue-50/80 via-white to-indigo-50/80 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-2xs">
+          <div className="flex items-center gap-3">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-sgx-blue text-white shadow-xs font-bold text-lg">
+              🎬
+            </span>
+            <div>
+              <h4 className="font-display text-sm sm:text-base font-extrabold text-slate-900">
+                Dedicated Handbooks &amp; Playable Video Walkthrough Studio
+              </h4>
+              <p className="text-xs text-slate-600">
+                Watch simulated visual screen cues with live voiceover narration, scrubbable chapter timelines, and export 1-click printable PDF manuals.
+              </p>
+            </div>
+          </div>
+          <Link
+            href="/handbook"
+            className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-xl bg-sgx-blue px-4 py-2 text-xs font-bold text-white shadow-xs hover:bg-blue-700 transition"
+          >
+            Open Handbooks &amp; Videos
+            <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
+        </div>
+
         {/* Video Walkthrough Episode Cards */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">

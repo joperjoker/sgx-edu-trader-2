@@ -21,6 +21,25 @@ const nextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: "/videos",
+        destination: "/handbook",
+        permanent: false,
+      },
+      {
+        source: "/guide",
+        destination: "/handbook",
+        permanent: false,
+      },
+      {
+        source: "/handbooks",
+        destination: "/handbook",
+        permanent: false,
+      },
+    ];
+  },
   async headers() {
     return [
       {

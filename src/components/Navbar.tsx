@@ -18,6 +18,7 @@ import {
   Briefcase,
   Sparkles,
   Bot,
+  BookOpen,
 } from "lucide-react";
 import {
   getFirebaseBrowserAuth,
@@ -162,6 +163,7 @@ export default function Navbar({ initialUser }: Props) {
     { href: "/copilot", label: "AI Copilot", icon: Bot },
     { href: "/portfolio", label: "My Portfolio", icon: PieChart },
     { href: "/leaderboard", label: "Leaderboard", icon: Trophy },
+    { href: "/handbook", label: "Handbooks & Videos", icon: BookOpen },
     { href: "/launch", label: "Google Launch", icon: Sparkles },
   ];
   if (isAdminOrTeacher) {

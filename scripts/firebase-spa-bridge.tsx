@@ -56,6 +56,7 @@ import LeaderboardClient, {
 import AdminClient from "../src/app/admin/AdminClient";
 import LaunchClient from "../src/app/launch/LaunchClient";
 import SgxCopilotClient from "../src/app/copilot/CopilotClient";
+import HandbookClient from "../src/app/handbook/HandbookClient";
 import SgxProChart from "../src/components/company/SgxProChart";
 import SgxOrderTicket from "../src/components/company/SgxOrderTicket";
 import SgxDividendCalculator from "../src/components/company/SgxDividendCalculator";
@@ -807,6 +808,13 @@ function AppShell() {
         }))}
       />
     );
+  } else if (
+    pathname === "/handbook" ||
+    pathname === "/videos" ||
+    pathname === "/guide" ||
+    pathname === "/handbooks"
+  ) {
+    content = <HandbookClient />;
   } else {
     const challenge = Object.values(db.weeklyChallenges)[0] ?? null;
     content = (
