@@ -8,6 +8,7 @@ import "./globals.css";
 import { validateEnv } from "@/utils/env-check";
 import { getServerSessionUser } from "@/lib/firebase/auth-session";
 import Navbar from "@/components/Navbar";
+import ClassroomPersonaBanner from "@/components/ClassroomPersonaBanner";
 import Footer from "@/components/Footer";
 import OnboardingFlow from "@/components/OnboardingFlow";
 
@@ -88,6 +89,7 @@ export default async function RootLayout({
     >
       <body className="min-h-screen flex flex-col bg-sgx-canvas font-sans text-sgx-ink antialiased selection:bg-blue-100 selection:text-sgx-blue">
         <Navbar initialUser={user} />
+        <ClassroomPersonaBanner initialUser={user} />
         <OnboardingFlow user={user} />
         <div className="flex-1">{children}</div>
         <Footer />

@@ -43,6 +43,7 @@ import {
 
 // Import the actual application UI components from src/
 import Navbar from "../src/components/Navbar";
+import ClassroomPersonaBanner from "../src/components/ClassroomPersonaBanner";
 import Footer from "../src/components/Footer";
 import OnboardingFlow from "../src/components/OnboardingFlow";
 import LoginClient from "../src/app/login/LoginClient";
@@ -839,6 +840,7 @@ function AppShell() {
         {pathname !== "/login" && (
           <>
             <Navbar initialUser={currentUser} />
+            <ClassroomPersonaBanner initialUser={currentUser} />
             <OnboardingFlow user={currentUser} />
           </>
         )}

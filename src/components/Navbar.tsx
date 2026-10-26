@@ -19,6 +19,8 @@ import {
   Sparkles,
   Bot,
   BookOpen,
+  PlusCircle,
+  User as UserIcon,
 } from "lucide-react";
 import {
   getFirebaseBrowserAuth,
@@ -27,6 +29,11 @@ import {
 } from "@/lib/firebase/client";
 import type { UserProfileDoc } from "@/types/firestore";
 import { formatSgd } from "@/utils/sgx-market";
+import {
+  CLASSROOM_SAMPLE_PROFILES,
+  type ClassroomSampleProfile,
+  findSampleProfile,
+} from "@/utils/classroom-profiles";
 
 interface Props {
   initialUser: UserProfileDoc | null;
@@ -184,6 +191,63 @@ export default function Navbar({ initialUser }: Props) {
     router.refresh();
   };
 
+  const handleQuickSwitchProfile = async (profile: ClassroomSampleProfile) => {
+    try {
+      setMenuOpen(false);
+      setMobileOpen(false);
+      const res = await fetch("/api/auth/session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          demoEmail: profile.email,
+          demoName: profile.name,
+        }),
+      });
+      if (res.ok) {
+        const data = (await res.json()) as { user?: UserProfileDoc };
+        if (data?.user) {
+          setUser(data.user);
+        }
+      }
+      window.dispatchEvent(new CustomEvent("sgx:db-mutated"));
+
+      if (profile.role === "teacher") {
+        if (pathname !== "/admin" && !pathname.startsWith("/admin")) {
+          router.push("/admin");
+        }
+      } else if (profile.role === "superadmin") {
+        if (
+          pathname !== "/admin" &&
+          pathname !== "/launch" &&
+          !pathname.startsWith("/admin")
+        ) {
+          router.push("/admin");
+        }
+      } else if (profile.email === "chloe.ng@gmail.com") {
+        if (
+          pathname === "/admin" ||
+          pathname === "/launch" ||
+          pathname.startsWith("/admin")
+        ) {
+          router.push("/leaderboard");
+        }
+      } else if (profile.email === "student1@gmail.com") {
+        if (
+          pathname === "/admin" ||
+          pathname === "/launch" ||
+          pathname.startsWith("/admin")
+        ) {
+          router.push("/dashboard");
+        }
+      }
+      router.refresh();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const activeSampleProfile = findSampleProfile(user);
+
   const roleBadgeClass =
     user.role === "superadmin"
       ? "bg-amber-50 text-amber-800 border-amber-200"
@@ -308,7 +372,7 @@ export default function Navbar({ initialUser }: Props) {
             </button>
 
             {menuOpen && (
-              <div className="absolute right-0 mt-2 w-64 rounded-2xl border border-slate-200 bg-white p-3 shadow-xl animate-scale-in">
+              <div className="absolute right-0 mt-2 w-72 rounded-2xl border border-slate-200 bg-white p-3 shadow-xl animate-scale-in">
                 <div className="border-b border-slate-100 pb-3">
                   <p className="text-sm font-bold text-slate-900 truncate">
                     {user.nickname}
@@ -316,11 +380,18 @@ export default function Navbar({ initialUser }: Props) {
                   <p className="font-mono text-xs text-slate-500 truncate">
                     {user.email}
                   </p>
-                  <span
-                    className={`mt-2 inline-block rounded-md border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${roleBadgeClass}`}
-                  >
-                    {user.role}
-                  </span>
+                  <div className="mt-2 flex items-center gap-1.5">
+                    <span
+                      className={`inline-block rounded-md border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${roleBadgeClass}`}
+                    >
+                      {user.role}
+                    </span>
+                    {activeSampleProfile && (
+                      <span className="rounded-md border border-blue-200 bg-blue-50 px-1.5 py-0.5 text-[10px] font-semibold text-sgx-blue">
+                        {activeSampleProfile.shortLabel}
+                      </span>
+                    )}
+                  </div>
                 </div>
 
                 <div className="py-2 text-xs text-slate-600 space-y-1 border-b border-slate-100">
@@ -338,13 +409,71 @@ export default function Navbar({ initialUser }: Props) {
                   </div>
                 </div>
 
+                {/* Switch Sample Classroom Profile */}
+                <div className="py-2.5 border-b border-slate-100">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+                    Switch Sample Profile
+                  </p>
+                  <div className="space-y-1">
+                    {CLASSROOM_SAMPLE_PROFILES.map((profile) => {
+                      const isCurrent =
+                        user.email.toLowerCase() ===
+                          profile.email.toLowerCase() ||
+                        user.uid === profile.uid ||
+                        user.uid ===
+                          `gmail-${profile.email.replace(/[^a-z0-9]/g, "-")}`;
+                      return (
+                        <button
+                          key={profile.email}
+                          type="button"
+                          disabled={isCurrent}
+                          onClick={() => handleQuickSwitchProfile(profile)}
+                          className={`flex w-full items-center justify-between rounded-lg px-2 py-1.5 text-xs transition ${
+                            isCurrent
+                              ? "bg-blue-50 font-bold text-sgx-blue border border-blue-200/60"
+                              : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
+                          }`}
+                        >
+                          <div className="flex items-center gap-1.5 truncate">
+                            <span
+                              className={`h-2 w-2 rounded-full shrink-0 ${
+                                isCurrent ? "bg-sgx-blue" : "bg-slate-300"
+                              }`}
+                            />
+                            <span className="truncate">{profile.shortLabel}</span>
+                          </div>
+                          {isCurrent ? (
+                            <span className="text-[10px] font-bold text-sgx-blue shrink-0">
+                              Active
+                            </span>
+                          ) : (
+                            <span className="font-mono text-[10px] text-slate-400 shrink-0">
+                              {profile.role}
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Personal Gmail Action */}
+                <Link
+                  href="/login?mode=custom"
+                  onClick={() => setMenuOpen(false)}
+                  className="mt-2 flex w-full items-center gap-2 rounded-xl border border-dashed border-slate-300 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:border-sgx-blue hover:text-sgx-blue hover:bg-blue-50/30"
+                >
+                  <PlusCircle className="h-4 w-4 text-sgx-blue shrink-0" />
+                  <span>Sign In with Personal Gmail</span>
+                </Link>
+
                 <button
                   type="button"
                   onClick={handleSignOut}
-                  className="mt-2 flex w-full items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold text-rose-600 transition hover:bg-rose-50"
+                  className="mt-1 flex w-full items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold text-rose-600 transition hover:bg-rose-50"
                 >
-                  <LogOut className="h-4 w-4" />
-                  Sign out of Google Account
+                  <LogOut className="h-4 w-4 shrink-0" />
+                  <span>Sign out of Google Account</span>
                 </button>
               </div>
             )}
@@ -412,6 +541,54 @@ export default function Navbar({ initialUser }: Props) {
               );
             })}
           </nav>
+
+          {/* Mobile Profile Switcher & Sign Out */}
+          <div className="pt-2 border-t border-slate-200 space-y-2">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+              Switch Sample Profile
+            </p>
+            <div className="grid grid-cols-2 gap-1.5">
+              {CLASSROOM_SAMPLE_PROFILES.map((profile) => {
+                const isCurrent =
+                  user.email.toLowerCase() === profile.email.toLowerCase() ||
+                  user.uid === profile.uid ||
+                  user.uid ===
+                    `gmail-${profile.email.replace(/[^a-z0-9]/g, "-")}`;
+                return (
+                  <button
+                    key={profile.email}
+                    type="button"
+                    disabled={isCurrent}
+                    onClick={() => handleQuickSwitchProfile(profile)}
+                    className={`flex items-center justify-between rounded-lg px-2.5 py-1.5 text-xs font-medium transition ${
+                      isCurrent
+                        ? "bg-blue-50 text-sgx-blue font-bold border border-blue-200"
+                        : "bg-slate-50 text-slate-700 hover:bg-slate-100"
+                    }`}
+                  >
+                    <span className="truncate">{profile.shortLabel}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            <Link
+              href="/login?mode=custom"
+              className="flex items-center justify-center gap-1.5 rounded-xl border border-dashed border-slate-300 py-2 text-xs font-semibold text-slate-700 hover:border-sgx-blue hover:text-sgx-blue"
+            >
+              <PlusCircle className="h-3.5 w-3.5 text-sgx-blue" />
+              Sign In with Personal Gmail
+            </Link>
+
+            <button
+              type="button"
+              onClick={handleSignOut}
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-rose-50 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-100"
+            >
+              <LogOut className="h-3.5 w-3.5" />
+              Sign out of Google Account
+            </button>
+          </div>
         </div>
       )}
     </header>
