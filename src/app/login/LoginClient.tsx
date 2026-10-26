@@ -302,7 +302,7 @@ export default function LoginClient({
                 </h3>
               </div>
               <p className="mt-2 text-xs leading-relaxed text-slate-600">
-                Instantly enter as <strong>Ryan</strong> (Student), <strong>Chloe</strong> (#1 Leader), <strong>Ms. Lim</strong> (Teacher), or <strong>Dr. Tan</strong> (Admin), or connect your personal <strong>@gmail.com</strong> account with fresh <strong>S$10,000.00</strong> capital.
+                Instantly enter as <strong>Ryan</strong> (Student), <strong>Chloe</strong> (#1 Leader), <strong>Ms. Lim</strong> (HOD / YH), or <strong>Dr. Tan</strong> (Admin), or connect your personal <strong>@gmail.com</strong> account with fresh <strong>S$10,000.00</strong> capital.
               </p>
               <div className="mt-3 flex items-center gap-1.5 font-mono text-[11px] font-semibold text-sgx-blue">
                 <span>1-Click Entry · Zero Setup Required</span>

@@ -103,9 +103,9 @@ export const CLASSROOM_SAMPLE_PROFILES: ClassroomSampleProfile[] = [
     uid: "user-teacher-1",
     email: "teacher@sgxedu.sg",
     name: "Ms. Rachel Lim",
-    shortLabel: "Ms. Lim (Teacher)",
+    shortLabel: "Ms. Lim (HOD / YH)",
     role: "teacher",
-    roleBadge: "HOD Finance · Classroom Educator",
+    roleBadge: "Head of Department / Year Head (HOD / YH)",
     statHighlight: "5-Pillar Heatmap · 1-Click Dividends",
     summary:
       "Educator console for grading SOLO taxonomy stages, distributing quarterly dividends, and exporting to Google Sheets.",
