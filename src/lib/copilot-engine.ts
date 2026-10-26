@@ -1064,7 +1064,7 @@ export function evaluateCopilotTurn(
       "Safe Bets",
       "Industry Giants",
       "Everyday Brands",
-      "High Risk, High Reward",
+      "Growth & Innovation",
     ];
     const coveredSet = new Set<RiskTier>();
     let topHoldingTicker: string | null = null;
@@ -1243,11 +1243,18 @@ export function evaluateCopilotTurn(
       (t) => TICKER_META[t].tier === "Everyday Brands",
     );
     criteriaLabel = "🟣 Everyday Brands (Supermarkets, Transport & Healthcare)";
-  } else if (lower.includes("high risk")) {
+  } else if (
+    lower.includes("growth") ||
+    lower.includes("innovation") ||
+    lower.includes("catalyst") ||
+    lower.includes("high risk")
+  ) {
     filteredTickers = VALID_TICKERS.filter(
-      (t) => TICKER_META[t].tier === "High Risk, High Reward",
+      (t) =>
+        TICKER_META[t].tier === "Growth & Innovation" ||
+        TICKER_META[t].tier === "High Risk, High Reward",
     );
-    criteriaLabel = "🟠 High Risk, High Reward (Growth & Small-Cap)";
+    criteriaLabel = "🟣 Growth & Innovation (High-Growth Tech & Catalysts)";
   } else if (lower.includes("under s$") || lower.includes("cheap") || lower.includes("affordable") || lower.includes("low price")) {
     filteredTickers = VALID_TICKERS.filter((t) => {
       const px = ctx.snapshot.quotes[t]?.price ?? TICKER_META[t].refPrice;

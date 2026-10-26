@@ -101,7 +101,7 @@ export const EPISODES_DATA: EpisodeData[] = [
         endSec: 95,
         time: "1:02 - 1:35",
         cue: "Screen Recording: /dashboard Market Screener",
-        callout: "Live SGT Session Clock · 4 Risk Tiers (Safe Bets, Giants, Everyday, High Risk)",
+        callout: "Live SGT Session Clock · 4 Tiers (Safe Bets, Giants, Everyday, Growth & Innovation)",
         vo: "Here is your command center: the SGX Market Screener. Notice the live clock at the top right—it tracks actual Singapore Trading Hours: Pre-Open, Morning Open, Midday Break, and Pre-Close. All 20 companies are grouped into 4 intuitive Risk Tiers.",
         sceneType: "market_screener",
       },

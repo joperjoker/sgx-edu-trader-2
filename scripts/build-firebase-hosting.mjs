@@ -791,15 +791,34 @@ const logoSrc = path.join(rootDir, "public", "efl-logo.png");
 if (fs.existsSync(logoSrc)) {
   fs.copyFileSync(logoSrc, path.join(outDir, "efl-logo.png"));
 }
+const manifestSrc = path.join(rootDir, "public", "site.webmanifest");
+if (fs.existsSync(manifestSrc)) {
+  fs.copyFileSync(manifestSrc, path.join(outDir, "site.webmanifest"));
+}
 
 const indexHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#F8FAFC" />
   <title>EduFinLit · Student Growth & Market Simulator</title>
+  <meta name="description" content="EduFinLit — Institutional-grade Singapore paper trading simulator and financial literacy sandbox for students and educators. Practice disciplined investing across 20 real SGX counters with authentic SGX rules and Gemini AI coaching." />
   <link rel="icon" type="image/png" href="/efl-logo.png" />
   <link rel="apple-touch-icon" href="/efl-logo.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <!-- OpenGraph Social Metadata -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://sgx-edu-trader-2-sg.web.app" />
+  <meta property="og:site_name" content="EduFinLit SGX Paper Trading Platform" />
+  <meta property="og:title" content="EduFinLit · Student Growth & Market Simulator" />
+  <meta property="og:description" content="Institutional-grade Singapore paper trading simulator and financial literacy sandbox. 20 real SGX counters, S$10,000 virtual capital, authentic SGX tick sizes, and Gemini AI coaching." />
+  <meta property="og:image" content="https://sgx-edu-trader-2-sg.web.app/efl-logo.png" />
+  <!-- Twitter Card Metadata -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="EduFinLit · Student Growth & Market Simulator" />
+  <meta name="twitter:description" content="SGX paper trading simulator & financial literacy education platform with Socratic Gemini AI coaching." />
+  <meta name="twitter:image" content="https://sgx-edu-trader-2-sg.web.app/efl-logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">

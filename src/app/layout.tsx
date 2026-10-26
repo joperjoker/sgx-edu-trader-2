@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import {
   Inter,
   Plus_Jakarta_Sans,
@@ -31,13 +31,45 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
+export const viewport: Viewport = {
+  themeColor: "#F8FAFC",
+  width: "device-width",
+  initialScale: 1,
+};
+
 export const metadata: Metadata = {
-  title: "EduFinLit · Student Growth & Market Simulator",
+  metadataBase: new URL("https://sgx-edu-trader-2-sg.web.app"),
+  title: "EduFinLit · Student Growth & SGX Market Simulator",
   description:
-    "Institutional daylight financial literacy and paper trading platform for Singapore students. Powered by Google Cloud, Firebase, TradingView Charts, and Gemini.",
+    "Institutional daylight financial literacy and SGX Market paper trading simulator for Singapore secondary school and junior college students. Powered by Google Cloud, Firebase, TradingView Charts, and Gemini.",
+  manifest: "/site.webmanifest",
   icons: {
     icon: "/efl-logo.png",
     apple: "/efl-logo.png",
+  },
+  openGraph: {
+    title: "EduFinLit · Student Growth & SGX Market Simulator 🇸🇬📈",
+    description:
+      "Institutional daylight paper trading simulator for Singapore students. S$10,000 virtual capital, 20 SGX blue-chips, authentic board lots, fee drag math, and Socratic Gemini AI coaching.",
+    url: "https://sgx-edu-trader-2-sg.web.app",
+    siteName: "EduFinLit",
+    images: [
+      {
+        url: "/efl-logo.png",
+        width: 800,
+        height: 800,
+        alt: "EduFinLit Crest Logo & Singapore Financial Literacy",
+      },
+    ],
+    locale: "en_SG",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "EduFinLit · Student Growth & SGX Market Simulator 🇸🇬📈",
+    description:
+      "Institutional daylight paper trading simulator for Singapore students. S$10,000 virtual capital, 20 SGX blue-chips, authentic board lots, fee drag math, and Socratic Gemini AI coaching.",
+    images: ["/efl-logo.png"],
   },
 };
 

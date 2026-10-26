@@ -31,7 +31,7 @@ SGX Edu-Trader 2.0 is an institutional-grade, bright-mode Next.js 14 paper tradi
 - **Safe Bets:** `D05.SI` (DBS Group Holdings), `O39.SI` (OCBC Bank), `U11.SI` (United Overseas Bank), `Z74.SI` (Singtel), `C6L.SI` (Singapore Airlines)
 - **Industry Giants:** `BN4.SI` (Keppel Ltd), `U96.SI` (Sembcorp Industries), `S68.SI` (Singapore Exchange), `S58.SI` (SATS Ltd), `S63.SI` (ST Engineering)
 - **Everyday Brands:** `C52.SI` (ComfortDelGro), `OV8.SI` (Sheng Siong Group), `BSL.SI` (Raffles Medical Group), `OYY.SI` (PropNex Limited), `S59.SI` (SIA Engineering)
-- **High Risk, High Reward:** `AIY.SI` (iFAST Corporation), `MZH.SI` (Nanofilm Technologies), `CHZ.SI` (HRnetGroup Limited), `8AZ.SI` (Aztech Global Ltd), `ITS.SI` (ISOTeam Ltd)
+- **Growth & Innovation:** `AIY.SI` (iFAST Corporation), `MZH.SI` (Nanofilm Technologies), `CHZ.SI` (HRnetGroup Limited), `8AZ.SI` (Aztech Global Ltd), `ITS.SI` (ISOTeam Ltd)
 
 ## Required Disclaimer — Present on Every Page Footer
 "SGX Edu-Trader is a paper trading simulation for educational purposes only. No real securities transactions are conducted and no real money is involved. Not licensed by the Monetary Authority of Singapore (MAS). Not financial advice under the Financial Advisers Act (Cap. 110) or Securities and Futures Act (Cap. 289) of Singapore. Not affiliated with Singapore Exchange Limited (SGX Group)."

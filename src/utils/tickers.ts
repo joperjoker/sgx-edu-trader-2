@@ -2,6 +2,7 @@ export type RiskTier =
   | "Safe Bets"
   | "Industry Giants"
   | "Everyday Brands"
+  | "Growth & Innovation"
   | "High Risk, High Reward";
 
 export interface SgxTickerMeta {
@@ -336,7 +337,7 @@ export const TICKER_META: Record<string, SgxTickerMeta> = {
     sgxCode: "AIY",
     name: "iFAST Corporation Ltd",
     shortName: "iFAST Corp",
-    tier: "High Risk, High Reward",
+    tier: "Growth & Innovation",
     sector: "Fintech & Wealth Tech",
     boardLot: 100,
     refPrice: 8.61,
@@ -355,7 +356,7 @@ export const TICKER_META: Record<string, SgxTickerMeta> = {
     sgxCode: "MZH",
     name: "Nanofilm Technologies Intl Ltd",
     shortName: "Nanofilm",
-    tier: "High Risk, High Reward",
+    tier: "Growth & Innovation",
     sector: "Advanced Materials & Tech",
     boardLot: 100,
     refPrice: 0.73,
@@ -374,7 +375,7 @@ export const TICKER_META: Record<string, SgxTickerMeta> = {
     sgxCode: "CHZ",
     name: "HRnetGroup Limited",
     shortName: "HRnetGroup",
-    tier: "High Risk, High Reward",
+    tier: "Growth & Innovation",
     sector: "Human Resources & Staffing",
     boardLot: 100,
     refPrice: 0.64,
@@ -393,7 +394,7 @@ export const TICKER_META: Record<string, SgxTickerMeta> = {
     sgxCode: "8AZ",
     name: "Aztech Global Ltd",
     shortName: "Aztech Global",
-    tier: "High Risk, High Reward",
+    tier: "Growth & Innovation",
     sector: "IoT & Electronics Mfg",
     boardLot: 100,
     refPrice: 0.95,
@@ -412,7 +413,7 @@ export const TICKER_META: Record<string, SgxTickerMeta> = {
     sgxCode: "ITS",
     name: "ISOTeam Ltd",
     shortName: "ISOTeam",
-    tier: "High Risk, High Reward",
+    tier: "Growth & Innovation",
     sector: "Building & Estate Upgrading",
     boardLot: 100,
     refPrice: 0.87,
@@ -485,19 +486,33 @@ export const TIER_CONFIG: Record<RiskTier, TierStyleMeta> = {
     dotColor: "#D97706",
     chartColor: "#D97706",
   },
-  "High Risk, High Reward": {
-    key: "risk",
-    tier: "High Risk, High Reward",
-    badgeText: "High Risk · Growth",
-    shortLabel: "High Risk, High Reward",
+  "Growth & Innovation": {
+    key: "growth",
+    tier: "Growth & Innovation",
+    badgeText: "Growth & Innovation",
+    shortLabel: "Growth & Innovation",
     blurb:
-      "Fintech, deep-tech nanotechnology, and smaller-cap companies with higher volatility and wider spreads.",
+      "High-growth fintech, advanced nanotechnology, IoT electronics, and agile small-to-mid-cap innovators with strong catalyst potential.",
     beginnerFriendly: false,
-    pillBg: "bg-rose-50",
-    pillText: "text-rose-700",
-    pillBorder: "border-rose-200",
-    dotColor: "#E11D48",
-    chartColor: "#E11D48",
+    pillBg: "bg-purple-50",
+    pillText: "text-purple-700",
+    pillBorder: "border-purple-200",
+    dotColor: "#9333EA",
+    chartColor: "#9333EA",
+  },
+  "High Risk, High Reward": {
+    key: "growth",
+    tier: "Growth & Innovation",
+    badgeText: "Growth & Innovation",
+    shortLabel: "Growth & Innovation",
+    blurb:
+      "High-growth fintech, advanced nanotechnology, IoT electronics, and agile small-to-mid-cap innovators with strong catalyst potential.",
+    beginnerFriendly: false,
+    pillBg: "bg-purple-50",
+    pillText: "text-purple-700",
+    pillBorder: "border-purple-200",
+    dotColor: "#9333EA",
+    chartColor: "#9333EA",
   },
 };
 
@@ -505,5 +520,5 @@ export const TIER_LIST: RiskTier[] = [
   "Safe Bets",
   "Industry Giants",
   "Everyday Brands",
-  "High Risk, High Reward",
+  "Growth & Innovation",
 ];

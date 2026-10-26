@@ -81,7 +81,7 @@ Students manage **S$10,000.00** in virtual SGD capital across **20 real Singapor
 | **🟢 Safe Bets (Blue-Chip Anchors)** | `D05.SI` (DBS Group), `O39.SI` (OCBC Bank), `U11.SI` (UOB), `Z74.SI` (Singtel), `C6L.SI` (Singapore Airlines) |
 | **🔵 Industry Giants (Core Infrastructure)** | `BN4.SI` (Keppel Ltd), `U96.SI` (Sembcorp Industries), `S68.SI` (SGX Group), `S58.SI` (SATS Ltd), `S63.SI` (ST Engineering) |
 | **🟣 Everyday Brands (Domestic Consumer & Services)** | `C52.SI` (ComfortDelGro), `OV8.SI` (Sheng Siong), `BSL.SI` (Raffles Medical), `OYY.SI` (PropNex), `S59.SI` (SIA Engineering) |
-| **🟠 High Risk, High Reward (Growth & Cyclicals)** | `AIY.SI` (iFAST Corp), `MZH.SI` (Nanofilm Tech), `CHZ.SI` (HRnetGroup), `8AZ.SI` (Aztech Global), `ITS.SI` (ISOTeam) |
+| **🟣 Growth & Innovation (High-Growth Tech & Catalysts)** | `AIY.SI` (iFAST Corp), `MZH.SI` (Nanofilm Tech), `CHZ.SI` (HRnetGroup), `8AZ.SI` (Aztech Global), `ITS.SI` (ISOTeam) |
 
 ---
 

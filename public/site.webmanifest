@@ -1,0 +1,17 @@
+{
+  "name": "EduFinLit · Student Growth & SGX Market Simulator",
+  "short_name": "EduFinLit",
+  "description": "Institutional daylight financial literacy and paper trading platform for Singapore students. Powered by Google Cloud & Gemini.",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#F8FAFC",
+  "theme_color": "#F8FAFC",
+  "icons": [
+    {
+      "src": "/efl-logo.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

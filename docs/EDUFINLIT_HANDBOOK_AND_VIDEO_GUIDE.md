@@ -77,9 +77,9 @@ The platform tracks 20 carefully curated, highly liquid SGX securities divided i
 │ Tangible Consumer & Healthcare│ BSL.SI (Raffles Medical Group) · OYY.SI (PropNex Ltd)  │
 │ Resilient recurring cash flows│ S59.SI (SIA Engineering Company)                       │
 ├───────────────────────────────┼────────────────────────────────────────────────────────┤
-│ TIER 4: HIGH RISK, HIGH REWARD│ AIY.SI (iFAST Corporation) · MZH.SI (Nanofilm Tech)   │
-│ Tech, Growth & Sub-Dollar Eq. │ CHZ.SI (HRnetGroup) · 8AZ.SI (Aztech Global)           │
-│ Higher volatility & beta      │ ITS.SI (ISOTeam Ltd - Sub-dollar Penny Equity)         │
+│ TIER 4: GROWTH & INNOVATION   │ AIY.SI (iFAST Corporation) · MZH.SI (Nanofilm Tech)   │
+│ Tech, Growth & Catalysts      │ CHZ.SI (HRnetGroup) · 8AZ.SI (Aztech Global)           │
+│ Small & mid-cap market drivers│ ITS.SI (ISOTeam Ltd - Estate Upgrading & Green Infra)  │
 └───────────────────────────────┴────────────────────────────────────────────────────────┘
 ```
 
